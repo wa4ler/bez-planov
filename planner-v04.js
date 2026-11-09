@@ -116,6 +116,7 @@ function textSignals(cfg){
  if(restrictions.has('outdoors'))avoid.delete('nature');
  if(restrictions.has('crowds'))avoid.delete('walk');
  if(restrictions.has('noise'))avoid.delete('food');
+ if(restrictions.has('expensive'))avoid.delete('food');
  const names=[...pos].map(k=>PREF_BY_KEY[k]?.title).filter(Boolean);
  const banned=[...avoid].map(k=>PREF_BY_KEY[k]?.title).filter(Boolean);
  return {positive:[...pos],avoid:[...avoid],restrictions:[...restrictions],recognized:names,avoided:banned};
@@ -292,6 +293,8 @@ function validateConfig(cfg){
  if(!Array.isArray(cfg.events)||cfg.events.length>20)return 'Можно закрепить до 20 событий.';
  if(cfg.events.some(e=>!bookedEventValid(e,cfg)))return 'Проверьте дату, время, стоимость и длительность закреплённых событий.';
  if(overlappingEvents(cfg.events))return 'В закреплённых событиях есть пересечение по времени. Исправьте его.';
+ if(cfg.events.some(e=>minutes(e.time)<start||minutes(e.time)+Number(e.duration)>end))
+   return 'Закреплённое событие находится за пределами выбранного времени дня. Вернитесь к настройке часов или измените время события.';
  if(cfg.budgetCovers==='all'&&(!Number.isFinite(cfg.transportReserve)||cfg.transportReserve<0||!Number.isFinite(cfg.hotelReserve)||cfg.hotelReserve<0))return 'Введите корректный резерв на транспорт и ночёвки.';
  for(let i=0;i<d.length;i++){
   const budget=budgetForDay(cfg,i,d.length,cfg.events.filter(e=>e.date===d[i]));
@@ -348,8 +351,10 @@ function chooseStopsForDay(area,cfg,signals,feedback,usage,index,dayBudget,event
    let slot=timeSlots[slotIndex];
    if(!slot){slotIndex=0;slot=timeSlots[0]}
    const personFocus=(chosen.length+index)%Math.max(1,cfg.peopleMode==='solo'?1:2);
+   const unused=pool.filter(p=>!(usage[p.id]>0));
    const candidates=pool.filter(p=>{
      if(chosen.some(s=>s.id===p.id))return false;
+     if(unused.length>=max-chosen.length&&usage[p.id]>0)return false;
      const cost=priceAllowance(p,cfg.partySize);
      if(spent+cost>available)return false;
      const length=p.minutes+(cfg.transport==='foot'?25:20);
@@ -417,7 +422,7 @@ function alternativesFor(plan,dayIndex,stopIndex,feedback){
  const old=PLACES[st.id],oldTags=placeTags(old);
  return area.places.filter(p=>
    p.id!==st.id&&!day.stops.some(s=>s.id===p.id)&&placeEligible(p,cfg,signals,feedback||getFeedback())&&
-   priceAllowance(p,cfg.partySize)<=capacity)
+   priceAllowance(p,cfg.partySize)<=capacity&&p.minutes<=(st.duration||old.minutes))
   .sort((a,b)=>(placeScore(b,cfg,signals,used,dayIndex,null,feedback||getFeedback())+placeTags(b).filter(t=>oldTags.includes(t)).length*4)
     -(placeScore(a,cfg,signals,used,dayIndex,null,feedback||getFeedback())+placeTags(a).filter(t=>oldTags.includes(t)).length*4))
   .slice(0,5);
