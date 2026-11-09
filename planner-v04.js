@@ -100,24 +100,38 @@ const TEXT_RESTRICTIONS=[
 ];
 function textSignals(cfg){
  const people=cfg.peopleMode==='solo'?cfg.profiles.slice(0,1):cfg.profiles;
- const fromWords=t=>SIGNAL_WORDS.filter(w=>w.rx.test(String(t||''))).map(w=>w.key);
- const peoplePositive=people.map(p=>fromWords(p.likes+' '+p.dream));
- const peopleAvoid=people.map(p=>fromWords(p.avoid));
- const sharedPositive=fromWords(cfg.perfectDay),sharedAvoid=fromWords(cfg.badDay);
- const pos=new Set([...peoplePositive.flat(),...sharedPositive]);
- const avoid=new Set([...peopleAvoid.flat(),...sharedAvoid]);
  const restrictions=new Set(cfg.restrictions||[]);
- for(const t of people.map(p=>p.avoid).concat(cfg.badDay)){
-   for(const r of TEXT_RESTRICTIONS)if(r.rx.test(String(t||'')))restrictions.add(r.key);
+ const negation=/(?:не\s+(?:люблю|нравится|хочу|интересно|переношу)|ненавиж|избегаю|терпеть\s+не\s+могу|никаких)/i;
+ function parse(raw,negativeDefault){
+   const positive=new Set(),negative=new Set();
+   const parts=String(raw||'').split(/[,.!?;\n]|\s+но\s+|\s+однако\s+/i).map(s=>s.trim()).filter(Boolean);
+   for(const part of parts){
+     const isNegative=negativeDefault||negation.test(part);
+     for(const w of SIGNAL_WORDS)if(w.rx.test(part))(isNegative?negative:positive).add(w.key);
+     for(const r of TEXT_RESTRICTIONS)if(r.rx.test(part))restrictions.add(r.key);
+     if(/без\s+цели|бесцельн|просто\s+ходить/i.test(part))restrictions.add('aimless');
+   }
+   return {positive:[...positive],negative:[...negative]};
  }
+ const personal=people.map(p=>{
+   const a=parse((p.likes||'')+'; '+(p.dream||''),false),b=parse(p.avoid,true);
+   return {positive:[...new Set([...a.positive,...b.positive])],
+     negative:[...new Set([...a.negative,...b.negative])]};
+ });
+ const sharedA=parse(cfg.perfectDay,false),sharedB=parse(cfg.badDay,true);
+ const sharedPositive=[...new Set([...sharedA.positive,...sharedB.positive])];
+ const sharedAvoid=[...new Set([...sharedA.negative,...sharedB.negative])];
+ const peoplePositive=personal.map(p=>p.positive),peopleAvoid=personal.map(p=>p.negative);
  const notHard={
-   longwalk:['walk'],outdoors:['nature'],crowds:['walk'],noise:['food'],expensive:['food']
+   longwalk:['walk'],outdoors:['nature'],crowds:['walk'],noise:['food'],expensive:['food'],
+   heights:['views'],aimless:['walk']
  };
  for(const key of restrictions)for(const interest of notHard[key]||[]){
-   avoid.delete(interest);
-   for(const arr of peopleAvoid)if(arr.includes(interest))arr.splice(arr.indexOf(interest),1);
+   for(const arr of peopleAvoid){const i=arr.indexOf(interest);if(i>=0)arr.splice(i,1)}
    const j=sharedAvoid.indexOf(interest);if(j>=0)sharedAvoid.splice(j,1);
  }
+ const avoid=new Set([...peopleAvoid.flat(),...sharedAvoid]);
+ const pos=new Set([...peoplePositive.flat(),...sharedPositive].filter(x=>!avoid.has(x)));
  const names=[...pos].map(k=>PREF_BY_KEY[k]?.title).filter(Boolean);
  const banned=[...avoid].map(k=>PREF_BY_KEY[k]?.title).filter(Boolean);
  return {positive:[...pos],avoid:[...avoid],peoplePositive,peopleAvoid,sharedPositive,sharedAvoid,
@@ -186,6 +200,7 @@ function placeScore(p,cfg,signals,usage,dayIndex,personFocus,feedback){
  if(cfg.venuePreference==='mostly-outdoor'&&meta.indoor)score-=4;
  if(cfg.walkingLevel==='low'&&tags.includes('walk'))score-=8;
  if(signals.restrictions.includes('longwalk')&&tags.includes('walk'))score-=8;
+ if(signals.restrictions.includes('aimless')&&tags.includes('walk'))score-=5;
  if(feedback[p.id]==='yes')score+=7;
  score-=Math.min(usage[p.id]||0,4)*20;
  // Keep cross-day variety: don't let an accidental catalog order dominate.
