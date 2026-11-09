@@ -64,7 +64,7 @@ const AREAS = [
     P('vdnh-arch','Арка главного входа ВДНХ',['history','walk'],0,30,'Парадное начало прогулки по знаменитому комплексу.','проспект Мира, 119, Москва'),
     P('vdnh-park','ВДНХ',['walk','history','nature'],0,80,'Знаменитые павильоны, площади и длинные аллеи.','проспект Мира, 119, Москва'),
     P('cosmos','Центр «Космонавтика и авиация»',['history','unusual','art'],1800,100,'Экспозиция о космосе в павильоне «Космос».','ВДНХ, павильон 34, Москва'),
-    P('mосквариум','Москвариум',['activity','nature','unusual'],5500,115,'Океанариум на ВДНХ; актуальные цены и сеансы проверьте.','ВДНХ, Москвариум, Москва'),
+    P('moskvarium','Москвариум',['activity','nature','unusual'],5500,115,'Океанариум на ВДНХ; актуальные цены и сеансы проверьте.','ВДНХ, Москвариум, Москва'),
     P('sun-moscow','Колесо обозрения «Солнце Москвы»',['activity','romance'],2600,60,'Посмотрите на город с высоты. Работа зависит от условий.','2-я Останкинская улица, 3, Москва'),
     P('botanical','Главный ботанический сад РАН',['nature','walk'],0,90,'Просторное место для прогулок среди зелени.','Ботаническая улица, 4, Москва'),
     P('moscow-sky','Ресторан «Московское небо»',['food','romance'],4400,80,'Пауза на обед или ужин на территории ВДНХ.','ВДНХ, ресторан Московское небо, Москва')
@@ -93,6 +93,7 @@ let currentStep = 1;
 function $(id){return document.getElementById(id)}
 function safe(s){return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function money(n){return new Intl.NumberFormat('ru-RU').format(Math.round(Number(n)||0))+' ₽'}
+function daysWord(n){return n%10===1&&n%100!==11?'день':([2,3,4].includes(n%10)&&![12,13,14].includes(n%100)?'дня':'дней')}
 function dateObj(s){return new Date(s+'T12:00:00')}
 function isoLocal(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
 function dateLabel(s){return new Intl.DateTimeFormat('ru-RU',{day:'numeric',month:'long'}).format(dateObj(s))}
@@ -243,15 +244,22 @@ function generatePlan(){
   const days=dates.map((date,i)=>buildDay(areas[i],cfg,date,budgetPerDay(cfg,i,dates.length),usage));
   return {id:String(Date.now())+'-'+Math.random().toString(36).slice(2,8),createdAt:new Date().toISOString(),config:cfg,days};
 }
+function recalculateTimes(day,cfg){
+  let mins=cfg.startTime*60;
+  day.stops.forEach(s=>{
+    s.time=String(Math.floor(mins/60)).padStart(2,'0')+':'+String(mins%60).padStart(2,'0');
+    mins+=(PLACES[s.id]?PLACES[s.id].minutes:60)+20;
+  });
+}
 function totalDay(day,cfg){return day.stops.reduce((s,stop)=>s+estimatedCost(PLACES[stop.id]||{cost:0},cfg.groupSize),0)}
 function totalPlan(plan){return plan.days.reduce((s,d)=>s+totalDay(d,plan.config),0)}
 function totalBudget(plan){return plan.config.budgetAmount*(plan.config.budgetScope==='daily'?plan.days.length:1)}
 function mapSearch(p){return 'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(p.address)}
-function mapRoute(day){
+function mapRoute(day,cfg){
   const p=day.stops.map(x=>PLACES[x.id]).filter(Boolean);
   if(!p.length)return 'https://www.google.com/maps';
   if(p.length===1)return mapSearch(p[0]);
-  let url='https://www.google.com/maps/dir/?api=1&origin='+encodeURIComponent(p[0].address)+'&destination='+encodeURIComponent(p[p.length-1].address)+'&travelmode=walking';
+  let url='https://www.google.com/maps/dir/?api=1&origin='+encodeURIComponent(p[0].address)+'&destination='+encodeURIComponent(p[p.length-1].address)+'&travelmode='+(cfg.transport==='car'||cfg.transport==='taxi'?'driving':'walking');
   if(p.length>2)url+='&waypoints='+encodeURIComponent(p.slice(1,-1).map(x=>x.address).join('|'));
   return url;
 }
@@ -271,8 +279,8 @@ function renderResult(){
     '<button type="button" role="tab" aria-selected="'+(i===currentDay)+'" class="day-tab'+(i===currentDay?' active':'')+'" data-action="choose-day" data-index="'+i+'">День '+(i+1)+'<small>'+safe(shortDate(day.date))+'</small></button>'
   ).join('');
   renderDay();
-  const isSaved=getSaved().some(x=>x.id===plan.id);
-  $('saveCurrent').textContent=isSaved?'✓ Сохранено':'♡ Сохранить';
+  const saved=getSaved().find(x=>x.id===plan.id);
+  $('saveCurrent').textContent=saved&&JSON.stringify(saved)===JSON.stringify(plan)?'✓ Сохранено':(saved?'♡ Сохранить изменения':'♡ Сохранить');
 }
 function renderDay(){
   const plan=currentPlan;if(!plan)return;
@@ -317,7 +325,7 @@ function renderDay(){
       '<div class="day-spend">'+money(total)+'</div>'+
       '<div class="money-track"><span style="width:'+percent+'%"></span></div>'+
       '<div class="legend"><span>Бюджет дня: '+money(day.budget)+'</span><span>Остаток: '+money(Math.max(0,day.budget-total))+'</span></div>'+
-      '<a class="btn" href="'+safe(mapRoute(day))+'" target="_blank" rel="noopener noreferrer">Открыть маршрут в картах ↗</a>'+
+      '<a class="btn" href="'+safe(mapRoute(day,cfg))+'" target="_blank" rel="noopener noreferrer">Открыть маршрут в картах ↗</a>'+
       '<div class="note-box"><strong>Перед выходом</strong><br>Порядок остановок ориентировочный, время указано без расчёта реального пути. Проверяйте часы работы и билеты. Такси, транспорт, проживание и покупки не включены в бюджет.</div>'+
       '</aside></div>';
 }
@@ -354,7 +362,7 @@ function renderLibrary(){
   const plans=getSaved(),favs=getFavorites();
   $('savedPlans').innerHTML=plans.length?plans.map(p=>{
     if(!p||!p.config||!Array.isArray(p.days))return '';
-    return '<div class="saved-item"><div><h4>'+safe(p.days.length===1?'День в Москве':'Путешествие на '+p.days.length+' дней')+'</h4>'+
+    return '<div class="saved-item"><div><h4>'+safe(p.days.length===1?'День в Москве':'Путешествие на '+p.days.length+' '+daysWord(p.days.length))+'</h4>'+
       '<p>'+safe(dateLabel(p.config.from))+(p.days.length>1?' — '+safe(dateLabel(p.config.to)):'')+
       ' · '+money(totalPlan(p))+'</p></div>'+
       '<div class="saved-actions"><button class="btn small" type="button" data-action="open-saved" data-id="'+safe(p.id)+'">Открыть</button>'+
@@ -398,7 +406,7 @@ function handleClick(e){
     if(!old||old.locked||!next||day.stops.some(s=>s.id===next.id))return;
     const projected=totalDay(day,currentPlan.config)-estimatedCost(PLACES[old.id],currentPlan.config.groupSize)+estimatedCost(next,currentPlan.config.groupSize);
     if(projected>day.budget){alert('Выбранная остановка превышает бюджет дня.');return}
-    old.id=next.id;openSwap=null;renderResult();return;
+    old.id=next.id;recalculateTimes(day,currentPlan.config);openSwap=null;renderResult();return;
   }
   if(action==='toggle-favorite'){
     const id=button.dataset.place;if(!PLACES[id])return;
