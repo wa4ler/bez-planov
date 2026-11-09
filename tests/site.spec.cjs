@@ -22,6 +22,7 @@ test('Homepage loads without horizontal overflow and opens wizard',async({page})
   await page.goto('/');
   await expect(page.locator('h1')).toContainText('Два человека');
   await expect(page.locator('.hero-art')).toBeVisible();
+  await page.screenshot({path:'test-results/home-'+test.info().project.name.replace(/\W/g,'-')+'.png',fullPage:true});
   const width=await page.evaluate(()=>({screen:window.innerWidth,page:document.documentElement.scrollWidth}));
   expect(width.page).toBeLessThanOrEqual(width.screen+2);
   await page.locator('.hero-cta-row [data-action="new"]').click();
@@ -38,6 +39,7 @@ test('Couple: distinct preferences, booked event, multi-day output, favorites an
   await page.locator('#budgetAmount').fill('12000');
   await step(page);
   await expect(page.locator('[data-step="1"]')).toBeVisible();
+  await page.screenshot({path:'test-results/profile-'+testInfo.project.name.replace(/\W/g,'-')+'.png',fullPage:true});
   await page.locator('#nameOne').fill('Алекс');
   await giveRatings(page,0,{food:2,art:2,walk:1,views:1});
   await page.locator('#likesOne').fill('Люблю маленькие кофейни, необычные улочки и музеи.');
@@ -48,6 +50,7 @@ test('Couple: distinct preferences, booked event, multi-day output, favorites an
   await page.locator('#likesTwo').fill('Хочется погулять в парках и найти красивый вид.');
   await step(page);
   await expect(page.locator('[data-step="3"]')).toBeVisible();
+  await page.screenshot({path:'test-results/mood-'+testInfo.project.name.replace(/\W/g,'-')+'.png',fullPage:true});
   await page.locator('#goalChoices [data-value="talk"]').click();
   await page.locator('#goalChoices [data-value="photo"]').click();
   await page.locator('#perfectDay').fill('Вкусный завтрак, красивые места, разговоры без спешки.');
@@ -77,6 +80,7 @@ test('Couple: distinct preferences, booked event, multi-day output, favorites an
   await page.locator('[data-action="open-saved"]').first().click();
   await expect(page.locator('#page-result')).toBeVisible();
   await expect(page.locator('#daysTabs .day-tab')).toHaveCount(3);
+  await page.waitForTimeout(450);
   await page.screenshot({path:'test-results/couple-'+testInfo.project.name.replace(/\W/g,'-')+'.png',fullPage:true});
 });
 test('Solo flow skips partner and can select whole-period budget',async({page})=>{
