@@ -263,15 +263,7 @@ function usePremium(){
      renderMemories();notify('Воспоминание удалено');
    }return;
   }
-  const clear=e.target.closest('[data-action="clear-local"]');
-  if(clear){
-   // Original handler handles plans/favorites. Clear separately stored private notes, too.
-   // User cancellation is handled by the primary confirmation in ui-v04.js, so defer until after its event.
-   setTimeout(()=>{if(!readArray(STORE_PLANS).length&&!readArray(STORE_FAV).length){
-     try{localStorage.removeItem(MOMENTS_STORE)}catch(e){}
-     renderMemories();
-   }},0);
-  }
+
  },true);
 }
 document.addEventListener('DOMContentLoaded',usePremium);
