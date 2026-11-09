@@ -409,6 +409,7 @@ function daySpending(day,cfg){
 function totalSpend(plan){return plan.days.reduce((s,day)=>s+daySpending(day,plan.config).total,0)}
 function totalLimit(cfg,days){return cfg.budgetAmount*(cfg.budgetScope==='daily'?days:1)}
 function mapLink(address){return 'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(address||'Москва')}
+function mapLinkYandex(address){return 'https://yandex.ru/maps/?text='+encodeURIComponent(address||'Москва')}
 function dayMap(day,cfg){
  const addresses=day.stops.map(s=>s.kind==='fixed'?s.address:PLACES[s.id]?.address).filter(Boolean);
  if(!addresses.length)return 'https://www.google.com/maps';
