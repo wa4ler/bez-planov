@@ -448,6 +448,13 @@ function renderLibrary(){
     '<a class="tool-link" href="'+escapeHTML(mapLink(p.address))+'" rel="noopener noreferrer" target="_blank">На карте ↗</a></div>'+
     '<button type="button" class="button button-outline button-small" data-action="favorite" data-place="'+escapeHTML(id)+'">♥</button></div>';
  }).join(''):'<div class="empty-library"><span>♡</span><strong>Пока нет любимых мест</strong><p>Добавляйте места прямо из маршрута.</p></div>';
+ const participants=(draft.peopleMode==='solo'?draft.profiles.slice(0,1):draft.profiles)
+   .map((p,i)=>personName(p,i,draft.peopleMode));
+ const liked=PREFS.filter(p=>draft.profiles.some(pr=>rated(pr,p.key)>0)).map(p=>p.title);
+ $('profileSummary').innerHTML='<div class="profile-chips">'+
+   participants.map(n=>'<span>'+escapeHTML(n)+'</span>').join('')+
+   liked.slice(0,6).map(n=>'<span>♥ '+escapeHTML(n)+'</span>').join('')+
+   '</div>';
 }
 function openSaved(id,isLegacy){
  const p=isLegacy?getLegacy().find(x=>String(x.id)===id):getSaved().find(x=>x.id===id);
@@ -467,6 +474,20 @@ function handleGlobalClick(e){
  const b=e.target.closest('[data-action]');if(!b)return;
  const action=b.dataset.action;
  if(action==='new'){freshWizard();return}
+ if(action==='edit-draft'){cfgToFields();goStep(1);showPage('wizard');return}
+ if(action==='reset-feedback'){
+   if(!window.confirm('Сбросить все отметки «не подходит» для мест?'))return;
+   if(writeStore(STORE_FEEDBACK,{}))notify('Все места снова доступны для подбора');
+   return;
+ }
+ if(action==='clear-local'){
+   if(!window.confirm('Удалить ответы анкеты, избранное, отзывы и все сохранённые маршруты из этого браузера?'))return;
+   for(const key of [STORE_PLANS,STORE_FAV,STORE_DRAFT,STORE_FEEDBACK,STORE_PREVIOUS,'bezPlanovPlans'])
+     localStorage.removeItem(key);
+   draft=buildDefault();cfgToFields();updateSavedCount();renderLibrary();
+   notify('Локальные данные удалены');
+   return;
+ }
  if(action==='example'){
   $('howItWorks').scrollIntoView({behavior:'smooth'});return;
  }
