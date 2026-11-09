@@ -11,6 +11,7 @@
 <link rel="stylesheet" href="./style-v04.css">
 <script src="./catalog.js" defer></script>
 <script src="./planner-v04.js" defer></script>
+<script src="./ui-v04.js" defer></script>
 </head>
 <body>
 <header class="header">
@@ -199,7 +200,7 @@
       <div class="form-grid triple-input"><div class="field"><label for="eventTime">Начало</label><input id="eventTime" type="time" class="control" value="18:00"></div><div class="field"><label for="eventDuration">Длительность</label><select id="eventDuration" class="control"><option value="45">45 мин</option><option value="60">1 час</option><option value="90" selected>1,5 часа</option><option value="120">2 часа</option><option value="180">3 часа</option></select></div><div class="field"><label for="eventCost">Стоимость, ₽</label><input id="eventCost" class="control" type="number" inputmode="numeric" min="0" max="10000000" value="0"></div></div>
       <div class="field"><label for="eventAddress">Где проходит? <small>Необязательно</small></label><input id="eventAddress" class="control" maxlength="180" placeholder="Адрес, район или название места"></div>
       <label class="checkbox-label"><input type="checkbox" id="eventPaid"> Уже оплачено</label>
-      <label class="checkbox-label"><input type="checkbox" id="eventCostIncluded"> Учесть эту стоимость в заявленном бюджете</label>
+      <label class="checkbox-label"><input type="checkbox" id="eventCostIncluded"> Учесть уже оплаченную сумму в общем бюджете</label><small class="field-note">Неоплаченные события учитываются автоматически.</small>
       <button type="button" id="addEvent" class="button button-outline button-small">+ Добавить закреплённое событие</button>
       <div id="eventError" class="field-error" aria-live="polite"></div>
       <div id="eventList" class="event-list" aria-live="polite"></div>
