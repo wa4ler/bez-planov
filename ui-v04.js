@@ -4,8 +4,8 @@ const $=(id)=>document.getElementById(id);
 const RATINGS=[{value:2,label:'Очень люблю',symbol:'♥'},{value:1,label:'Подойдёт',symbol:'✓'},{value:-3,label:'Точно не моё',symbol:'×'}];
 const TITLES=[
  ['Начнём с главного.','Когда, с кем и на какую сумму вы хотите отправиться?'],
- ['Маленький портрет большого человека.','Теперь узнаем интересы первого участника.'],
- ['Теперь другая точка зрения.','Предпочтения второго человека могут отличаться — и это нормально.'],
+ ['У каждого — свой вкус.','Начнём с того, что по-настоящему нравится вам.'],
+ ['Теперь — взгляд второго.','Его интересы так же важны для вашего общего маршрута.'],
  ['Важны не только места.','Как вы хотите чувствовать себя в эти дни?'],
  ['Сохраним ваш комфорт.','Проверим практические детали, которые меняют маршрут.'],
  ['Остались ваши планы.','Закрепим билеты и посмотрим, что мы о вас узнали.']
@@ -375,8 +375,7 @@ function swapPlace(i,id){
  if(!old||old.kind!=='place'||old.locked||!candidate)return;
  if(!alternativesFor(currentPlan,currentDay,i,getFeedback()).some(x=>x.id===id)){notify('Замена больше не подходит по условиям');return}
  old.id=id;old.duration=candidate.minutes;
- reassignTimes(day,currentPlan.config);
- openSwap=null;renderResult();notify('Остановку заменили');
+ openSwap=null;renderResult();notify('Остановку заменили, закреплённое время сохранилось');
 }
 function rerollDay(){
  const day=currentPlan.days[currentDay],cfg=currentPlan.config;
@@ -402,7 +401,6 @@ function markNotForUs(index){
  const alt=alternativesFor(currentPlan,currentDay,index,feedback);
  if(alt.length){s.id=alt[0].id;s.duration=alt[0].minutes}
  else day.stops.splice(index,1);
- reassignTimes(day,currentPlan.config);
  renderResult();notify('Учли ваш отзыв. Это место больше не предложим в этом браузере');
 }
 function toggleFavorite(id){
