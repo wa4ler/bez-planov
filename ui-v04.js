@@ -89,6 +89,7 @@ function reflectMode(){
 function reflectBudget(){
  $('reserveInputs').hidden=draft.budgetCovers!=='all';
  $('hotelReserveField').hidden=!draft.overnightStay;
+ $('hotelAddressField').hidden=!draft.overnightStay;
 }
 function reflectDates(){
  const dates=datesBetween(draft.from,draft.to);
@@ -271,7 +272,7 @@ function renderResult(){
   '<button role="tab" type="button" aria-selected="'+(i===currentDay)+'" class="day-tab'+(i===currentDay?' active':'')+'" data-action="day" data-index="'+i+'">День '+(i+1)+'<small>'+escapeHTML(shortDate(d.date))+'</small></button>'
  ).join('');
  $('savePlan').textContent=savedIsSame()?'✓ Сохранено':'♡ Сохранить';
- $('accommodationSummary').hidden=!cfg.hotelAddress;
+ $('accommodationSummary').hidden=!(cfg.overnightStay&&cfg.hotelAddress);
  if(cfg.hotelAddress){
   $('accommodationSummary').innerHTML='<strong>⌂ Ваша база на время поездки:</strong> '+escapeHTML(cfg.hotelAddress)+
    '. Это ваша заметка; расстояния и ночёвка не проверены. '+(cfg.budgetCovers==='all'?'Бюджет включает заданный вами резерв на ночёвки.':'Стоимость жилья не входит в бюджет.');
