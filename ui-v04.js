@@ -41,7 +41,7 @@ function renderTaste(){
 }
 const FIELD_MAP={
  dateStart:'from',dateEnd:'to',budgetAmount:'budgetAmount',budgetScope:'budgetScope',partySize:'partySize',
- transportReserve:'transportReserve',hotelReserve:'hotelReserve',nameOne:'profile1name',likesOne:'profile1likes',
+ transportReserve:'transportReserve',hotelReserve:'hotelReserve',overnightStay:'overnightStay',nameOne:'profile1name',likesOne:'profile1likes',
  dreamOne:'profile1dream',avoidOne:'profile1avoid',nameTwo:'profile2name',likesTwo:'profile2likes',
  dreamTwo:'profile2dream',avoidTwo:'profile2avoid',surpriseLevel:'surpriseLevel',
  perfectDay:'perfectDay',badDay:'badDay',dayStart:'dayStart',dayEnd:'dayEnd',
@@ -55,7 +55,7 @@ function fieldToCfg(id,value){
    const m=k.match(/^profile([12])(.*)$/);if(m){
      draft.profiles[Number(m[1])-1][m[2]]=cleanText(value,m[2]==='name'?35:m[2]==='likes'?650:350);
    }
- }else draft[k]=NUMERIC_KEYS.has(k)?Number(value):k==='stepFree'?!!value:value;
+ }else draft[k]=NUMERIC_KEYS.has(k)?Number(value):(k==='stepFree'||k==='overnightStay')?!!value:value;
 }
 function cfgToFields(){
  for(const [id,key] of Object.entries(FIELD_MAP)){
@@ -88,6 +88,7 @@ function reflectMode(){
 }
 function reflectBudget(){
  $('reserveInputs').hidden=draft.budgetCovers!=='all';
+ $('hotelReserveField').hidden=!draft.overnightStay;
 }
 function reflectDates(){
  const dates=datesBetween(draft.from,draft.to);
@@ -322,7 +323,7 @@ function renderDay(){
     '</div>'+altHTML+'</article></div>';
  }).join('');
  const calendarText='День '+(currentDay+1)+' · '+shortDate(day.date);
- const overnight=plan.days.length>1&&currentDay<plan.days.length-1?
+ const overnight=cfg.overnightStay&&plan.days.length>1&&currentDay<plan.days.length-1?
    '<div class="overnight"><div class="overnight-icon">☾</div><div><strong>Ночёвка после '+escapeHTML(shortDate(day.date))+'</strong><p>'+
    (cfg.hotelAddress?escapeHTML(cfg.hotelAddress):'Место проживания пока не указано — внесите его в анкету.')+
    '</p><small>'+(day.reserve?.nightly?'Заложенный вами резерв: '+formatMoney(day.reserve.nightly):'Проживание не включено в расчёт расходов')+
@@ -565,6 +566,7 @@ function handleField(e){
  }else if(target.id==='dateEnd'){
   draft.events=draft.events.filter(x=>x.date>=draft.from&&x.date<=draft.to);
  }
+ if(target.id==='overnightStay')reflectBudget();
  if(target.id==='peopleMode')reflectMode();
  if(['dateStart','dateEnd','budgetAmount','budgetScope'].includes(target.id))reflectDates();
  persistDraft();
