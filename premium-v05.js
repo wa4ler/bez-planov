@@ -34,12 +34,12 @@ renderTaste=function(){
   const root=$(id);if(!root)continue;
   const list=root.querySelectorAll('.taste-row');
   const expand=expandedTastes[person];
-  list.forEach((row,i)=>{row.classList.toggle('premium-extra',i>=8);row.hidden=i>=8&&!expand});
-  if(list.length>8){
+  list.forEach((row,i)=>{row.classList.toggle('premium-extra',i>=10);row.hidden=i>=10&&!expand});
+  if(list.length>10){
    const btn=document.createElement('button');btn.type='button';btn.className='expand-tastes';
    btn.dataset.action='expand-tastes';btn.dataset.person=person;
    btn.setAttribute('aria-expanded',String(expand));
-   btn.textContent=(expand?'Скрыть дополнительные интересы':'Показать ещё '+(list.length-8)+' интересов')+(expand?' ↑':' ↓');
+   btn.textContent=(expand?'Скрыть дополнительные интересы':'Показать ещё '+(list.length-10)+' интересов')+(expand?' ↑':' ↓');
    root.appendChild(btn);
   }
  }
