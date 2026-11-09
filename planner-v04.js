@@ -66,7 +66,7 @@ function hasOwn(obj,key){return Object.prototype.hasOwnProperty.call(obj,key)}
 function buildDefault(){
  return {
   from:localISO(new Date()),to:localISO(new Date()),peopleMode:'couple',partySize:2,journeyMode:'connected',
-  budgetAmount:10000,budgetScope:'daily',budgetCovers:'activities',transportReserve:500,hotelReserve:3000,
+  budgetAmount:10000,budgetScope:'daily',budgetCovers:'activities',transportReserve:500,hotelReserve:3000,overnightStay:false,
   profiles:[
    {name:'',ratings:{},likes:'',dream:'',avoid:''},
    {name:'',ratings:{},likes:'',dream:'',avoid:''}
@@ -196,7 +196,7 @@ function priceAllowance(p,party){return Math.round(Math.max(0,p.cost)*party/2/50
 function bookingCounted(e){return !e.paid||e.includeBudget}
 function bookingCost(e){return bookingCounted(e)?Math.max(0,Number(e.cost)||0):0}
 function dayReserve(cfg,index,numDays){
- const nightly=(cfg.budgetCovers==='all'&&index<numDays-1)?Number(cfg.hotelReserve)||0:0;
+ const nightly=(cfg.budgetCovers==='all'&&cfg.overnightStay&&index<numDays-1)?Number(cfg.hotelReserve)||0:0;
  const transport=cfg.budgetCovers==='all'?Number(cfg.transportReserve)||0:0;
  return {nightly,transport,total:nightly+transport};
 }
