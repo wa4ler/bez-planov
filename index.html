@@ -1,1 +1,560 @@
-<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Без планов — Москва</title><style>:root{font-family:system-ui,-apple-system,sans-serif;color:#202322;background:#f8f7f4}*{box-sizing:border-box}body{margin:0}main{max-width:560px;margin:auto;padding:24px 20px 90px}.brand{font-size:19px;font-weight:800;letter-spacing:-.7px}header{display:flex;justify-content:space-between;align-items:center;margin-bottom:55px}.tag{font-size:12px;background:#e8eee9;padding:7px 12px;border-radius:30px}h1{font-size:clamp(40px,9vw,60px);line-height:1.02;letter-spacing:-2px;margin:12px 0 20px}h2{font-size:29px;letter-spacing:-1px}p{color:#666e69;line-height:1.55}.pill{display:inline-block;background:#e5ece7;padding:8px 13px;border-radius:40px;font-size:13px}button{border:0;border-radius:16px;background:#223e32;color:white;padding:16px 22px;font-weight:700;font-size:16px;cursor:pointer;width:100%;margin-top:12px}button.secondary{background:#e7ebe7;color:#263b30}.panel{background:white;border:1px solid #e6e7e3;border-radius:23px;padding:20px;margin:18px 0}.hidden{display:none}label{display:block;font-weight:650;font-size:14px;margin:16px 0 7px}input,select{width:100%;padding:13px;border-radius:12px;border:1px solid #d5d9d4;background:white;font-size:16px}.chips{display:flex;flex-wrap:wrap;gap:8px}.chip{padding:10px 13px;border:1px solid #d9dfd9;background:#fff;color:#2c3932;border-radius:20px;font-size:14px;cursor:pointer}.chip.active{background:#d9e8dd;border-color:#668773}.timeline{border-left:2px solid #d3ded5;margin-left:8px;padding-left:23px}.stop{position:relative;margin:24px 0}.stop:before{content:'';position:absolute;left:-30px;top:5px;width:12px;height:12px;background:#537b60;border-radius:50%}.time{font-size:12px;color:#597365;font-weight:800}.stop strong{display:block;margin:7px 0}.small{font-size:12px}.footer{margin-top:40px;font-size:12px;color:#8a918b}</style></head><body><main><header><div class="brand">без планов<span style="color:#779987">.</span></div><span class="tag">Москва · прототип</span></header><section id="home"><span class="pill">Ваш отдых, без хлопот</span><h1>Не планируйте.<br>Проживайте.</h1><p>Расскажите, что вам нравится. Мы покажем, как может выглядеть ваш идеальный день вдвоём — с маршрутом, бюджетом и временем на отдых.</p><button onclick="go('form')">Спланировать наш день →</button><div class="panel"><b>Один день. Ваши правила.</b><p>Уютное кафе, прогулка, впечатления и свободное время — всё в одной программе.</p><span class="small">Демонстрация: без реальных бронирований и генерации ИИ</span></div></section><section id="form" class="hidden"><span class="pill">Шаг 1 из 2</span><h2>Каким будет ваш день?</h2><label>Дата</label><input id="date" type="date"><label>Бюджет на двоих</label><select id="budget"><option value="3000">До 3 000 ₽</option><option value="7000" selected>До 7 000 ₽</option><option value="15000">До 15 000 ₽</option><option value="50000">До 50 000 ₽</option></select><label>Что вам нравится?</label><div class="chips" id="interests"><button class="chip active" onclick="toggle(this)">☕ Кафе</button><button class="chip active" onclick="toggle(this)">🌳 Прогулки</button><button class="chip" onclick="toggle(this)">🎭 Культура</button><button class="chip" onclick="toggle(this)">🧖 СПА</button><button class="chip" onclick="toggle(this)">🎲 Активности</button></div><label>Темп дня</label><select id="pace"><option>Спокойный</option><option selected>Сбалансированный</option><option>Насыщенный</option></select><label>Откуда начинаем?</label><input id="start" placeholder="Например, метро Тверская"><label>Как передвигаемся?</label><select id="transport"><option>Метро и пешком</option><option>Такси</option><option>На автомобиле</option></select><button onclick="build()">Показать пример маршрута →</button><button class="secondary" onclick="go('home')">Назад</button></section><section id="result" class="hidden"><span class="pill">Ваш маршрут · демо</span><h2>День, который запомнится</h2><p id="summary"></p><div class="panel"><b>Пример программы</b><p class="small">Места и цены ниже иллюстративные. Это не проверка наличия мест, меню или времени в пути.</p><div class="timeline"><div class="stop"><span class="time">11:00</span><strong>Неспешный завтрак</strong><p>Уютное кафе с подходящей вам кухней. Ориентир: 1 500 ₽ на двоих.</p></div><div class="stop"><span class="time">12:30</span><strong>Прогулка по центру</strong><p>Время поговорить и посмотреть город без спешки.</p></div><div class="stop"><span class="time">15:00</span><strong>Совместное впечатление</strong><p>Выставка или другая активность по вашим интересам. Ориентир: 2 000 ₽.</p></div><div class="stop"><span class="time">17:30</span><strong>Кофе и свободное время</strong><p>Оставляем запас времени, чтобы не превращать отдых в гонку.</p></div></div></div><button onclick="go('form')">Изменить предпочтения</button><button class="secondary" onclick="go('account')">Посмотреть личный кабинет</button></section><section id="account" class="hidden"><span class="pill">Макет кабинета</span><h2>Ваши впечатления</h2><div class="panel"><b>Сохранённые планы</b><p>После подключения аккаунтов здесь будут ваши маршруты, оценки и любимые места.</p></div><div class="panel"><b>Любимые места</b><p>Здесь можно будет добавлять места, которые вы любите, и просить подобрать похожие.</p></div><button onclick="go('home')">На главную</button></section><div class="footer">Без планов · концептуальный прототип · Москва</div></main><script>function go(id){for(const x of ['home','form','result','account'])document.getElementById(x).classList.toggle('hidden',x!==id);window.scrollTo(0,0)}function toggle(el){el.classList.toggle('active')}function build(){const b=document.getElementById('budget').value;const d=document.getElementById('date').value||'выбранный день';const ints=[...document.querySelectorAll('.chip.active')].map(x=>x.textContent.trim()).join(', ')||'разные впечатления';document.getElementById('summary').textContent=`${d} · бюджет до ${Number(b).toLocaleString('ru-RU')} ₽ · интересы: ${ints}. Это пример оформления, а не индивидуальная генерация.`;go('result')}</script></body></html>
+
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Без планов — ваш день, ваши правила</title>
+<style>
+:root{
+  --bg:#f7f7f3;
+  --ink:#202723;
+  --muted:#737d76;
+  --green:#234537;
+  --soft:#e6eee8;
+  --line:#dce3dd;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--ink);
+  font-family:system-ui,-apple-system,Arial,sans-serif;
+}
+button,input,select{font:inherit}
+button{cursor:pointer}
+.wrap{
+  max-width:680px;
+  margin:auto;
+  padding:24px 20px 70px;
+}
+header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  margin-bottom:75px;
+}
+.logo{
+  font-size:25px;
+  font-weight:900;
+  letter-spacing:-1.2px;
+}
+.logo span{color:#84a591}
+.pill{
+  background:var(--soft);
+  border-radius:30px;
+  padding:11px 15px;
+  font-size:13px;
+  font-weight:650;
+}
+h1{
+  font-size:clamp(39px,9vw,62px);
+  line-height:1.04;
+  letter-spacing:-2.5px;
+  margin:25px 0;
+  font-weight:900;
+}
+h2{
+  font-size:35px;
+  letter-spacing:-1.3px;
+  line-height:1.1;
+}
+p{
+  color:var(--muted);
+  font-size:17px;
+  line-height:1.65;
+}
+.eyebrow{
+  display:inline-block;
+  background:var(--soft);
+  padding:12px 17px;
+  border-radius:30px;
+  font-weight:650;
+}
+.btn{
+  width:100%;
+  border:0;
+  background:var(--green);
+  color:white;
+  padding:20px;
+  border-radius:19px;
+  font-weight:800;
+  font-size:17px;
+  margin-top:14px;
+}
+.btn.secondary{
+  background:var(--soft);
+  color:var(--green);
+}
+.card{
+  background:white;
+  border:1px solid var(--line);
+  border-radius:25px;
+  padding:24px;
+  margin:20px 0;
+}
+.card h3{margin-top:0;font-size:22px}
+label{
+  display:block;
+  font-weight:750;
+  margin:23px 0 9px;
+}
+input,select{
+  width:100%;
+  padding:17px;
+  border:1px solid #cdd8d0;
+  background:white;
+  border-radius:15px;
+  color:var(--ink);
+  outline-color:#668e75;
+}
+.chips{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+.chip{
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:15px 8px;
+  background:white;
+  color:var(--ink);
+  font-weight:700;
+}
+.chip.active{
+  background:#d9e9dd;
+  border-color:#6c977a;
+}
+.page{display:none}
+.page.active{display:block}
+.timeline{
+  border-left:2px solid #c8d8cd;
+  margin:25px 0 15px 9px;
+  padding-left:25px;
+}
+.stop{
+  position:relative;
+  margin-bottom:33px;
+}
+.stop:before{
+  content:"";
+  position:absolute;
+  left:-33px;
+  top:5px;
+  width:14px;
+  height:14px;
+  background:#5a8568;
+  border-radius:50%;
+}
+.time{
+  color:#5a8568;
+  font-weight:850;
+}
+.stop h3{
+  font-size:20px;
+  margin:9px 0;
+}
+.stop p{margin:0}
+.stats{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+}
+.stat{
+  background:var(--soft);
+  padding:18px;
+  border-radius:18px;
+}
+.stat strong{
+  display:block;
+  font-size:22px;
+  margin-bottom:5px;
+}
+.stat small{color:var(--muted)}
+.saved{
+  padding:16px;
+  background:#f3f7f3;
+  border-radius:15px;
+  margin:12px 0;
+}
+footer{
+  margin-top:75px;
+  color:#929c95;
+  font-size:13px;
+}
+.error{
+  color:#b43d3d;
+  font-size:14px;
+  margin-top:10px;
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="logo" onclick="show('home')">
+    без планов<span>.</span>
+  </div>
+  <div class="pill">Москва · прототип</div>
+</header>
+
+<section id="home" class="page active">
+  <span class="eyebrow">Ваш отдых, без хлопот</span>
+  <h1>Не планируйте.<br>Проживайте.</h1>
+  <p>
+    Выберите настроение, бюджет и интересы.
+    Мы покажем, как может выглядеть ваш
+    идеальный день вдвоём.
+  </p>
+  <button class="btn" onclick="show('form')">
+    Спланировать наш день →
+  </button>
+  <div class="card">
+    <h3>Один день. Ваши правила.</h3>
+    <p>
+      Уютные кафе, прогулки, впечатления
+      и свободное время — всё в одной программе.
+    </p>
+    <div class="stats">
+      <div class="stat">
+        <strong>5</strong>
+        <small>Категорий отдыха</small>
+      </div>
+      <div class="stat">
+        <strong>1 день</strong>
+        <small>Для вас двоих</small>
+      </div>
+    </div>
+  </div>
+  <button class="btn secondary" onclick="show('account')">
+    Мои планы
+  </button>
+</section>
+
+<section id="form" class="page">
+  <span class="eyebrow">Шаг 1 из 2</span>
+  <h2>Каким будет ваш день?</h2>
+
+  <label for="date">Дата</label>
+  <input type="date" id="date">
+
+  <label for="budget">Бюджет на двоих</label>
+  <select id="budget">
+    <option value="3000">До 3 000 ₽</option>
+    <option value="5000">До 5 000 ₽</option>
+    <option value="7000" selected>До 7 000 ₽</option>
+    <option value="10000">До 10 000 ₽</option>
+    <option value="15000">До 15 000 ₽</option>
+  </select>
+
+  <label>Что вам нравится?</label>
+  <div class="chips">
+    <button class="chip active" data-interest="Кафе">☕ Кафе</button>
+    <button class="chip active" data-interest="Прогулки">🌳 Прогулки</button>
+    <button class="chip" data-interest="Культура">🎭 Культура</button>
+    <button class="chip" data-interest="СПА">🧖 СПА</button>
+    <button class="chip" data-interest="Активности">🎲 Активности</button>
+  </div>
+
+  <label for="pace">Темп дня</label>
+  <select id="pace">
+    <option value="Спокойный">Спокойный</option>
+    <option value="Сбалансированный" selected>Сбалансированный</option>
+    <option value="Насыщенный">Насыщенный</option>
+  </select>
+
+  <label for="start">Откуда начинаем?</label>
+  <input id="start" placeholder="Например, метро Тверская">
+
+  <label for="transport">Как передвигаемся?</label>
+  <select id="transport">
+    <option>Метро и пешком</option>
+    <option>На автомобиле</option>
+    <option>Такси</option>
+    <option>Только пешком</option>
+  </select>
+
+  <div id="formError" class="error"></div>
+  <button class="btn" onclick="generate()">
+    Показать пример маршрута →
+  </button>
+  <button class="btn secondary" onclick="show('home')">
+    Назад
+  </button>
+</section>
+
+<section id="result" class="page">
+  <span class="eyebrow">Ваш маршрут · демо</span>
+  <h2>День, который запомнится</h2>
+  <p id="summary"></p>
+
+  <div class="stats">
+    <div class="stat">
+      <strong id="total">—</strong>
+      <small>Примерные расходы</small>
+    </div>
+    <div class="stat">
+      <strong id="count">—</strong>
+      <small>Остановки</small>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Программа дня</h3>
+    <p>
+      Демонстрационный маршрут.
+      Заведения, цены и время в пути
+      пока не проверяются.
+    </p>
+    <div class="timeline" id="timeline"></div>
+  </div>
+
+  <button class="btn" onclick="savePlan()">
+    ♡ Сохранить маршрут
+  </button>
+  <button class="btn secondary" onclick="show('form')">
+    Изменить предпочтения
+  </button>
+  <button class="btn secondary" onclick="show('account')">
+    Личный кабинет
+  </button>
+</section>
+
+<section id="account" class="page">
+  <span class="eyebrow">Личный кабинет</span>
+  <h2>Ваши впечатления</h2>
+
+  <div class="card">
+    <h3>Сохранённые планы</h3>
+    <div id="savedPlans"></div>
+  </div>
+
+  <div class="card">
+    <h3>Любимые места</h3>
+    <p>
+      В следующих версиях здесь появится
+      ваша коллекция кафе, ресторанов,
+      парков и других мест.
+    </p>
+  </div>
+
+  <button class="btn" onclick="show('home')">
+    На главную
+  </button>
+</section>
+
+<footer>
+  Без планов · концептуальный прототип · Москва
+</footer>
+
+</div>
+
+<script>
+let currentPlan=null;
+
+function show(id){
+  document.querySelectorAll('.page').forEach(p=>{
+    p.classList.remove('active');
+  });
+  document.getElementById(id).classList.add('active');
+  if(id==='account')renderSaved();
+  window.scrollTo(0,0);
+}
+
+document.querySelectorAll('.chip').forEach(chip=>{
+  chip.addEventListener('click',()=>{
+    chip.classList.toggle('active');
+  });
+});
+
+function money(n){
+  return new Intl.NumberFormat('ru-RU').format(n)+' ₽';
+}
+
+function generate(){
+  const interests=[...document.querySelectorAll('.chip.active')]
+    .map(c=>c.dataset.interest);
+
+  const error=document.getElementById('formError');
+  error.textContent='';
+
+  if(!interests.length){
+    error.textContent='Выберите хотя бы один интерес.';
+    return;
+  }
+
+  const budget=Number(document.getElementById('budget').value);
+  const date=document.getElementById('date').value;
+  const pace=document.getElementById('pace').value;
+  const start=document.getElementById('start').value.trim();
+  const transport=document.getElementById('transport').value;
+
+  const activities={
+    'Кафе':{
+      title:'Уютное кафе',
+      desc:'Неспешный завтрак или кофе вдвоём.',
+      cost:1500
+    },
+    'Прогулки':{
+      title:'Прогулка по городу',
+      desc:'Красивые улицы и время для общения.',
+      cost:0
+    },
+    'Культура':{
+      title:'Музей или выставка',
+      desc:'Новое впечатление и интересные открытия.',
+      cost:1800
+    },
+    'СПА':{
+      title:'Время для расслабления',
+      desc:'Отдых и восстановление сил.',
+      cost:3500
+    },
+    'Активности':{
+      title:'Совместное развлечение',
+      desc:'Игры или другая активность на двоих.',
+      cost:2000
+    }
+  };
+
+  let chosen=interests.map(i=>activities[i]);
+  if(pace==='Спокойный')chosen=chosen.slice(0,3);
+  if(pace==='Насыщенный'){
+    chosen.push({
+      title:'Свободное время',
+      desc:'Возможность задержаться там, где понравится.',
+      cost:0
+    });
+  }
+
+  let total=chosen.reduce((sum,a)=>sum+a.cost,0);
+
+  if(total>budget){
+    chosen=chosen.filter(a=>a.cost<=budget);
+    total=chosen.reduce((sum,a)=>sum+a.cost,0);
+  }
+
+  const times=['11:00','12:30','14:30','16:30','18:00','19:30'];
+
+  const timeline=document.getElementById('timeline');
+  timeline.innerHTML='';
+
+  chosen.forEach((a,i)=>{
+    const stop=document.createElement('div');
+    stop.className='stop';
+
+    const time=document.createElement('div');
+    time.className='time';
+    time.textContent=times[i]||'20:00';
+
+    const title=document.createElement('h3');
+    title.textContent=a.title;
+
+    const desc=document.createElement('p');
+    desc.textContent=a.desc+' Ориентир: '+money(a.cost)+'.';
+
+    stop.append(time,title,desc);
+    timeline.appendChild(stop);
+  });
+
+  const dateText=date
+    ?new Date(date+'T12:00:00').toLocaleDateString('ru-RU')
+    :'Дата не выбрана';
+
+  document.getElementById('summary').textContent=
+    dateText+' · бюджет '+money(budget)+
+    ' · '+pace.toLowerCase()+' темп · '+transport+
+    (start?' · старт: '+start:'')+
+    '. Это пример, а не индивидуальная генерация.';
+
+  document.getElementById('total').textContent=money(total);
+  document.getElementById('count').textContent=chosen.length;
+
+  currentPlan={
+    id:Date.now(),
+    date:dateText,
+    budget,
+    total,
+    interests,
+    pace,
+    start,
+    transport,
+    activities:chosen
+  };
+
+  show('result');
+}
+
+function getSaved(){
+  try{
+    return JSON.parse(localStorage.getItem('bezPlanovPlans')||'[]');
+  }catch(e){
+    return [];
+  }
+}
+
+function savePlan(){
+  if(!currentPlan)return;
+
+  try{
+    const plans=getSaved();
+    plans.unshift(currentPlan);
+    localStorage.setItem(
+      'bezPlanovPlans',
+      JSON.stringify(plans.slice(0,30))
+    );
+    alert('Маршрут сохранён на этом устройстве!');
+    show('account');
+  }catch(e){
+    alert('Не удалось сохранить маршрут в браузере.');
+  }
+}
+
+function renderSaved(){
+  const container=document.getElementById('savedPlans');
+  const plans=getSaved();
+  container.innerHTML='';
+
+  if(!plans.length){
+    const p=document.createElement('p');
+    p.textContent='Пока нет сохранённых маршрутов.';
+    container.appendChild(p);
+    return;
+  }
+
+  plans.forEach(plan=>{
+    const item=document.createElement('div');
+    item.className='saved';
+
+    const title=document.createElement('strong');
+    title.textContent=plan.date;
+
+    const info=document.createElement('p');
+    info.textContent=
+      plan.interests.join(', ')+
+      ' · '+money(plan.total);
+
+    const btn=document.createElement('button');
+    btn.className='chip';
+    btn.textContent='Удалить';
+    btn.onclick=()=>{
+      const next=getSaved().filter(p=>p.id!==plan.id);
+      localStorage.setItem(
+        'bezPlanovPlans',
+        JSON.stringify(next)
+      );
+      renderSaved();
+    };
+
+    item.append(title,info,btn);
+    container.appendChild(item);
+  });
+}
+
+document.getElementById('date').min=
+  new Date().toLocaleDateString('en-CA');
+</script>
+</body>
+</html>
