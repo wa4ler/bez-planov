@@ -403,15 +403,34 @@ function rerollDay(){
  const locked=day.stops.filter(s=>s.kind==='place'&&s.locked);
  if(locked.length){notify('Сначала открепите выбранные остановки: они должны остаться неизменными');return}
  const feedback=getFeedback(),signals=textSignals(cfg),usage={};
- for(let i=0;i<currentPlan.days.length;i++)if(i!==currentDay)for(const s of currentPlan.days[i].stops)if(s.kind==='place')usage[s.id]=(usage[s.id]||0)+1;
+ for(let i=0;i<currentPlan.days.length;i++)if(i!==currentDay)
+   for(const s of currentPlan.days[i].stops)if(s.kind==='place')usage[s.id]=(usage[s.id]||0)+1;
  const scored=AREAS.map(a=>({a,score:areaQuality(a,cfg,signals,feedback)}))
    .filter(x=>x.score>-900).sort((a,b)=>b.score-a.score);
- let selected=scored.find(x=>x.a.id!==day.areaId)?.a||AREA_BY_ID[day.areaId];
- if(fixed.length)selected=AREA_BY_ID[day.areaId]; // Keep booked area stable.
+ let selected=AREA_BY_ID[day.areaId];
+ if(!fixed.length){
+   const other=scored.filter(x=>x.a.id!==day.areaId);
+   const nearby=cfg.journeyMode==='connected'?other.filter(x=>NEARBY[day.areaId]?.includes(x.a.id)):[];
+   selected=(nearby[0]||other[0])?.a||selected;
+ }
  const limit=budgetForDay(cfg,currentDay,currentPlan.days.length,fixed);
- const rebuilt=chooseStopsForDay(selected,cfg,signals,feedback,usage,currentDay,limit,fixed);
+ let rebuilt=chooseStopsForDay(selected,cfg,signals,feedback,usage,currentDay,limit,fixed);
+ if(selected.id===day.areaId){
+   // On the same neighborhood, rotate the unlocked recommendations instead of reproducing an identical list.
+   const excluded={...feedback};
+   for(const stop of day.stops)if(stop.kind==='place')excluded[stop.id]='no';
+   const alternate=chooseStopsForDay(selected,cfg,signals,excluded,usage,currentDay,limit,fixed);
+   if(alternate.stops.some(s=>s.kind==='place'))rebuilt=alternate;
+ }
+ const previous=day.stops.map(s=>s.id).join(',');
+ const next=rebuilt.stops.map(s=>s.id).join(',');
+ if((selected.id===day.areaId&&previous===next)||
+     (!rebuilt.stops.some(s=>s.kind==='place')&&day.stops.some(s=>s.kind==='place'))){
+   notify('Других вариантов по вашим ограничениям в подборке пока нет');
+   return;
+ }
  day.areaId=selected.id;day.stops=rebuilt.stops;currentPlan.signals=signals;
- openSwap=null;renderResult();notify('День пересобран с вашими ограничениями');
+ openSwap=null;renderResult();notify('Предложили другой вариант дня с учётом ваших интересов');
 }
 function markNotForUs(index){
  const day=currentPlan.days[currentDay],s=day?.stops[index];
