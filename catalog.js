@@ -95,3 +95,10 @@ const PLACE_INFO = {
   'vdnh-arch':{outdoor:true},'vdnh-park':{outdoor:true},'cosmos':{indoor:true},'moskvarium':{indoor:true},'sun-moscow':{outdoor:true},'botanical':{outdoor:true},'moscow-sky':{indoor:true},
   'kolom-park':{outdoor:true},'ascension':{outdoor:true},'palace-alexei':{indoor:true},'gol-os':{outdoor:true},'kolom-river':{outdoor:true},'kazan-church':{outdoor:true}
 };
+
+/* Only externally verified destinations; websites do not imply live booking availability. */
+const PLACE_LINKS={
+  'pushkin-cafe':{reservation:'https://cafe-pushkin.ru/rezerv/'},
+  'bjorn':{website:'https://bjorn.rest/'},
+  'vokrug-sveta':{website:'https://vokrugsvetamarket.ru/'}
+};
