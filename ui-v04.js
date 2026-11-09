@@ -157,9 +157,19 @@ function prevStep(){
 }
 function persistDraft(){writeStore(STORE_DRAFT,draft)}
 function freshWizard(){
- const hasDraft=Object.values(draft.profiles[0].ratings).length>0||draft.events.length>0||draft.perfectDay.length>0;
- if(!$('page-wizard').hidden&&hasDraft&&!window.confirm('Начать новую анкету? Несохранённые ответы текущей анкеты будут заменены.'))return;
- draft=buildDefault();cfgToFields();persistDraft();goStep(0);showPage('wizard');
+ const current=clone(draft);
+ const hasDraft=Object.values(current.profiles[0].ratings||{}).length>0||
+   current.events.length>0||current.perfectDay.length>0;
+ if(!$('page-wizard').hidden&&hasDraft&&
+   !window.confirm('Начать новый маршрут? Мы сохраним ваши предпочтения, но даты и закреплённые события будут сброшены.'))return;
+ draft=buildDefault();
+ // Product promise: a couple should not have to teach the planner about themselves every time.
+ const keep=['peopleMode','partySize','profiles','foodNeeds','restrictions','walkingLevel',
+   'venuePreference','transport','stepFree','startLocation','hotelAddress'];
+ for(const key of keep)draft[key]=clone(current[key]);
+ cfgToFields();persistDraft();goStep(0);showPage('wizard');
+ if(current.profiles.some(p=>Object.keys(p.ratings||{}).length||p.likes))
+   notify('Ваши вкусы сохранены, осталось выбрать новые даты');
 }
 function editWizard(){
  if(!currentPlan)return;
