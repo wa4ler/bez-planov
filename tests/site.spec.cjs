@@ -20,7 +20,7 @@ test.afterEach(async ({page},testInfo)=>{
 });
 test('Homepage loads without horizontal overflow and opens wizard',async({page})=>{
   await page.goto('/');
-  await expect(page.locator('h1')).toContainText('Два человека');
+  await expect(page.locator('h1')).toContainText('Не просто выйти');
   await expect(page.locator('.hero-art')).toBeVisible();
   await page.screenshot({path:'test-results/home-'+test.info().project.name.replace(/\W/g,'-')+'.png',fullPage:true});
   const width=await page.evaluate(()=>({screen:window.innerWidth,page:document.documentElement.scrollWidth}));
