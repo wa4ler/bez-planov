@@ -56,7 +56,7 @@
  <div class="container promise-row">
    <div class="promise"><span class="promise-index">01</span><div><strong>Сначала — вы</strong><p>Узнаём, что любит каждый, и чего лучше избегать.</p></div></div>
    <div class="promise"><span class="promise-index">02</span><div><strong>Потом — ваши дни</strong><p>Связываем места, настроение, бюджет и время.</p></div></div>
-   <div class="promise"><span class="promise-index">03</span><div><strong>Никакой магии «на словах»</strong><p>Показываем, почему место оказалось в плане.</p></div></div>
+   <div class="promise"><span class="promise-index">03</span><div><strong>Никакой магии «на словах»</strong><p>Объясняем выбор и даём менять даже одну остановку.</p></div></div>
  </div>
  <section class="container editorial-preview">
   <div class="editorial-heading"><div><div class="overline"><span class="overline-dot"></span> НЕ СЛУЧАЙНЫЕ СПИСКИ</div><h2>Открывайте Москву<br><em>по настроению.</em></h2></div><button class="button button-outline" data-screen="discover" type="button">Все восемь районов <svg class="ui-icon"><use href="./assets/icons.svg#arrow"></use></svg></button></div>
@@ -70,7 +70,7 @@
    <div class="section-intro"><div class="overline"><span class="overline-dot"></span> Не анкета ради анкеты</div><h2>Мы спрашиваем<br>о <em>важном.</em></h2><p>Хороший маршрут нельзя собрать по двум галочкам «кафе» и «прогулки». Мы узнаём и мечты, и маленькие «только не это».</p></div>
    <div class="story-grid">
      <article class="story-card"><div class="story-mark">✧</div><span class="story-step">Шаг 01</span><h3>У каждого — свой вкус.</h3><p>Пусть один любит искусство, а другой — городские приключения. Отвечайте отдельно, выбирайте не только «нравится», но и «не моё».</p><div class="story-illustration"><span>Я · ♥ искусство</span><span>Мы · ♥ прогулки</span><span>Ты · ♥ открытия</span></div></article>
-     <article class="story-card"><div class="story-mark">✦</div><span class="story-step">Шаг 02</span><h3>Слова важнее галочек.</h3><p>Можно своими словами описать идеальный вечер, место мечты и то, что испортит настроение. Эти ответы останутся в вашем профиле.</p><div class="story-quote">«Хочу место, где можно говорить часами, а потом гулять до темноты»</div></article>
+     <article class="story-card"><div class="story-mark">✦</div><span class="story-step">Шаг 02</span><h3>Говорите своими словами.</h3><p>Можно своими словами описать идеальный вечер, место мечты и то, что испортит настроение. Эти ответы останутся в вашем профиле.</p><div class="story-quote">«Хочу место, где можно говорить часами, а потом гулять до темноты»</div></article>
      <article class="story-card story-card-dark"><div class="story-mark">↗</div><span class="story-step">Шаг 03</span><h3>План можно менять.</h3><p>От одного дня до четырнадцати. Закрепляйте купленные билеты, заменяйте остановки, сохраняйте понравившиеся места.</p><div class="story-timeline"><i></i><span>12:00 · прогулка</span><i></i><span>14:00 · ваше место</span><i></i><span>17:00 · сюрприз</span></div></article>
    </div>
    <div class="story-banner"><div><div class="overline">Вместо «куда пойдём?»</div><h2>Пусть начнётся<br>ваша история.</h2></div><button type="button" class="button button-light" data-action="new">Собрать маршрут ↗</button></div>
@@ -100,6 +100,7 @@
         <div class="field"><label for="dateEnd">Окончание</label><input type="date" class="control" id="dateEnd" required></div>
       </div>
       <div class="inline-info" id="rangeInfo" aria-live="polite">Выберите даты поездки.</div>
+      <div class="inline-info district-hint" id="districtSelectionNote" hidden></div>
       <div class="field"><span class="field-label">Для кого планируем?</span><div class="choice-grid triple" data-choice="peopleMode">
        <button type="button" class="choice active" data-value="couple" aria-pressed="true"><span>♥</span><strong>Для двоих</strong><small>У каждого свои вкусы</small></button>
        <button type="button" class="choice" data-value="solo" aria-pressed="false"><span>✦</span><strong>Для себя</strong><small>Только мои желания</small></button>
