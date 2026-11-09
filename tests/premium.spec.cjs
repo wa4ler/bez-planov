@@ -49,7 +49,7 @@ test('16 interests, free answers, visited exclusions and desired venue appear in
  await expect(page.locator('#planCover')).toBeVisible();
  await expect(page.locator('#dayResult .day-header img')).toBeVisible();
  const limits=await page.locator('#planStats .stat').allTextContents();
- expect(limits.join(' ')).toContain('16 000');
+ expect(limits.join(' ').replace(/\s/g,' ')).toContain('16 000');
  await page.screenshot({path:'test-results/premium-result-'+test.info().project.name.replace(/\W/g,'-')+'.png',fullPage:true});
 });
 test('Calendar export contains complete selected dates and print contains every day',async({page})=>{
