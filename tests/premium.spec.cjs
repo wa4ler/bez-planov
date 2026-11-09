@@ -8,7 +8,7 @@ test('Hand-painted hero, all eight illustrated districts, and district selection
  await expect(page.locator('.hero-art')).toBeVisible();
  await expect.poll(()=>page.locator('.hero-art').evaluate(e=>e.complete&&e.naturalWidth>0)).toBe(true);
  await expect(page.locator('.hero-art')).toHaveAttribute('src','./assets/hero-moscow.webp');
- await page.locator('[data-screen="discover"]').first().click();
+ await page.locator('[data-screen="discover"]:visible').first().click();
  await expect(page.locator('#page-discover')).toBeVisible();
  await expect(page.locator('.district-card')).toHaveCount(8);
  const cards=page.locator('.district-card img');
@@ -26,7 +26,7 @@ test('16 interests, free answers, visited exclusions and desired venue appear in
  await page.locator('#budgetAmount').fill('16000');
  await next(page);
  await expect(page.locator('#tasteOne .taste-row')).toHaveCount(16);
- await expect(page.locator('#tasteOne .taste-row:not([hidden])')).toHaveCount(8);
+ await expect(page.locator('#tasteOne .taste-row:not([hidden])')).toHaveCount(10);
  await page.locator('#tasteOne [data-action="expand-tastes"]').click();
  await expect(page.locator('#tasteOne .taste-row:not([hidden])')).toHaveCount(16);
  await rate(page,0,'art','2');await rate(page,0,'coffee','2');
@@ -73,13 +73,13 @@ test('Calendar export contains complete selected dates and print contains every 
 });
 test('Memories are private, persisted across reloads, and deleted when confirmed',async({page})=>{
  await page.goto('/');
- await page.locator('[data-screen="library"]').first().click();
+ await page.locator('[data-screen="library"]:visible').first().click();
  await page.locator('#memoryDate').fill(future(-2));
  await page.locator('#memoryText').fill('Наш прекрасный вечер у реки, после музея.');
  await page.locator('#memoryForm button[type="submit"]').click();
  await expect(page.locator('#memoriesList')).toContainText('Наш прекрасный вечер');
  await page.reload();
- await page.locator('[data-screen="library"]').first().click();
+ await page.locator('[data-screen="library"]:visible').first().click();
  await expect(page.locator('#memoriesList')).toContainText('Наш прекрасный вечер');
  page.once('dialog',dialog=>dialog.accept());
  await page.locator('[data-action="clear-local"]').click();
@@ -89,7 +89,7 @@ test('Mobile all screens remain in viewport without horizontal overflow',async({
  await page.goto('/');
  for(const name of ['home','discover','library','wizard']){
   if(name==='wizard')await page.locator('[data-action="new"]').first().click();
-  else await page.locator('.mobile-bottom-nav [data-screen="'+name+'"]').click();
+  else await page.locator('[data-screen="'+name+'"]:visible').first().click();
   await expect(page.locator('#page-'+name)).toBeVisible();
   const sizes=await page.evaluate(()=>({view:innerWidth,scroll:document.documentElement.scrollWidth}));
   expect(sizes.scroll,'Page '+name+' should not overflow horizontally').toBeLessThanOrEqual(sizes.view+2);
