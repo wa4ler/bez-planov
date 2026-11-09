@@ -14,14 +14,53 @@ const PREFS=[
  {key:'romance',icon:'♥',title:'Атмосферные места',sub:'Уют, красота, свидания'},
  {key:'unusual',icon:'✦',title:'Необычное',sub:'Места, где ещё не бывали'},
  {key:'views',icon:'◉',title:'Красивые виды',sub:'Панорамы, мосты и город сверху'},
- {key:'cinema',icon:'◈',title:'Кино и театр',sub:'Культурный вечер с билетами'}
+ {key:'cinema',icon:'◈',title:'Кино и театр',sub:'Культурный вечер с билетами'},
+ {key:'coffee',icon:'☕',title:'Кофейни и завтраки',sub:'Уютная пауза с любимым напитком'},
+ {key:'architecture',icon:'⌂',title:'Городская архитектура',sub:'Фасады, детали и старые улицы'},
+ {key:'science',icon:'✺',title:'Наука и космос',sub:'Планетарии и интерактивные выставки'},
+ {key:'water',icon:'≈',title:'Река и набережные',sub:'Красивые виды у воды'},
+ {key:'shopping',icon:'◇',title:'Магазины и маркеты',sub:'Необычные товары и маленькие находки'},
+ {key:'photography',icon:'◉',title:'Фотопрогулки',sub:'Эстетичные места для снимков'}
 ];
 const PREF_BY_KEY=Object.fromEntries(PREFS.map(x=>[x.key,x]));
 const VIEW_IDS=new Set(['floating-bridge','patriarshy-bridge','panorama360','shevchenko','bagration','sun-moscow','moscow-city','christ-savior','kolom-river','krymskaya','frunzenskaya']);
 const CINEMA_IDS=new Set(['khudozhestvenny']);
 const HIGH_IDS=new Set(['panorama360','sun-moscow']);
 const ANIMALS_IDS=new Set(['moscow-zoo','moskvarium']);
+const COFFEE_IDS=new Set(['vokrug-sveta','depo-lesnaya','afimall-food','usachevsky','pushkin-cafe','varenichnaya']);
+const ARCH_IDS=new Set(['gum','red-square','st-basil','nikolskaya','arbat-old','ascension','palace-alexei','vdnh-arch','moscow-city','christ-savior','ordynka','pyatnitskaya']);
+const SCIENCE_IDS=new Set(['planetarium','cosmos','vdnh-park','moskvarium']);
+const WATER_IDS=new Set(['floating-bridge','zaryadye','krymskaya','frunzenskaya','patriarshy-bridge','kolom-river','shevchenko','bagration','neskuchny']);
+const SHOPPING_IDS=new Set(['gum','afimall','arbat-old','depo-lesnaya','vokrug-sveta']);
+const PHOTO_IDS=new Set([...VIEW_IDS,'zaryadye','patriarch-ponds','gorky-park','muzeon','vdnh-park','kolom-park']);
 const PLACE_TAG_CACHE=new Map();
+const PLACE_ALIASES={
+ 'tretyakov':['третьяковка','третьяковскую'],
+ 'ges2':['гэс-2','гэс 2','гэс'],
+ 'gorky-park':['парк горького','парк горький'],
+ 'planetarium':['планетарий'],
+ 'moskvarium':['москвариум'],
+ 'moscow-zoo':['зоопарк'],
+ 'moscow-city':['москва-сити','москва сити'],
+ 'history-museum':['исторический музей'],
+ 'red-square':['красная площадь'],
+ 'vdnh-park':['вднх'],
+ 'panorama360':['панорама360','панорама 360'],
+ 'sun-moscow':['солнце москвы'],
+ 'arbat-old':['старый арбат'],
+ 'patriarch-ponds':['патриаршие пруды','патрики']
+};
+function normalizePlaceQuery(t){return String(t||'').toLowerCase().replace(/ё/g,'е').replace(/[«»"“”.,!?:;()\n]/g,' ').replace(/\s+/g,' ').trim()}
+function mentionedPlaceIds(text){
+ const phrases=normalizePlaceQuery(text).split(/[\n;]+|\s*,\s*/).filter(Boolean);
+ const full=normalizePlaceQuery(text);
+ return Object.keys(PLACES).filter(id=>{
+   const place=PLACES[id];
+   const candidates=[place.name,...(PLACE_ALIASES[id]||[])].map(normalizePlaceQuery)
+     .filter(x=>x.length>=5);
+   return candidates.some(x=>full.includes(x));
+ });
+}
 const STORE_PLANS='bezPlanovPlansV4';
 const STORE_FAV='bezPlanovFavoritesV4';
 const STORE_DRAFT='bezPlanovDraftV4';
@@ -33,6 +72,12 @@ function placeTags(p){
  const xs=new Set(p.tags);
  if(VIEW_IDS.has(p.id))xs.add('views');
  if(CINEMA_IDS.has(p.id))xs.add('cinema');
+ if(COFFEE_IDS.has(p.id))xs.add('coffee');
+ if(ARCH_IDS.has(p.id))xs.add('architecture');
+ if(SCIENCE_IDS.has(p.id))xs.add('science');
+ if(WATER_IDS.has(p.id))xs.add('water');
+ if(SHOPPING_IDS.has(p.id))xs.add('shopping');
+ if(PHOTO_IDS.has(p.id))xs.add('photography');
  const out=[...xs];
  PLACE_TAG_CACHE.set(p.id,out);
  return out;
@@ -73,7 +118,8 @@ function buildDefault(){
   ],
   occasion:'just',goals:[],pace:'balanced',surpriseLevel:50,perfectDay:'',badDay:'',
   dayStart:'11:00',dayEnd:'21:00',startLocation:'',transport:'walk',walkingLevel:'medium',
-  venuePreference:'any',restrictions:[],foodNeeds:'',stepFree:false,hotelAddress:'',events:[]
+  venuePreference:'any',restrictions:[],foodNeeds:'',stepFree:false,hotelAddress:'',events:[],
+  alreadyVisited:'',dreamPlaces:'',preferredDistrict:null
  };
 }
 function personName(profile,i,groupMode){return cleanText(profile.name,35)||(groupMode==='group'?'Участник '+(i+1):i===0?'Вы':'Партнёр')}
@@ -87,7 +133,13 @@ const SIGNAL_WORDS=[
  {key:'romance',rx:/романт|уют|красив|атмосфер|свидан/i},
  {key:'unusual',rx:/необыч|нов[оы]е|удив|космос|планетар|эксперимент/i},
  {key:'views',rx:/вид[ыа]|панорам|крыше|высот|смотров/i},
- {key:'cinema',rx:/кино|театр|спектакл/i}
+ {key:'cinema',rx:/кино|театр|спектакл/i},
+ {key:'coffee',rx:/кофейн|кофей|кофе|капучино|латте|завтрак/i},
+ {key:'architecture',rx:/архитектур|фасад|старинн.*дом|здани|усадьб/i},
+ {key:'science',rx:/наук|космос|планетар|астроном/i},
+ {key:'water',rx:/рек[аеу]|набережн|у воды|лодк/i},
+ {key:'shopping',rx:/магазин|шопинг|маркет|покупк/i},
+ {key:'photography',rx:/фотограф|фотографир|снимк|фотопрогулк/i}
 ];
 const TEXT_RESTRICTIONS=[
  {key:'crowds',rx:/толп|очеред|много людей|людн/i},
@@ -166,6 +218,7 @@ function placeEligible(p,cfg,signals,feedback){
  if(signals.restrictions.includes('heights')&&HIGH_IDS.has(p.id))return false;
  if(signals.restrictions.includes('animals')&&ANIMALS_IDS.has(p.id))return false;
  if(feedback[p.id]==='no')return false;
+ if(cfg.alreadyVisited && mentionedPlaceIds(cfg.alreadyVisited).includes(p.id) && !mentionedPlaceIds(cfg.dreamPlaces).includes(p.id))return false;
  // Dietary restrictions cannot be asserted satisfied by this catalog.
  if(/аллерг|целиак|веган|вегетари|халяль|кошер|без глютен/i.test(cfg.foodNeeds)&&p.tags.includes('food'))return false;
  return true;
@@ -202,6 +255,7 @@ function placeScore(p,cfg,signals,usage,dayIndex,personFocus,feedback){
  if(signals.restrictions.includes('longwalk')&&tags.includes('walk'))score-=8;
  if(signals.restrictions.includes('aimless')&&tags.includes('walk'))score-=5;
  if(feedback[p.id]==='yes')score+=7;
+ if(mentionedPlaceIds(cfg.dreamPlaces).includes(p.id))score+=65;
  score-=Math.min(usage[p.id]||0,4)*20;
  // Keep cross-day variety: don't let an accidental catalog order dominate.
  score+=Math.min(3,(dayIndex%3));
@@ -255,7 +309,8 @@ const NEARBY={
 };
 function chooseAreas(cfg,dates,signals,feedback){
  const scores=Object.fromEntries(AREAS.map(a=>[a.id,areaQuality(a,cfg,signals,feedback)]));
- const base=areaFromText(cfg.startLocation)||areaFromText(cfg.hotelAddress);
+ const base=cfg.preferredDistrict||areaFromText(cfg.startLocation)||areaFromText(cfg.hotelAddress);
+ const wishIds=mentionedPlaceIds(cfg.dreamPlaces);
  const used={},selected=[];
  for(let i=0;i<dates.length;i++){
   const dayEvents=cfg.events.filter(e=>e.date===dates[i]);
@@ -268,6 +323,7 @@ function chooseAreas(cfg,dates,signals,feedback){
      let v=scores[x.id]-n*35;
      if(i===0&&base===x.id)v+=18;
      if(eventArea===x.id)v+=60;
+     if(x.places.some(p=>wishIds.includes(p.id)&&!(used[x.id]>0)))v+=35;
      if(cfg.journeyMode==='connected'&&i>0&&NEARBY[selected[i-1]]?.includes(x.id))v+=14;
      if(cfg.journeyMode==='independent'&&n===0)v+=6;
      return v;
@@ -362,6 +418,7 @@ function reserveSlots(cfg,events){
 function chooseStopsForDay(area,cfg,signals,feedback,usage,index,dayBudget,events){
  const available=dayBudget.available;
  const pool=area.places.filter(p=>placeEligible(p,cfg,signals,feedback));
+ const wished=mentionedPlaceIds(cfg.dreamPlaces);
  const max=Math.max(0,dayCapacity(cfg)-events.length);
  const booked=events.map(e=>({kind:'fixed',id:e.id,name:e.name,address:e.address,date:e.date,time:e.time,duration:Number(e.duration),cost:Number(e.cost),paid:!!e.paid,includeBudget:!!e.includeBudget,locked:true}));
  const slots=reserveSlots(cfg,events);
@@ -371,7 +428,9 @@ function chooseStopsForDay(area,cfg,signals,feedback,usage,index,dayBudget,event
  while(chosen.length<max&&timeSlots.length){
    let slot=timeSlots[slotIndex];
    if(!slot){slotIndex=0;slot=timeSlots[0]}
-   const personFocus=(chosen.length+index)%Math.max(1,cfg.peopleMode==='solo'?1:2);
+   const profiles=cfg.peopleMode==='solo'?cfg.profiles.slice(0,1):cfg.profiles;
+   const personBenefits=profiles.map(profile=>chosen.reduce((s,stop)=>s+placeTags(PLACES[stop.id]).filter(k=>rated(profile,k)>0).length,0));
+   const personFocus=personBenefits.length>1?(personBenefits[0]<=personBenefits[1]?0:1):0;
    const unused=pool.filter(p=>!(usage[p.id]>0));
    const candidates=pool.filter(p=>{
      if(chosen.some(s=>s.id===p.id))return false;
@@ -385,8 +444,10 @@ function chooseStopsForDay(area,cfg,signals,feedback,usage,index,dayBudget,event
    candidates.sort((a,b)=>placeScore(b,cfg,signals,usage,index,personFocus,feedback)-
      placeScore(a,cfg,signals,usage,index,personFocus,feedback)||area.places.indexOf(a)-area.places.indexOf(b));
    let place=candidates[0];
+   const requested=candidates.find(p=>wished.includes(p.id));
+   if(requested)place=requested;
    // Avoid filling every slot with walk-only activities.
-   if(chosen.length>=1&&chosen.every(s=>PLACES[s.id]?.tags.includes('walk'))&&
+   if(!requested&&chosen.length>=1&&chosen.every(s=>PLACES[s.id]?.tags.includes('walk'))&&
        place.tags.includes('walk')&&candidates.some(p=>!p.tags.includes('walk')))
        place=candidates.find(p=>!p.tags.includes('walk'));
    const cost=priceAllowance(place,cfg.partySize);
@@ -410,9 +471,10 @@ function generateItinerary(cfg,priorFeedback){
    const planned=chooseStopsForDay(area,cfg,signals,feedback,usage,i,budget,events);
    return {date,areaId:area.id,limit:budget.total,reserve:budget.reserve,eventBudget:budget.eventCost,stops:planned.stops};
  });
- return {schema:4,id:String(Date.now())+'-'+Math.random().toString(36).slice(2,7),
+ const wished=mentionedPlaceIds(cfg.dreamPlaces),included=days.flatMap(d=>d.stops).filter(s=>s.kind==='place').map(s=>s.id);
+ return {schema:5,id:String(Date.now())+'-'+Math.random().toString(36).slice(2,7),
    createdAt:new Date().toISOString(),config:clone(cfg),days,signals,
-   meta:{engine:'local',catalog:'editorial',priceType:'budget-allowance'}};
+   meta:{engine:'local',catalog:'editorial',priceType:'budget-allowance',wishlistMatched:wished.filter(id=>included.includes(id)),wishlistMissed:wished.filter(id=>!included.includes(id))}};
 }
 function countedEventSpend(day){return day.stops.filter(s=>s.kind==='fixed').reduce((n,s)=>n+bookingCost(s),0)}
 function daySpending(day,cfg){
