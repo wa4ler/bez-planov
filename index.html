@@ -2,187 +2,266 @@
 <html lang="ru">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#f7f7f1">
-<meta name="description" content="Без планов — продуманные маршруты по Москве на один день или целое путешествие. Выбирайте даты, бюджет и интересы.">
-<title>Без планов — дни, которые хочется прожить</title>
-<link rel="stylesheet" href="./styles.css">
-<script defer src="./app.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f8f7f2">
+<meta name="description" content="Без планов — маршруты, которые учитывают ваши разные вкусы. Для свиданий, выходных и путешествий по Москве.">
+<title>Без планов — маршрут, в котором есть вы оба</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="./style-v04.css">
+<script src="./catalog.js" defer></script>
+<script src="./planner-v04.js" defer></script>
+<script src="./ui-v04.js" defer></script>
 </head>
 <body>
-<header class="sitebar">
-  <div class="shell sitebar-inner">
-    <button class="brand" type="button" data-screen="home" aria-label="Без планов, на главную">без планов<i>.</i></button>
-    <nav class="header-nav" aria-label="Основная навигация">
-      <button type="button" class="navlink" data-screen="home">О проекте</button>
-      <button type="button" class="navlink" data-screen="saved">Мои маршруты <span id="savedCount"></span></button>
-      <button type="button" class="navlink nav-primary" data-action="start">Создать маршрут</button>
-    </nav>
-  </div>
+<header class="header">
+ <div class="container header-inner">
+   <button type="button" class="brand" data-screen="home" aria-label="Без планов — на главную">без планов<span>.</span></button>
+   <nav class="navigation" aria-label="Основное меню">
+     <button class="nav-link mobile-hide" type="button" data-screen="home">Идея</button>
+     <button class="nav-link" type="button" data-screen="library">Мои маршруты <span id="savedNumber"></span></button>
+     <button class="nav-cta" type="button" data-action="new">Создать маршрут <span aria-hidden="true">↗</span></button>
+   </nav>
+ </div>
 </header>
-
 <main>
-<section id="view-home" class="screen">
-  <div class="shell">
-    <div class="hero">
-      <div class="hero-copy">
-        <span class="eyebrow">Москва • ваш следующий выходной</span>
-        <h1>Меньше планов.<br><span class="accent">Больше жизни.</span></h1>
-        <p class="lead">Один день или целое путешествие по городу. Расскажите, что любите, выберите даты и бюджет — мы поможем собрать дни, наполненные вашими впечатлениями.</p>
-        <div class="hero-actions">
-          <button class="btn" type="button" data-action="start">Спланировать отдых <span aria-hidden="true">↗</span></button>
-          <button class="btn outline" type="button" data-screen="saved">Мои маршруты</button>
-        </div>
-        <div class="micro-copy"><span class="stars">✦ ✦ ✦</span> Первая версия планировщика · без регистрации</div>
-      </div>
-      <div class="hero-art" role="img" aria-label="Вид на Москву, пример путешествия на три дня">
-        <div class="hero-picture"></div>
-        <div class="hero-art-top"><span class="art-tag">✳ Собрано под вас</span><span>МОСКВА, РОССИЯ</span></div>
-        <div class="art-caption">
-          <span class="eyebrow" style="color:#e7f1e8">Вдохновение на выходные</span>
-          <h3>Город откроется<br>с новой стороны.</h3>
-          <p>Красивые места, уютные паузы и время для самого важного.</p>
-          <div class="art-steps"><div class="art-step">01 · Узнать город</div><div class="art-step">02 · Вдохновиться</div><div class="art-step">03 · Замедлиться</div></div>
-        </div>
-      </div>
-    </div>
-
-    <div class="trust-strip">
-      <div class="trust-item"><span class="trust-icon">🗓️</span><strong>От одного дня до двух недель</strong><p>Выберите любые даты «с — по» и получите программу на каждый день.</p></div>
-      <div class="trust-item"><span class="trust-icon">🪙</span><strong>Бюджет под контролем</strong><p>Укажите лимит на день или на весь период — расходы будут показаны отдельно.</p></div>
-      <div class="trust-item"><span class="trust-icon">📍</span><strong>Конкретные места Москвы</strong><p>Маршруты по районам, ссылки на карты и возможность заменить остановку.</p></div>
-    </div>
-
-    <div class="section-title">
-      <span class="eyebrow">Как это работает</span>
-      <h2>Всё начинается<br>с ваших желаний.</h2>
-      <p>Несколько ответов — и маршрут превращается из списка мест в понятную программу путешествия.</p>
-    </div>
-    <div class="features">
-      <article class="feature"><div class="number">01 / ДАТЫ</div><h3>Назначьте свои дни</h3><p>Свидание вечером, насыщенные выходные или пять дней знакомства с городом.</p></article>
-      <article class="feature"><div class="number">02 / НАСТРОЕНИЕ</div><h3>Выберите атмосферу</h3><p>Парки, архитектура, культура, еда или необычные впечатления. Без обязательных шаблонов.</p></article>
-      <article class="feature"><div class="number">03 / МАРШРУТ</div><h3>Откройте свой план</h3><p>Дни, остановки, ориентировочные расходы, замены, избранное и сохранение на устройстве.</p></article>
-    </div>
-    <div class="wide-banner">
-      <div><span class="eyebrow" style="color:#cae8d0">Попробуйте сейчас</span><h2>Ваши лучшие дни ещё впереди.</h2><p>Первые маршруты по Москве уже можно собирать бесплатно.</p></div>
-      <button class="btn" type="button" data-action="start">Создать свой маршрут ↗</button>
-    </div>
-  </div>
+<section class="page home-page" id="page-home">
+ <div class="container hero">
+   <div class="hero-copy">
+     <div class="overline"><span class="overline-dot"></span> Москва, которая подходит вам обоим</div>
+     <h1>Два человека.<br><em>Тысяча желаний.</em><br>Одна история.</h1>
+     <p class="hero-lead">Один мечтает о тихом парке. Другой — об удивительном месте, о котором расскажут друзьям. Не нужно выбирать, чьи желания важнее. Соберём дни, в которых интересно обоим.</p>
+     <div class="hero-cta-row">
+       <button type="button" class="button button-primary button-large" data-action="new">Найти наш маршрут <span aria-hidden="true">↗</span></button>
+       <button type="button" class="button button-ghost button-large" data-action="example">Как это работает</button>
+     </div>
+     <div class="hero-footnote"><span class="mini-stars">✷ ✷ ✷</span> От одного вечера до двух недель. Без регистрации.</div>
+   </div>
+   <div class="hero-scene">
+     <img src="./art-moscow.svg" alt="Авторская иллюстрация Москвы с башнями, куполами и рекой" class="hero-art">
+     <div class="floating-tag floating-one"><span class="tag-icon">♥</span><span><strong>Любит атмосферу</strong><small>Партнёр 1</small></span></div>
+     <div class="floating-tag floating-two"><span class="tag-icon">✦</span><span><strong>Обожает открытия</strong><small>Партнёр 2</small></span></div>
+     <div class="floating-match"><span class="match-icon">✳</span><span>Не выбираем между вами.<br><strong>Собираем общее.</strong></span></div>
+     <div class="hero-vertical">МОСКВА · НАША ИСТОРИЯ</div>
+   </div>
+ </div>
+ <div class="container promise-row">
+   <div class="promise"><span class="promise-index">01</span><div><strong>Сначала — вы</strong><p>Узнаём, что любит каждый, и чего лучше избегать.</p></div></div>
+   <div class="promise"><span class="promise-index">02</span><div><strong>Потом — ваши дни</strong><p>Связываем места, настроение, бюджет и время.</p></div></div>
+   <div class="promise"><span class="promise-index">03</span><div><strong>Никакой магии «на словах»</strong><p>Показываем, почему место оказалось в плане.</p></div></div>
+ </div>
+ <div class="container home-story" id="howItWorks">
+   <div class="section-intro"><div class="overline"><span class="overline-dot"></span> Не анкета ради анкеты</div><h2>Мы спрашиваем<br>о <em>важном.</em></h2><p>Хороший маршрут нельзя собрать по двум галочкам «кафе» и «прогулки». Мы узнаём и мечты, и маленькие «только не это».</p></div>
+   <div class="story-grid">
+     <article class="story-card"><div class="story-mark">✧</div><span class="story-step">Шаг 01</span><h3>У каждого — свой вкус.</h3><p>Пусть один любит искусство, а другой — городские приключения. Отвечайте отдельно, выбирайте не только «нравится», но и «не моё».</p><div class="story-illustration"><span>Я · ♥ искусство</span><span>Мы · ♥ прогулки</span><span>Ты · ♥ открытия</span></div></article>
+     <article class="story-card"><div class="story-mark">✦</div><span class="story-step">Шаг 02</span><h3>Слова важнее галочек.</h3><p>Можно своими словами описать идеальный вечер, место мечты и то, что испортит настроение. Эти ответы останутся в вашем профиле.</p><div class="story-quote">«Хочу место, где можно говорить часами, а потом гулять до темноты»</div></article>
+     <article class="story-card story-card-dark"><div class="story-mark">↗</div><span class="story-step">Шаг 03</span><h3>План можно менять.</h3><p>От одного дня до четырнадцати. Закрепляйте купленные билеты, заменяйте остановки, сохраняйте понравившиеся места.</p><div class="story-timeline"><i></i><span>12:00 · прогулка</span><i></i><span>14:00 · ваше место</span><i></i><span>17:00 · сюрприз</span></div></article>
+   </div>
+   <div class="story-banner"><div><div class="overline">Вместо «куда пойдём?»</div><h2>Пусть начнётся<br>ваша история.</h2></div><button type="button" class="button button-light" data-action="new">Собрать маршрут ↗</button></div>
+ </div>
 </section>
 
-<section id="view-builder" class="screen" hidden>
-  <div class="shell">
-    <div class="builder-head">
-      <span class="eyebrow">Ваш маршрут начинается здесь</span>
-      <h2>Каким будет<br>ваше приключение?</h2>
-      <p>Настройте путешествие. Мы постараемся сгруппировать реальные места по районам и уложиться в выбранный ориентировочный бюджет.</p>
-    </div>
-    <div class="builder-layout">
-      <form id="plannerForm" class="surface form-panel" novalidate>
-        <div class="step-progress" aria-label="Два шага"><span class="progress-part on" id="progressOne"></span><span class="progress-part" id="progressTwo"></span></div>
-        <div id="stepOne" class="step-pane">
-          <span class="eyebrow">Шаг 1 из 2</span>
-          <h3>Когда и с кем?</h3>
-          <p>Сначала определим даты, формат и деньги.</p>
-          <div class="field-row">
-            <div class="field"><label for="dateFrom">Дата начала</label><input class="control" type="date" id="dateFrom" required></div>
-            <div class="field"><label for="dateTo">Дата окончания</label><input class="control" type="date" id="dateTo" required></div>
-          </div>
-          <p id="periodNote" class="estimate" aria-live="polite">Выберите даты путешествия.</p>
-          <div class="field-row">
-            <div class="field"><label for="budgetAmount">Ваш бюджет, ₽</label><input class="control" type="number" id="budgetAmount" inputmode="numeric" min="500" max="10000000" step="500" value="7000" required></div>
-            <div class="field"><label for="budgetScope">На какой срок?</label><select class="control" id="budgetScope"><option value="daily">На каждый день</option><option value="total">На весь период</option></select></div>
-          </div>
-          <div class="field-row">
-            <div class="field"><label for="groupSize">Сколько человек?</label><select class="control" id="groupSize"><option value="1">Один</option><option value="2" selected>Двое</option><option value="3">Трое</option><option value="4">Четверо</option></select></div>
-            <div class="field"><label for="journeyMode">Как связать дни?</label><select class="control" id="journeyMode"><option value="connected">Единое путешествие</option><option value="independent">Отдельный маршрут на каждый день</option></select><small class="hint">В едином путешествии районы выбираются последовательно. Ночёвки пока не подбираются.</small></div>
-          </div>
-        </div>
-        <div id="stepTwo" class="step-pane" hidden>
-          <span class="eyebrow">Шаг 2 из 2</span>
-          <h3>Что вас вдохновляет?</h3>
-          <p>Выберите одну или несколько категорий — маршрут будет учитывать их при подборе мест.</p>
-          <div class="field">
-            <div class="field-label">Ваши интересы</div>
-            <div class="interest-grid" id="interests">
-              <button type="button" class="interest-chip" data-interest="food" aria-pressed="true"><span class="emoji">☕</span>Кафе и еда</button>
-              <button type="button" class="interest-chip" data-interest="walk" aria-pressed="true"><span class="emoji">🌿</span>Прогулки</button>
-              <button type="button" class="interest-chip" data-interest="art" aria-pressed="false"><span class="emoji">🎨</span>Искусство</button>
-              <button type="button" class="interest-chip" data-interest="history" aria-pressed="false"><span class="emoji">🏛️</span>История</button>
-              <button type="button" class="interest-chip" data-interest="activity" aria-pressed="false"><span class="emoji">🎟️</span>Развлечения</button>
-              <button type="button" class="interest-chip" data-interest="nature" aria-pressed="false"><span class="emoji">🍃</span>Природа</button>
-              <button type="button" class="interest-chip" data-interest="romance" aria-pressed="false"><span class="emoji">💛</span>Атмосфера</button>
-              <button type="button" class="interest-chip" data-interest="unusual" aria-pressed="false"><span class="emoji">✨</span>Необычное</button>
-            </div>
-          </div>
-          <div class="field-row">
-            <div class="field"><label for="pace">Темп дня</label><select class="control" id="pace"><option value="slow">Неспешный · 3 места</option><option value="balanced" selected>Сбалансированный · 4 места</option><option value="active">Насыщенный · 5 мест</option></select></div>
-            <div class="field"><label for="startTime">Когда начинаем?</label><select class="control" id="startTime"><option value="10">Утром · 10:00</option><option value="12" selected>Днём · 12:00</option><option value="15">После обеда · 15:00</option></select></div>
-          </div>
-          <div class="field-row">
-            <div class="field"><label for="startPoint">Точка старта (необязательно)</label><input class="control" id="startPoint" type="text" maxlength="120" placeholder="Например, метро Тверская"><small class="hint">Адрес сохраняется в описании; автоматический расчёт пути от него пока недоступен.</small></div>
-            <div class="field"><label for="transport">Передвижение</label><select class="control" id="transport"><option value="walk">Пешком и метро</option><option value="car">На автомобиле</option><option value="taxi">На такси</option><option value="foot">По возможности пешком</option></select></div>
-          </div>
-        </div>
-        <div id="plannerError" class="alert" role="alert" aria-live="polite"></div>
-        <div class="actions-row">
-          <button class="btn outline" type="button" id="stepBack" hidden>← Вернуться</button>
-          <button class="btn" type="button" id="stepNext">Продолжить →</button>
-          <button class="btn" type="submit" id="buildNow" hidden>Собрать мои дни ↗</button>
-        </div>
-      </form>
-      <aside class="surface aside-panel">
-        <span class="eyebrow">Всё под контролем</span>
-        <h3>Продуманный отдых начинается с деталей.</h3>
-        <p>Не нужно выдумывать идеальный план с нуля. Просто задайте направление.</p>
-        <div class="aside-list"><div><span>📆</span>Поддержка от 1 до 14 дней</div><div><span>📍</span>Подбор по районам Москвы</div><div><span>💳</span>Ориентир по стоимости</div><div><span>♡</span>Сохранение и избранное</div></div>
-        <div class="estimate"><strong>Важно:</strong> сейчас работает локальный алгоритм и подготовленная подборка мест. Онлайн-проверки расписаний, цен и доступности пока нет.</div>
-      </aside>
-    </div>
+<section class="page" id="page-wizard" hidden>
+ <div class="container wizard-wrap">
+  <div class="wizard-intro">
+   <div class="overline"><span class="overline-dot"></span> Точный маршрут начинается с вас</div>
+   <div class="wizard-intro-row"><div><h2 id="wizardTitle">Начнём с главного.</h2><p id="wizardSubtitle">Выбирайте ответы, которые действительно вам подходят.</p></div><div class="wizard-counter"><strong id="stepCount">01</strong><span>из 06</span></div></div>
+   <div class="wizard-progress" id="wizardProgress" role="progressbar" aria-label="Заполнение анкеты" aria-valuemin="1" aria-valuemax="6" aria-valuenow="1"><span></span></div>
   </div>
-</section>
-
-<section id="view-results" class="screen" hidden>
-  <div class="shell">
-    <div class="results-head">
-      <span class="eyebrow">Ваше путешествие · планировщик</span>
-      <div class="results-head-flex">
-        <div><h2 id="planHeading">Ваши дни в Москве</h2><p id="planSubtitle"></p></div>
-        <div class="results-tools">
-          <button class="btn ghost" type="button" id="editCurrent">⚙ Изменить</button>
-          <button class="btn ghost" type="button" id="shareCurrent">↗ Поделиться</button>
-          <button class="btn" type="button" id="saveCurrent">♡ Сохранить</button>
-        </div>
+  <form id="wizard" class="wizard-layout" novalidate>
+   <div class="wizard-main panel">
+    <section class="wizard-step" data-step="0">
+      <div class="step-kicker">01 / ВРЕМЯ И ВОЗМОЖНОСТИ</div>
+      <h3>Когда отправимся?</h3>
+      <p class="section-description">Один красивый вечер, длинные выходные или несколько дней открытий — подойдёт любой формат.</p>
+      <div class="form-grid">
+        <div class="field"><label for="dateStart">Начало</label><input type="date" class="control" id="dateStart" required></div>
+        <div class="field"><label for="dateEnd">Окончание</label><input type="date" class="control" id="dateEnd" required></div>
       </div>
+      <div class="inline-info" id="rangeInfo" aria-live="polite">Выберите даты поездки.</div>
+      <div class="field"><span class="field-label">Для кого планируем?</span><div class="choice-grid triple" data-choice="peopleMode">
+       <button type="button" class="choice active" data-value="couple" aria-pressed="true"><span>♥</span><strong>Для двоих</strong><small>У каждого свои вкусы</small></button>
+       <button type="button" class="choice" data-value="solo" aria-pressed="false"><span>✦</span><strong>Для себя</strong><small>Только мои желания</small></button>
+       <button type="button" class="choice" data-value="group" aria-pressed="false"><span>◈</span><strong>Компания</strong><small>Предпочтения двух представителей</small></button>
+      </div></div>
+      <div class="field" id="partySizeField" hidden><label for="partySize">Сколько вас всего?</label><select id="partySize" class="control"><option value="3">Трое</option><option value="4">Четверо</option><option value="5">Пятеро</option><option value="6">Шестеро</option></select></div>
+      <div class="field"><span class="field-label">Как связать дни?</span><div class="choice-grid twin" data-choice="journeyMode">
+       <button type="button" class="choice active" data-value="connected" aria-pressed="true"><span>⌁</span><strong>Одно путешествие</strong><small>Дни связаны, меньше повторений</small></button>
+       <button type="button" class="choice" data-value="independent" aria-pressed="false"><span>▤</span><strong>Отдельные маршруты</strong><small>Своя программа на каждый день</small></button>
+      </div></div>
+      <div class="form-grid">
+       <div class="field"><label for="budgetAmount">Ваш бюджет, ₽</label><input type="number" id="budgetAmount" class="control" min="500" max="10000000" step="500" value="10000" inputmode="numeric"></div>
+       <div class="field"><label for="budgetScope">За какой период?</label><select id="budgetScope" class="control"><option value="daily">За один день</option><option value="total">За всё путешествие</option></select></div>
+      </div>
+      <div class="field"><span class="field-label">Что входит в бюджет?</span><div class="choice-grid twin" data-choice="budgetCovers">
+       <button type="button" class="choice active" data-value="activities" aria-pressed="true"><span>☕</span><strong>Еда и впечатления</strong><small>Проезд и ночёвки отдельно</small></button>
+       <button type="button" class="choice" data-value="all" aria-pressed="false"><span>◎</span><strong>Все расходы</strong><small>Учтём выбранные резервы на дорогу и ночёвки</small></button>
+      </div></div>
+      <div class="field"><label class="checkbox-label"><input type="checkbox" id="overnightStay"> Понадобятся ночёвки между днями</label><small class="field-note">Необязательно: можно планировать несколько отдельных дней без гостиницы.</small></div>
+      <div class="form-grid" id="reserveInputs" hidden>
+       <div class="field"><label for="transportReserve">Резерв на транспорт / день, ₽</label><input id="transportReserve" class="control" type="number" min="0" max="10000000" step="100" value="500"></div>
+       <div class="field" id="hotelReserveField" hidden><label for="hotelReserve">Резерв на ночёвку, ₽</label><input id="hotelReserve" class="control" type="number" min="0" max="10000000" step="500" value="3000"><small>На всю компанию, за одну ночь.</small></div>
+      </div>
+    </section>
+
+    <section class="wizard-step" data-step="1" hidden>
+     <div class="step-kicker">02 / ПЕРВЫЙ ЧЕЛОВЕК</div>
+     <h3 id="personOneTitle">А что нравится вам?</h3>
+     <p class="section-description">Не нужно отмечать всё. Выберите то, что искренне радует. «Нет» — это запрет на такой тип мест, а не слабый голос.</p>
+     <div class="field"><label for="nameOne">Как вас называть? <small>Необязательно</small></label><input id="nameOne" class="control" maxlength="35" autocomplete="off" placeholder="Например, Саша"></div>
+     <div class="taste-legend"><span><i class="legend-heart">♥</i> Очень люблю</span><span><i class="legend-okay">✓</i> Подойдёт</span><span><i class="legend-no">×</i> Точно нет</span></div>
+     <div id="tasteOne" class="taste-list" aria-label="Предпочтения первого участника"></div>
+     <div class="field"><label for="likesOne">Расскажите о себе своими словами</label><textarea id="likesOne" class="control textarea" rows="3" maxlength="650" placeholder="Люблю старые дворы, маленькие кофейни, книжные магазины. Могу часами гулять и рассматривать архитектуру…"></textarea></div>
+     <div class="field"><label for="dreamOne">Что давно хочется попробовать?</label><textarea id="dreamOne" class="control textarea" rows="2" maxlength="350" placeholder="Например: попасть на красивую смотровую, впервые сходить в планетарий…"></textarea></div>
+     <div class="field"><label for="avoidOne">Чего точно не хочется?</label><textarea id="avoidOne" class="control textarea" rows="2" maxlength="350" placeholder="Например: шумных баров, огромных очередей, слишком дорогих ресторанов…"></textarea></div>
+    </section>
+
+    <section class="wizard-step" data-step="2" hidden>
+     <div class="step-kicker">03 / ВТОРОЙ ЧЕЛОВЕК</div>
+     <h3>Теперь узнаем второго.</h3>
+     <p class="section-description">Если возможно, передайте телефон партнёру. Так ответы будут действительно его, а не вашими догадками.</p>
+     <div class="person-switch"><span>✧</span><p>Здесь не нужно соглашаться с первым человеком. Ваши различия — часть будущего маршрута.</p></div>
+     <div class="field"><label for="nameTwo">Как его или её называть? <small>Необязательно</small></label><input id="nameTwo" class="control" maxlength="35" autocomplete="off" placeholder="Например, Женя"></div>
+     <div class="taste-legend"><span><i class="legend-heart">♥</i> Очень люблю</span><span><i class="legend-okay">✓</i> Подойдёт</span><span><i class="legend-no">×</i> Точно нет</span></div>
+     <div id="tasteTwo" class="taste-list" aria-label="Предпочтения второго участника"></div>
+     <div class="field"><label for="likesTwo">Опишите свои интересы своими словами</label><textarea id="likesTwo" class="control textarea" rows="3" maxlength="650" placeholder="Люблю интерактивные музеи, вкусную еду и видовые места. Не люблю просто ходить без цели…"></textarea></div>
+     <div class="field"><label for="dreamTwo">Что давно хочется попробовать?</label><textarea id="dreamTwo" class="control textarea" rows="2" maxlength="350" placeholder="Например: увидеть Москву с высоты, сходить на необычную выставку…"></textarea></div>
+     <div class="field"><label for="avoidTwo">Чего точно не хочется?</label><textarea id="avoidTwo" class="control textarea" rows="2" maxlength="350" placeholder="Например: долгих пеших маршрутов, толп и походов по магазинам…"></textarea></div>
+    </section>
+
+    <section class="wizard-step" data-step="3" hidden>
+     <div class="step-kicker">04 / ВАША ОБЩАЯ АТМОСФЕРА</div>
+     <h3>Как вы хотите себя чувствовать?</h3>
+     <p class="section-description">Два человека могут любить одни и те же места, но ждать от дня совершенно разных эмоций.</p>
+     <div class="field"><span class="field-label">По какому поводу встречаетесь?</span><div id="occasionChoices" class="chip-cloud" data-single="occasion">
+      <button type="button" class="select-chip active" data-value="just">Просто хочется вместе</button>
+      <button type="button" class="select-chip" data-value="date">Свидание</button>
+      <button type="button" class="select-chip" data-value="anniversary">Годовщина</button>
+      <button type="button" class="select-chip" data-value="birthday">День рождения</button>
+      <button type="button" class="select-chip" data-value="surprise">Сюрприз</button>
+      <button type="button" class="select-chip" data-value="travel">Знакомство с городом</button>
+      <button type="button" class="select-chip" data-value="recover">Отдых после тяжёлой недели</button>
+     </div></div>
+     <div class="field"><span class="field-label">Что самое важное в этом дне? <small>Выберите до трёх</small></span><div id="goalChoices" class="chip-cloud" data-multi="goals" data-limit="3">
+      <button type="button" class="select-chip" data-value="talk">Поговорить по душам</button>
+      <button type="button" class="select-chip" data-value="wow">Удивиться новому</button>
+      <button type="button" class="select-chip" data-value="rest">Выдохнуть и расслабиться</button>
+      <button type="button" class="select-chip" data-value="laugh">Повеселиться</button>
+      <button type="button" class="select-chip" data-value="photo">Красивые фотографии</button>
+      <button type="button" class="select-chip" data-value="learn">Узнать что-то новое</button>
+      <button type="button" class="select-chip" data-value="romance">Романтическая атмосфера</button>
+      <button type="button" class="select-chip" data-value="move">Больше движения</button>
+     </div></div>
+     <div class="field"><span class="field-label">Каким должен быть ритм?</span><div class="choice-grid triple" data-choice="pace">
+      <button type="button" class="choice" data-value="slow" aria-pressed="false"><span>☁</span><strong>Без спешки</strong><small>Меньше мест, больше времени</small></button>
+      <button type="button" class="choice active" data-value="balanced" aria-pressed="true"><span>◒</span><strong>В меру</strong><small>События и паузы</small></button>
+      <button type="button" class="choice" data-value="active" aria-pressed="false"><span>✳</span><strong>Насыщенно</strong><small>Максимум впечатлений</small></button>
+     </div></div>
+     <div class="field"><label for="surpriseLevel">Насколько важны новые впечатления?</label><input class="range" id="surpriseLevel" type="range" min="0" max="100" step="25" value="50"><div class="range-extremes"><span>Любимые проверенные места</span><span>Хочется удивляться</span></div></div>
+     <div class="field"><label for="perfectDay">Представьте идеальный день вместе. Какой он?</label><textarea id="perfectDay" class="control textarea" rows="4" maxlength="850" placeholder="Например: нет спешки, сначала вкусно позавтракать, потом погулять по необычному району, попасть куда-то красивое, а вечером посидеть вдвоём с видом на город…"></textarea></div>
+     <div class="field"><label for="badDay">А что могло бы его испортить?</label><textarea id="badDay" class="control textarea" rows="3" maxlength="450" placeholder="Например: 10 км пешком, много людей, долго ждать столик, повторять места, где уже были…"></textarea></div>
+    </section>
+
+    <section class="wizard-step" data-step="4" hidden>
+     <div class="step-kicker">05 / КОМФОРТ И РЕАЛЬНАЯ ЖИЗНЬ</div>
+     <h3>Учтём то, что обычно забывают.</h3>
+     <p class="section-description">Даже красивое место не подойдёт, если не совпали дорога, время, погода или уровень усталости.</p>
+     <div class="form-grid">
+      <div class="field"><label for="dayStart">Начало дня</label><input type="time" id="dayStart" class="control" value="11:00"></div>
+      <div class="field"><label for="dayEnd">Закончить к</label><input type="time" id="dayEnd" class="control" value="21:00"></div>
+     </div>
+     <div class="form-grid">
+      <div class="field"><label for="startLocation">Откуда стартуете?</label><input id="startLocation" class="control" maxlength="120" placeholder="Метро Тверская, адрес или район"></div>
+      <div class="field"><label for="transport">Как будете перемещаться?</label><select id="transport" class="control"><option value="walk">Метро и пешком</option><option value="foot">Пешком, если возможно</option><option value="taxi">Такси</option><option value="car">На машине</option></select></div>
+     </div>
+     <div class="form-grid">
+      <div class="field"><label for="walkingLevel">Сколько ходить комфортно?</label><select id="walkingLevel" class="control"><option value="low">Мало · без долгих прогулок</option><option value="medium" selected>Умеренно</option><option value="high">Любим много гулять</option></select></div>
+      <div class="field"><label for="venuePreference">Помещения или улица?</label><select id="venuePreference" class="control"><option value="any">И то и другое</option><option value="mostly-indoor">Больше внутри</option><option value="mostly-outdoor">Больше на улице</option><option value="indoor-only">Только внутри</option><option value="outdoor-only">Только на улице</option></select></div>
+     </div>
+     <div class="field"><span class="field-label">Что желательно избегать? <small>Можно несколько</small></span><div id="restrictionChoices" class="chip-cloud" data-multi="restrictions">
+      <button type="button" class="select-chip" data-value="crowds">Толпы и очереди</button>
+      <button type="button" class="select-chip" data-value="noise">Громкие места</button>
+      <button type="button" class="select-chip" data-value="expensive">Дорогие заведения</button>
+      <button type="button" class="select-chip" data-value="longwalk">Долгие прогулки</button>
+      <button type="button" class="select-chip" data-value="outdoors">Долго находиться на улице</button>
+      <button type="button" class="select-chip" data-value="heights">Высоту</button>
+      <button type="button" class="select-chip" data-value="animals">Места с животными</button>
+     </div></div>
+     <div class="field"><label for="foodNeeds">Питание, аллергии и другие важные пожелания</label><textarea id="foodNeeds" class="control textarea" rows="2" maxlength="450" placeholder="Например: вегетарианство, аллергия на орехи, еда без острого, кофе без молока…"></textarea><small class="field-note">Мы сохраним ваши пожелания в плане, но не можем подтвердить меню и безопасность блюд без проверки заведения.</small></div>
+     <div class="field"><label class="checkbox-label"><input type="checkbox" id="stepFree"> Важен маршрут без ступеней и барьеров</label><small class="field-note">Доступность конкретных объектов пока не проверяется. Мы явно предупредим об этом в результатах.</small></div>
+     <div class="field" id="hotelAddressField" hidden><label for="hotelAddress">Где вы остановитесь? <small>Если поездка многодневная</small></label><input id="hotelAddress" class="control" maxlength="180" placeholder="Название гостиницы, адрес или район"><small class="field-note">Поможет запомнить базовую точку, но реальное время пути от неё пока не рассчитывается.</small></div>
+    </section>
+
+    <section class="wizard-step" data-step="5" hidden>
+     <div class="step-kicker">06 / ЗАКРЕПЛЁННЫЕ ПЛАНЫ И ПРОВЕРКА</div>
+     <h3>Что уже нельзя менять?</h3>
+     <p class="section-description">Если куплены билеты или забронирован столик, добавьте это событие. Мы сохраним его время и не заменим автоматически.</p>
+     <div class="booking-editor">
+      <div class="form-grid"><div class="field"><label for="eventName">Что запланировано?</label><input id="eventName" class="control" maxlength="110" placeholder="Билеты в театр, столик, экскурсия"></div><div class="field"><label for="eventDate">В какой день?</label><input id="eventDate" type="date" class="control"></div></div>
+      <div class="form-grid triple-input"><div class="field"><label for="eventTime">Начало</label><input id="eventTime" type="time" class="control" value="18:00"></div><div class="field"><label for="eventDuration">Длительность</label><select id="eventDuration" class="control"><option value="45">45 мин</option><option value="60">1 час</option><option value="90" selected>1,5 часа</option><option value="120">2 часа</option><option value="180">3 часа</option></select></div><div class="field"><label for="eventCost">Стоимость, ₽</label><input id="eventCost" class="control" type="number" inputmode="numeric" min="0" max="10000000" value="0"></div></div>
+      <div class="field"><label for="eventAddress">Где проходит? <small>Необязательно</small></label><input id="eventAddress" class="control" maxlength="180" placeholder="Адрес, район или название места"></div>
+      <label class="checkbox-label"><input type="checkbox" id="eventPaid"> Уже оплачено</label>
+      <label class="checkbox-label"><input type="checkbox" id="eventCostIncluded"> Учесть уже оплаченную сумму в общем бюджете</label><small class="field-note">Неоплаченные события учитываются автоматически.</small>
+      <button type="button" id="addEvent" class="button button-outline button-small">+ Добавить закреплённое событие</button>
+      <div id="eventError" class="field-error" aria-live="polite"></div>
+      <div id="eventList" class="event-list" aria-live="polite"></div>
+     </div>
+     <div class="final-review">
+       <div class="review-head"><span class="review-icon">◈</span><div><strong>Ваши предпочтения</strong><p>Посмотрите, как мы сопоставили ваши ответы.</p></div></div>
+       <div id="pairPreview"></div>
+       <div id="recognizedPreview" class="recognized-box"></div>
+       <div id="reviewInfo" class="review-info"></div>
+     </div>
+     <div class="data-disclaimer">Все ответы и маршруты хранятся в этом браузере. Без сервера тексты анализируются по ограниченному словарю, а не полноценной языковой моделью. Вы всегда можете изменить предпочтения.</div>
+    </section>
+    <div class="wizard-error" role="alert" aria-live="polite" id="wizardError"></div>
+    <div class="wizard-actions"><button type="button" class="button button-outline" id="prevStep">← Назад</button><button type="button" class="button button-primary" id="nextStep">Продолжить <span aria-hidden="true">→</span></button><button type="submit" class="button button-primary" id="finishPlan" hidden>Создать наши дни ✦</button></div>
+   </div>
+   <aside class="wizard-aside">
+    <div class="aside-card panel">
+      <div class="aside-orb">✷</div>
+      <span class="overline">За кулисами</span>
+      <h3>Не спрашиваем лишнего.</h3>
+      <p>Каждый ответ влияет на подбор или сохраняется как отдельное пожелание, чтобы ничего не потерять.</p>
+      <div class="aside-guide"><span>♥</span><span><strong>Оба человека важны</strong><small>Не отдаём предпочтение одному.</small></span></div>
+      <div class="aside-guide"><span>×</span><span><strong>«Точно нет» — не предлагаем</strong><small>Это исключение, а не низкий балл.</small></span></div>
+      <div class="aside-guide"><span>⌁</span><span><strong>Реальность важнее красоты</strong><small>Бюджет, время и билеты — ограничения.</small></span></div>
+      <div class="aside-note">Это версия с локальным алгоритмом. Мы не проверяем онлайн время работы, цены, доступность билетов или дорожную ситуацию.</div>
     </div>
-    <div id="resultStats" class="result-summary" aria-label="Сводка по путешествию"></div>
-    <div id="daysNav" class="days-nav" role="tablist" aria-label="Дни путешествия"></div>
-    <div id="dayContent" aria-live="polite"></div>
-    <p class="legal-note" id="resultNote">Маршрут подготовлен локальным алгоритмом на основе редакционной подборки мест, без онлайн-проверки. Стоимость — плановые суммы, не подтверждённые цены заведений. Перед визитом проверьте часы работы, билеты и дорогу.</p>
-    <div style="margin-top:20px"><button class="btn outline" type="button" id="newCurrent">Создать ещё один маршрут</button></div>
-  </div>
+   </aside>
+  </form>
+ </div>
 </section>
 
-<section id="view-saved" class="screen" hidden>
-  <div class="shell">
-    <div class="library-head">
-      <span class="eyebrow">Личная коллекция</span>
-      <h2>Места и дни,<br>которые вам близки.</h2>
-      <p>Ваши сохранённые маршруты и избранные места хранятся только в этом браузере. Аккаунта и облачной синхронизации пока нет.</p>
-    </div>
-    <div class="library-grid">
-      <div class="surface library-card"><h3>Мои маршруты</h3><div id="savedPlans"></div></div>
-      <div class="surface library-card"><h3>Избранные места</h3><div id="favoritePlaces"></div></div>
-    </div>
-    <div style="margin-top:23px"><button class="btn" type="button" data-action="start">Спланировать ещё ↗</button></div>
-  </div>
+<section class="page" id="page-result" hidden>
+ <div class="container results-container">
+  <div class="results-top"><div><div class="overline"><span class="overline-dot"></span> Маршрут, в котором вы оба</div><h2 id="resultsTitle">Ваши дни в Москве.</h2><p id="resultsSubtitle"></p></div><div class="result-actions"><button type="button" class="button button-outline button-small" id="editPlan">⚙ Изменить анкету</button><button type="button" class="button button-outline button-small" id="sharePlan">↗ Поделиться</button><button type="button" class="button button-primary button-small" id="savePlan">♡ Сохранить</button></div></div>
+  <div id="planStats" class="stat-grid"></div>
+  <section class="match-section panel" id="matchSection" aria-label="Сходство ваших интересов">
+    <div class="match-copy"><span class="overline">Ваш общий маршрут</span><h3>Где ваши вкусы<br>встречаются?</h3><p id="matchExplanation"></p></div>
+    <div id="matchGraphic" class="match-graphic"></div>
+  </section>
+  <div id="daysTabs" class="day-tabs" role="tablist" aria-label="Выбор дня"></div>
+  <div id="dayResult"></div>
+  <div id="accommodationSummary" class="accommodation-summary" hidden></div>
+  <div class="transparency-note"><strong>Насколько это точно?</strong> Это работающий планировщик на основе ваших выборов и редакционной базы Москвы, но не настоящий ИИ. Цены показаны как ориентиры бюджета, а не актуальные предложения. Время пути, расписания, очереди, меню, доступность и билеты нужно сверять перед поездкой. Отдельные свободные ответы интерпретируются лишь по известным ключевым словам — неизвестные мы сохраняем как заметки.</div>
+  <div class="result-footer-actions"><button type="button" class="button button-primary" data-action="new">Собрать ещё один маршрут ↗</button><button type="button" class="button button-outline" data-screen="library">Мои сохранённые планы</button></div>
+ </div>
+</section>
+
+<section class="page" id="page-library" hidden>
+ <div class="container library-container"><div class="overline"><span class="overline-dot"></span> Ваша небольшая коллекция</div><h2>Впечатления, которые<br>хочется сохранить.</h2><p class="library-lead">Маршруты и любимые места остаются в памяти браузера на этом устройстве. Для синхронизации между устройствами понадобится аккаунт в будущей версии.</p>
+ <div class="library-grid"><section class="panel library-panel"><h3>Маршруты</h3><div id="savedPlansList"></div></section><section class="panel library-panel"><h3>Избранные места</h3><div id="favoritePlacesList"></div></section></div>
+ <section class="panel profile-settings">
+  <div><span class="overline">Ваш профиль в этом браузере</span><h3>Помним ваши интересы.</h3><p>Вернуться к вопросам можно в любой момент. Ответы хранятся только на этом устройстве.</p><div id="profileSummary"></div></div>
+  <button type="button" class="button button-outline" data-action="edit-draft">Изменить предпочтения ↗</button>
+ </section>
+ <div class="privacy-tools"><button type="button" class="button-text" data-action="reset-feedback">Сбросить исключённые места</button><button type="button" class="button-text danger" data-action="clear-local">Удалить все данные этого браузера</button></div>
+ <div class="library-bottom"><button type="button" class="button button-primary" data-action="new">Создать ещё один маршрут ↗</button></div>
+ </div>
 </section>
 </main>
-
-<footer class="shell sitefooter">
-  <button class="brand" type="button" data-screen="home">без планов<i>.</i></button>
-  <span>Сделано с любовью к спонтанным дням · Москва · версия 0.3</span>
-  <span>© 2026 Без планов</span>
-</footer>
+<footer class="footer"><div class="container footer-inner"><button type="button" class="brand" data-screen="home">без планов<span>.</span></button><span>Ищем общее, оставляя место разному.</span><span>Москва · версия 0.4 · 2026</span></div></footer>
+<div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
 </body>
 </html>
