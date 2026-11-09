@@ -286,6 +286,8 @@ function renderDay(){
    const price=fixed?(bookingCounted(s)?formatMoney(s.cost)+' в лимите':formatMoney(s.cost)+' вне лимита'):formatMoney(priceAllowance(p,cfg.partySize));
    const why=fixed?'Закреплено вами · время и содержание не меняются автоматически':personEvidence(p,cfg,signals);
    const mapAddress=fixed?s.address:p.address;
+   const placeLink=fixed?null:PLACE_LINKS[p.id];
+   const placeIcon=fixed?'🎟':(PREF_BY_KEY[p.tags[0]]?.icon||'✧');
    const isFavorite=!fixed&&favorites.includes(p.id),swapOpen=openSwap===currentDay+':'+i;
    const alt=swapOpen?alternativesFor(plan,currentDay,i,feedback):[];
    const altHTML=swapOpen?
@@ -296,12 +298,13 @@ function renderDay(){
    return '<div class="stop'+(fixed?' fixed':'')+'">'+
     '<div class="stop-time">'+escapeHTML(s.time)+'</div><span class="stop-dot"></span>'+
     '<article class="stop-box"><div class="stop-head"><div><span class="stop-overline">'+(fixed?'🔒 Ваше событие':escapeHTML(TAGS[p.tags[0]]||'Впечатление'))+'</span>'+
-    '<h4>'+escapeHTML(name)+'</h4></div><span style="font-size:17px">'+(fixed?'✦':s.locked?'🔒':'✧')+'</span></div>'+
+    '<h4>'+escapeHTML(name)+'</h4></div><span class="stop-visual" aria-hidden="true">'+(s.locked&&!fixed?'🔒':placeIcon)+'</span></div>'+
     '<p>'+escapeHTML(description)+'</p>'+
     '<div class="stop-chips"><span>≈ '+escapeHTML(String(s.duration))+' мин на месте</span><span>'+escapeHTML(price)+'</span>'+
     (fixed&&s.paid?'<span>Уже оплачено</span>':'')+'</div>'+
     '<div class="stop-why">'+escapeHTML(why)+'</div>'+
-    '<div class="stop-tools">'+(mapAddress?'<a class="tool-link" href="'+escapeHTML(mapLink(mapAddress))+'" target="_blank" rel="noopener noreferrer">На карте ↗</a>':'')+
+    '<div class="stop-tools">'+(mapAddress?'<a class="tool-link" href="'+escapeHTML(mapLinkYandex(mapAddress))+'" target="_blank" rel="noopener noreferrer">Яндекс.Карты ↗</a><a class="tool-link" href="'+escapeHTML(mapLink(mapAddress))+'" target="_blank" rel="noopener noreferrer">Google Maps ↗</a>':'')+
+    (placeLink?.reservation?'<a class="tool-link" href="'+escapeHTML(placeLink.reservation)+'" target="_blank" rel="noopener noreferrer">Бронь на сайте ↗</a>':placeLink?.website?'<a class="tool-link" href="'+escapeHTML(placeLink.website)+'" target="_blank" rel="noopener noreferrer">Сайт заведения ↗</a>':'')+
     (!fixed?'<button type="button" class="tool-link" data-action="swap-menu" data-index="'+i+'" '+(s.locked?'disabled':'')+'>Заменить</button>'+
       '<button type="button" class="tool-link'+(s.locked?' active':'')+'" data-action="toggle-lock" data-index="'+i+'">'+(s.locked?'Открепить':'Закрепить')+'</button>'+
       '<button type="button" class="tool-link'+(isFavorite?' active':'')+'" data-action="favorite" data-place="'+escapeHTML(p.id)+'">'+(isFavorite?'♥ В избранном':'♡ В избранное')+'</button>'+
@@ -309,6 +312,11 @@ function renderDay(){
     '</div>'+altHTML+'</article></div>';
  }).join('');
  const calendarText='День '+(currentDay+1)+' · '+shortDate(day.date);
+ const overnight=plan.days.length>1&&currentDay<plan.days.length-1?
+   '<div class="overnight"><div class="overnight-icon">☾</div><div><strong>Ночёвка после '+escapeHTML(shortDate(day.date))+'</strong><p>'+
+   (cfg.hotelAddress?escapeHTML(cfg.hotelAddress):'Место проживания пока не указано — внесите его в анкету.')+
+   '</p><small>'+(day.reserve?.nightly?'Заложенный вами резерв: '+formatMoney(day.reserve.nightly):'Проживание не включено в расчёт расходов')+
+   '. Бронирование не выполняется.</small></div></div>':'';
  $('dayResult').innerHTML=
   '<div class="day-layout"><article class="panel day-panel">'+
    '<div class="day-header"><div><div class="overline">'+escapeHTML(calendarText)+'</div><h3>'+escapeHTML(area.name)+'</h3><p>'+escapeHTML(area.subtitle)+'</p></div>'+
@@ -317,7 +325,7 @@ function renderDay(){
    (cfg.journeyMode==='connected'?'Следующие дни подбираются с учётом предыдущего района. ':'Каждый день выбирается отдельно. ')+
    (day.stops.some(s=>s.kind==='fixed')?'Учтены закреплённые события. ':'')+
    'Это тематическая группировка, а не расчёт кратчайшего пути.</div>'+
-   '<div class="stop-list">'+(stops||'<div class="empty-library"><span>◈</span>При этих ограничениях не осталось подтверждённо подходящих мест в нашей подборке. Измените интересы или бюджет — мы не будем подставлять случайные варианты.</div>')+'</div></article>'+
+   '<div class="stop-list">'+(stops||'<div class="empty-library"><span>◈</span>При этих ограничениях не осталось подходящих мест в нашей подборке. Измените интересы или бюджет — мы не будем подставлять случайные варианты.</div>')+'</div>'+overnight+'</article>'+
    '<aside class="panel day-sidebar"><div class="overline">Ваш день</div><h3>Бюджет и путь</h3>'+
     '<p>Плановые суммы для '+cfg.partySize+' '+(cfg.partySize===1?'человека':'человек')+'. Не цены, полученные онлайн.</p>'+
     '<div class="day-total">'+formatMoney(sum.total)+'</div><div class="budget-track"><span style="width:'+percentage+'%"></span></div>'+
