@@ -100,26 +100,28 @@ const TEXT_RESTRICTIONS=[
 ];
 function textSignals(cfg){
  const people=cfg.peopleMode==='solo'?cfg.profiles.slice(0,1):cfg.profiles;
- const positive=people.map(p=>p.likes+' '+p.dream);
- const negative=people.map(p=>p.avoid);
- positive.push(cfg.perfectDay);
- negative.push(cfg.badDay);
- const pos=new Set(),avoid=new Set(),restrictions=new Set(cfg.restrictions||[]);
- for(const t of positive)for(const w of SIGNAL_WORDS)if(w.rx.test(t))pos.add(w.key);
- for(const t of negative){
-   for(const w of SIGNAL_WORDS)if(w.rx.test(t))avoid.add(w.key);
-   for(const r of TEXT_RESTRICTIONS)if(r.rx.test(t))restrictions.add(r.key);
+ const fromWords=t=>SIGNAL_WORDS.filter(w=>w.rx.test(String(t||''))).map(w=>w.key);
+ const peoplePositive=people.map(p=>fromWords(p.likes+' '+p.dream));
+ const peopleAvoid=people.map(p=>fromWords(p.avoid));
+ const sharedPositive=fromWords(cfg.perfectDay),sharedAvoid=fromWords(cfg.badDay);
+ const pos=new Set([...peoplePositive.flat(),...sharedPositive]);
+ const avoid=new Set([...peopleAvoid.flat(),...sharedAvoid]);
+ const restrictions=new Set(cfg.restrictions||[]);
+ for(const t of people.map(p=>p.avoid).concat(cfg.badDay)){
+   for(const r of TEXT_RESTRICTIONS)if(r.rx.test(String(t||'')))restrictions.add(r.key);
  }
- for(const r of TEXT_RESTRICTIONS)if(r.rx.test(cfg.badDay))restrictions.add(r.key);
- // A disliked "long walk" is not a ban on every beautiful outdoor place.
- if(restrictions.has('longwalk'))avoid.delete('walk');
- if(restrictions.has('outdoors'))avoid.delete('nature');
- if(restrictions.has('crowds'))avoid.delete('walk');
- if(restrictions.has('noise'))avoid.delete('food');
- if(restrictions.has('expensive'))avoid.delete('food');
+ const notHard={
+   longwalk:['walk'],outdoors:['nature'],crowds:['walk'],noise:['food'],expensive:['food']
+ };
+ for(const key of restrictions)for(const interest of notHard[key]||[]){
+   avoid.delete(interest);
+   for(const arr of peopleAvoid)if(arr.includes(interest))arr.splice(arr.indexOf(interest),1);
+   const j=sharedAvoid.indexOf(interest);if(j>=0)sharedAvoid.splice(j,1);
+ }
  const names=[...pos].map(k=>PREF_BY_KEY[k]?.title).filter(Boolean);
  const banned=[...avoid].map(k=>PREF_BY_KEY[k]?.title).filter(Boolean);
- return {positive:[...pos],avoid:[...avoid],restrictions:[...restrictions],recognized:names,avoided:banned};
+ return {positive:[...pos],avoid:[...avoid],peoplePositive,peopleAvoid,sharedPositive,sharedAvoid,
+   restrictions:[...restrictions],recognized:names,avoided:banned};
 }
 function rated(profile,key){const n=Number(profile?.ratings?.[key]);return [2,1,-3].includes(n)?n:0}
 function isHardNo(cfg,key,signal){
@@ -127,15 +129,19 @@ function isHardNo(cfg,key,signal){
  return (cfg.peopleMode==='solo'?cfg.profiles.slice(0,1):cfg.profiles).some(p=>rated(p,key)===-3);
 }
 function pairStats(cfg){
- const a=cfg.profiles[0],b=cfg.profiles[1];
- let mutual=0,unique=0,clash=0,one=0;
+ const a=cfg.profiles[0],b=cfg.profiles[1],signals=textSignals(cfg);
+ let mutual=0,clash=0,one=0;
  const common=[],different=[],conflicts=[];
+ function level(profile,index,key){
+   const exact=rated(profile,key);
+   if(exact===-3||signals.peopleAvoid[index]?.includes(key))return -3;
+   return exact|| (signals.peoplePositive[index]?.includes(key)?1:0);
+ }
  for(const p of PREFS){
-   const x=rated(a,p.key),y=cfg.peopleMode==='solo'?0:rated(b,p.key);
+   const x=level(a,0,p.key),y=cfg.peopleMode==='solo'?0:level(b,1,p.key);
    if(x>0&&y>0){mutual++;common.push(p.title)}
    else if((x>0&&y===0)||(y>0&&x===0)){one++;different.push(p.title)}
    else if((x>0&&y===-3)||(y>0&&x===-3)){clash++;conflicts.push(p.title)}
-   else if((x===-3&&y===0)||(y===-3&&x===0)){unique++}
  }
  return {mutual,one,clash,common,different,conflicts,solo:cfg.peopleMode==='solo'};
 }
@@ -155,7 +161,7 @@ function placeScore(p,cfg,signals,usage,dayIndex,personFocus,feedback){
  const tags=placeTags(p);
  let score=1;
  const profiles=cfg.peopleMode==='solo'?cfg.profiles.slice(0,1):cfg.profiles;
- const likes=profiles.map(profile=>tags.reduce((s,k)=>s+(rated(profile,k)===2?5:rated(profile,k)===1?2:0),0));
+ const likes=profiles.map((profile,i)=>tags.reduce((s,k)=>s+(rated(profile,k)===2?5:rated(profile,k)===1?2:0)+(rated(profile,k)===0&&signals.peoplePositive?.[i]?.includes(k)?2:0),0));
  score+=likes.reduce((s,v)=>s+v,0);
  if(likes.length>1&&likes[0]>0&&likes[1]>0)score+=6;
  if(likes.length>1&&personFocus!=null&&likes[personFocus]>0&&likes[1-personFocus]===0)score+=7;
@@ -304,7 +310,7 @@ function validateConfig(cfg){
 }
 function personEvidence(p,cfg,signals){
  const tags=placeTags(p),profiles=cfg.peopleMode==='solo'?cfg.profiles.slice(0,1):cfg.profiles;
- const matches=profiles.map((person,i)=>({i,name:personName(person,i,cfg.peopleMode),keys:tags.filter(k=>rated(person,k)>0)}));
+ const matches=profiles.map((person,i)=>({i,name:personName(person,i,cfg.peopleMode),keys:tags.filter(k=>rated(person,k)>0||signals.peoplePositive?.[i]?.includes(k))}));
  const clauses=[];
  if(matches.length>1&&matches.every(x=>x.keys.length))clauses.push('По интересам обоих');
  else{
