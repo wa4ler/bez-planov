@@ -97,7 +97,7 @@ renderResult=function(){
   const missing=wishes.filter(id=>!matched.some(s=>s.id===id));
   node.innerHTML='<strong>'+iconSVG('spark')+' Ваш список желаний: '+(wishes.length-missing.length)+' из '+wishes.length+' известных мест включено</strong>'+
    (missing.length?'<p>Не получилось включить сейчас: '+missing.map(id=>escapeHTML(PLACES[id].name)).join(', ')+'. Возможные причины: стоимость, расписание, запрет категории или нехватка времени.</p>':
-    '<p>Все распознанные места из вашего списка удалось включить.</p>');
+    '<p>Включили: '+wishes.map(id=>escapeHTML(PLACES[id].name)).join(', ')+'.</p>');
   $('planCover').insertAdjacentElement('afterend',node);
  }
  // Make the active day accessible while preserving the tab semantics.
