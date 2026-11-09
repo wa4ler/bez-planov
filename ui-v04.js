@@ -22,7 +22,7 @@ function notify(message){
  toastTimer=setTimeout(()=>{el.hidden=true},4200);
 }
 function showPage(name){
- for(const id of ['home','wizard','result','library'])$('page-'+id).hidden=id!==name;
+ for(const id of ['home','wizard','result','library','discover'])$('page-'+id).hidden=id!==name;
  if(name==='library')renderLibrary();
  window.scrollTo(0,0);
 }
@@ -46,7 +46,7 @@ const FIELD_MAP={
  dreamTwo:'profile2dream',avoidTwo:'profile2avoid',surpriseLevel:'surpriseLevel',
  perfectDay:'perfectDay',badDay:'badDay',dayStart:'dayStart',dayEnd:'dayEnd',
  startLocation:'startLocation',transport:'transport',walkingLevel:'walkingLevel',
- venuePreference:'venuePreference',foodNeeds:'foodNeeds',stepFree:'stepFree',hotelAddress:'hotelAddress'
+ venuePreference:'venuePreference',foodNeeds:'foodNeeds',stepFree:'stepFree',hotelAddress:'hotelAddress',alreadyVisited:'alreadyVisited',dreamPlaces:'dreamPlaces'
 };
 const NUMERIC_KEYS=new Set(['budgetAmount','partySize','transportReserve','hotelReserve','surpriseLevel']);
 function fieldToCfg(id,value){
@@ -98,6 +98,8 @@ function reflectDates(){
    const total=draft.budgetAmount*(draft.budgetScope==='daily'?dates.length:1);
    $('rangeInfo').textContent=dates.length+' '+dayWord(dates.length)+' · '+dateLabel(dates[0])+(dates.length>1?' — '+dateLabel(dates[dates.length-1]):'')+' · бюджет на период '+formatMoney(total);
  }else $('rangeInfo').textContent='Выберите период от одного до 14 дней.';
+ $('districtSelectionNote').hidden=!draft.preferredDistrict;
+ if(draft.preferredDistrict)$('districtSelectionNote').textContent='✦ Вы начали с района «'+AREA_BY_ID[draft.preferredDistrict]?.name+'». Это предпочтение для начала путешествия.';
  $('eventDate').min=draft.from;$('eventDate').max=draft.to;
  if(!dates.includes($('eventDate').value))$('eventDate').value=draft.from;
 }
@@ -167,6 +169,7 @@ function freshWizard(){
  draft=buildDefault();
  // Product promise: a couple should not have to teach the planner about themselves every time.
  const keep=['peopleMode','partySize','profiles','foodNeeds','restrictions','walkingLevel',
+   'alreadyVisited','dreamPlaces',
    'venuePreference','transport','stepFree','startLocation','hotelAddress'];
  for(const key of keep)draft[key]=clone(current[key]);
  cfgToFields();persistDraft();goStep(0);showPage('wizard');
@@ -505,6 +508,15 @@ function handleGlobalClick(e){
  const b=e.target.closest('[data-action]');if(!b)return;
  const action=b.dataset.action;
  if(action==='new'){freshWizard();return}
+ if(action==='district'){
+   const district=b.dataset.district;
+   if(!AREA_BY_ID[district])return;
+   freshWizard();draft.preferredDistrict=district;persistDraft();
+   $('districtSelectionNote').textContent='✦ Начнём с района «'+AREA_BY_ID[district].name+'». Вы сможете изменить старт и остальные настройки.';
+   $('districtSelectionNote').hidden=false;
+   notify('Выбран район: '+AREA_BY_ID[district].name);
+   return;
+ }
  if(action==='edit-draft'){cfgToFields();goStep(1);showPage('wizard');return}
  if(action==='reset-feedback'){
    if(!window.confirm('Сбросить все отметки «не подходит» для мест?'))return;
