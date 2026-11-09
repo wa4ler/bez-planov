@@ -32,6 +32,7 @@ test('16 interests, free answers, visited exclusions and desired venue appear in
  await rate(page,0,'art','2');await rate(page,0,'coffee','2');
  await page.locator('#likesOne').fill('Люблю музеи, но не люблю долгие прогулки.');
  await next(page);
+ await page.locator('#tasteTwo [data-action="expand-tastes"]').click();
  await rate(page,1,'art','1');await rate(page,1,'coffee','1');
  await page.locator('#likesTwo').fill('Хочу красивую галерею и уютное кафе.');
  await next(page);
