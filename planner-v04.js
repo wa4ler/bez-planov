@@ -52,13 +52,18 @@ const PLACE_ALIASES={
 };
 function normalizePlaceQuery(t){return String(t||'').toLowerCase().replace(/ё/g,'е').replace(/[«»"“”.,!?:;()\n]/g,' ').replace(/\s+/g,' ').trim()}
 function mentionedPlaceIds(text){
- const phrases=normalizePlaceQuery(text).split(/[\n;]+|\s*,\s*/).filter(Boolean);
  const full=normalizePlaceQuery(text);
+ if(!full)return [];
+ const words=full.split(/[^\\p{L}\\p{N}]+/u);
+ function containsName(name){
+   const needle=normalizePlaceQuery(name);
+   if(needle.length<3)return false;
+   // ГУМ and ВДНХ must match as words, not substrings of other text.
+   return needle.length<5?words.includes(needle):full.includes(needle);
+ }
  return Object.keys(PLACES).filter(id=>{
    const place=PLACES[id];
-   const candidates=[place.name,...(PLACE_ALIASES[id]||[])].map(normalizePlaceQuery)
-     .filter(x=>x.length>=5);
-   return candidates.some(x=>full.includes(x));
+   return [place.name,...(PLACE_ALIASES[id]||[])].some(containsName);
  });
 }
 const STORE_PLANS='bezPlanovPlansV4';
@@ -487,14 +492,22 @@ function totalSpend(plan){return plan.days.reduce((s,day)=>s+daySpending(day,pla
 function totalLimit(cfg,days){return cfg.budgetAmount*(cfg.budgetScope==='daily'?days:1)}
 function mapLink(address){return 'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(address||'Москва')}
 function mapLinkYandex(address){return 'https://yandex.ru/maps/?text='+encodeURIComponent(address||'Москва')}
+function itineraryOrigin(day,cfg){
+ // Explicit starting point is used as a map search hint, not as a time estimate.
+ if(cfg.overnightStay&&day.date>cfg.from&&cleanText(cfg.hotelAddress,180))
+   return cleanText(cfg.hotelAddress,180);
+ return cleanText(cfg.startLocation,120)||(cfg.overnightStay?cleanText(cfg.hotelAddress,180):'');
+}
 function dayMap(day,cfg){
  const addresses=day.stops.map(s=>s.kind==='fixed'?s.address:PLACES[s.id]?.address).filter(Boolean);
- if(!addresses.length)return 'https://www.google.com/maps';
- if(addresses.length===1)return mapLink(addresses[0]);
+ const userOrigin=itineraryOrigin(day,cfg);
+ const points=userOrigin?[userOrigin,...addresses]:addresses;
+ if(!points.length)return 'https://www.google.com/maps';
+ if(points.length===1)return mapLink(points[0]);
  const mode=cfg.transport==='car'||cfg.transport==='taxi'?'driving':cfg.transport==='walk'?'transit':'walking';
- let url='https://www.google.com/maps/dir/?api=1&origin='+encodeURIComponent(addresses[0])+
-  '&destination='+encodeURIComponent(addresses[addresses.length-1])+'&travelmode='+mode;
- if(addresses.length>2)url+='&waypoints='+encodeURIComponent(addresses.slice(1,-1).join('|'));
+ let url='https://www.google.com/maps/dir/?api=1&origin='+encodeURIComponent(points[0])+
+  '&destination='+encodeURIComponent(points[points.length-1])+'&travelmode='+mode;
+ if(points.length>2)url+='&waypoints='+encodeURIComponent(points.slice(1,-1).join('|'));
  return url;
 }
 function alternativesFor(plan,dayIndex,stopIndex,feedback){
