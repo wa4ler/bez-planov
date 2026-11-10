@@ -6,6 +6,7 @@ test('Cinematic homepage matches the approved dark photographic direction and wo
  await expect(page.locator('#dateGridHome .date-card img')).toHaveCount(10);
  await expect(page.locator('.hero-art')).toHaveAttribute('src','./assets/dates/picnic.webp');
  await expect.poll(()=>page.locator('.hero-art').evaluate(i=>i.complete&&i.naturalWidth>=1600)).toBe(true);
+ await expect.poll(()=>page.locator('#dateGridHome .date-card img').evaluateAll(items=>items.every(img=>img.complete&&img.naturalWidth>0)),{timeout:30000}).toBe(true);
  const width=await page.evaluate(()=>({window:innerWidth,scroll:document.documentElement.scrollWidth}));
  expect(width.scroll).toBeLessThanOrEqual(width.window+2);
  await page.screenshot({path:'test-results/cinematic-home-'+test.info().project.name.replace(/\W/g,'-')+'.png',fullPage:true});
