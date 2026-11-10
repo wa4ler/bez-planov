@@ -3,84 +3,198 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#f8f7f2">
-<meta name="color-scheme" content="light">
+<meta name="theme-color" content="#18131d">
+<meta name="color-scheme" content="dark">
 <meta property="og:title" content="Без планов — ваши истории начинаются здесь">
-<meta property="og:description" content="Маршруты, в которых есть место вашим желаниям. Москва — для двоих и для себя.">
+<meta property="og:description" content="Маршруты, в которых есть место вашим желаниям. Москва — только для пар.">
 <link rel="icon" type="image/svg+xml" href="./assets/favicon.svg">
 <link rel="manifest" href="./manifest.webmanifest">
-<meta name="description" content="Без планов — маршруты, которые учитывают ваши разные вкусы. Для свиданий, выходных и путешествий по Москве.">
-<title>Без планов — маршрут, в котором есть вы оба</title>
+<meta name="description" content="Без планов — персональные свидания и маршруты для пар в Москве. Два вкуса, один общий день.">
+<title>Без планов — свидания для двоих в Москве</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="./style-v04.css">
 <link rel="stylesheet" href="./premium-v05.css">
+<link rel="stylesheet" href="./cinematic-v06.css">
 <script src="./catalog.js" defer></script>
 <script src="./planner-v04.js" defer></script>
 <script src="./ui-v04.js" defer></script>
 <script src="./premium-v05.js" defer></script>
+<script src="./cinematic-v06.js" defer></script>
 </head>
 <body>
-<header class="header">
- <div class="container header-inner">
-   <button type="button" class="brand" data-screen="home" aria-label="Без планов — на главную">без планов<span>.</span></button>
-   <nav class="navigation" aria-label="Основное меню">
-     <button class="nav-link mobile-hide" type="button" data-screen="home">Главная</button>
-     <button class="nav-link mobile-hide" type="button" data-screen="discover">Места и идеи</button>
-     <button class="nav-link" type="button" data-screen="library">Мои маршруты <span id="savedNumber"></span></button>
-     <button class="nav-cta" type="button" data-action="new">Создать маршрут <span aria-hidden="true">↗</span></button>
-   </nav>
- </div>
-</header>
+<header class="header"><div class="container header-inner">
+<button type="button" class="brand" data-screen="home" aria-label="Без планов — на главную"><svg class="brand-heart" aria-hidden="true" viewBox="0 0 46 44" fill="none"><path d="M23 11.5c-9.5-13-24 .6-16 13L23 41l16-16.5c8-12.4-6.5-26-16-13Z" stroke="currentColor" stroke-width="3.3" stroke-linecap="round"/><path d="M16 10c-4 5-2 13 7 20 9-7 11-15 7-20" stroke="currentColor" stroke-width="3.3" stroke-linecap="round"/></svg><span class="brand-letters"><strong>Без планов</strong><small>Свидания и маршруты для двоих</small></span></button>
+<nav class="navigation" aria-label="Основное меню">
+<button class="nav-link" type="button" data-screen="home">Главная</button>
+<button class="nav-link" type="button" data-screen="discover">Идеи свиданий</button>
+<button class="nav-link" type="button" data-action="new">Подобрать маршрут</button>
+<button class="nav-link nav-library" type="button" data-screen="library">♡ <span>Избранное</span> <span id="savedNumber"></span></button>
+</nav>
+<button class="nav-cta" type="button" data-action="new">Для двоих <span aria-hidden="true">↗</span></button>
+</div></header>
 <main>
 <section class="page home-page" id="page-home">
- <div class="container hero">
-   <div class="hero-copy">
-     <div class="overline"><span class="overline-dot"></span> ВАШИ ЛУЧШИЕ ДНИ НАЧИНАЮТСЯ ЗДЕСЬ</div>
-     <h1>Не просто выйти.<br><em>Прожить своё.</em><br>Вместе.</h1>
-     <p class="hero-lead">Свидание, выходные или путешествие на несколько дней. Расскажите, что любите вы и ваш близкий человек — мы соберём маршрут из мест, впечатлений и моментов, которые хочется запомнить.</p>
-     <div class="hero-cta-row">
-       <button type="button" class="button button-primary button-large" data-action="new">Найти наш маршрут <span aria-hidden="true">↗</span></button>
-       <button type="button" class="button button-ghost button-large" data-screen="discover">Посмотреть места</button>
-     </div>
-     <div class="hero-footnote"><span class="mini-stars">✷ ✷ ✷</span> От одного вечера до двух недель. Без регистрации.</div>
-   </div>
-   <div class="hero-scene">
-     <img src="./assets/hero-moscow.webp" alt="Авторская живописная иллюстрация: пара гуляет по набережной Москвы на закате" class="hero-art" width="350" height="438" fetchpriority="high">
-     <div class="floating-tag floating-one"><span class="tag-icon">♥</span><span><strong>Любит атмосферу</strong><small>Партнёр 1</small></span></div>
-     <div class="floating-tag floating-two"><span class="tag-icon">✦</span><span><strong>Обожает открытия</strong><small>Партнёр 2</small></span></div>
-     <div class="floating-match"><span class="match-icon">✳</span><span>Не выбираем между вами.<br><strong>Собираем общее.</strong></span></div>
-     <div class="hero-vertical">МОСКВА · НАША ИСТОРИЯ</div>
-   </div>
- </div>
- <div class="container promise-row">
-   <div class="promise"><span class="promise-index">01</span><div><strong>Сначала — вы</strong><p>Узнаём, что любит каждый, и чего лучше избегать.</p></div></div>
-   <div class="promise"><span class="promise-index">02</span><div><strong>Потом — ваши дни</strong><p>Связываем места, настроение, бюджет и время.</p></div></div>
-   <div class="promise"><span class="promise-index">03</span><div><strong>Никакой магии «на словах»</strong><p>Объясняем выбор и даём менять даже одну остановку.</p></div></div>
- </div>
- <section class="container editorial-preview">
-  <div class="editorial-heading"><div><div class="overline"><span class="overline-dot"></span> НЕ СЛУЧАЙНЫЕ СПИСКИ</div><h2>Открывайте Москву<br><em>по настроению.</em></h2></div><button class="button button-outline" data-screen="discover" type="button">Все восемь районов <svg class="ui-icon"><use href="./assets/icons.svg#arrow"></use></svg></button></div>
-  <div class="editorial-grid">
-    <button type="button" class="editorial-tile editorial-large" data-action="district" data-district="zamos"><img src="./assets/areas/zamos.svg" alt="Авторский рисунок Замоскворечья" width="620" height="485" loading="lazy"><span class="editorial-tile-copy"><small>Тихая Москва</small><strong>Переулки, в которых<br>хочется потеряться.</strong><span>Замоскворечье ↗</span></span></button>
-    <button type="button" class="editorial-tile" data-action="district" data-district="city"><img src="./assets/areas/city.svg" alt="Авторский рисунок Москва-Сити" width="620" height="485" loading="lazy"><span class="editorial-tile-copy"><small>Увидеть по-новому</small><strong>Современная Москва<br>и невероятные виды.</strong><span>Москва-Сити ↗</span></span></button>
-    <button type="button" class="editorial-tile" data-action="district" data-district="gorky"><img src="./assets/areas/gorky.svg" alt="Авторский рисунок парка" width="620" height="485" loading="lazy"><span class="editorial-tile-copy"><small>Никуда не торопиться</small><strong>Пауза среди зелени<br>и городских набережных.</strong><span>Парк Горького ↗</span></span></button>
-  </div>
-</section>
- <div class="container home-story" id="howItWorks">
-   <div class="section-intro"><div class="overline"><span class="overline-dot"></span> Не анкета ради анкеты</div><h2>Мы спрашиваем<br>о <em>важном.</em></h2><p>Хороший маршрут нельзя собрать по двум галочкам «кафе» и «прогулки». Мы узнаём и мечты, и маленькие «только не это».</p></div>
-   <div class="story-grid">
-     <article class="story-card"><div class="story-mark">✧</div><span class="story-step">Шаг 01</span><h3>У каждого — свой вкус.</h3><p>Пусть один любит искусство, а другой — городские приключения. Отвечайте отдельно, выбирайте не только «нравится», но и «не моё».</p><div class="story-illustration"><span>Я · ♥ искусство</span><span>Мы · ♥ прогулки</span><span>Ты · ♥ открытия</span></div></article>
-     <article class="story-card"><div class="story-mark">✦</div><span class="story-step">Шаг 02</span><h3>Говорите своими словами.</h3><p>Можно своими словами описать идеальный вечер, место мечты и то, что испортит настроение. Эти ответы останутся в вашем профиле.</p><div class="story-quote">«Хочу место, где можно говорить часами, а потом гулять до темноты»</div></article>
-     <article class="story-card story-card-dark"><div class="story-mark">↗</div><span class="story-step">Шаг 03</span><h3>План можно менять.</h3><p>От одного дня до четырнадцати. Закрепляйте купленные билеты, заменяйте остановки, сохраняйте понравившиеся места.</p><div class="story-timeline"><i></i><span>12:00 · прогулка</span><i></i><span>14:00 · ваше место</span><i></i><span>17:00 · сюрприз</span></div></article>
-   </div>
-   <div class="story-banner"><div><div class="overline">Вместо «куда пойдём?»</div><h2>Пусть начнётся<br>ваша история.</h2></div><button type="button" class="button button-light" data-action="new">Собрать маршрут ↗</button></div>
- </div>
+<div class="cinematic-hero">
+<img class="cinematic-hero-img hero-art" src="./assets/dates/picnic.webp" alt="Пара отдыхает на пикнике с видом на Москву на закате" width="1670" height="942" fetchpriority="high">
+<div class="cinematic-hero-overlay"></div>
+<div class="container cinematic-hero-inner"><div class="cinematic-hero-copy">
+<div class="cinematic-eyebrow"><span class="live-dot"></span> МОСКВА · ТОЛЬКО ДЛЯ ПАР</div>
+<h1>Свидания<br>без суеты.<br><em>Идеи — у нас.</em></h1>
+<p>От уютного вечера до маленького путешествия. Два человека, два разных вкуса — и один маршрут, который понравится обоим.</p>
+<div class="hero-cta-row">
+<button type="button" class="button button-primary button-large" data-action="new">♡ Подобрать наше свидание <span aria-hidden="true">↗</span></button>
+<button type="button" class="button button-ghost button-large" data-screen="discover">Смотреть идеи</button>
+</div>
+<div class="hero-proof"><span>♥ Две отдельные анкеты</span><span>◈ С учётом бюджета</span><span>✦ 1–14 дней</span></div>
+</div></div>
+<div class="hero-caption">Ваши впечатления начинаются здесь.</div>
+</div>
+<div class="container date-ideas-home" id="ideas">
+<div class="idea-section-head"><div><div class="cinematic-eyebrow">ВАШИ БУДУЩИЕ ВПЕЧАТЛЕНИЯ</div><h2>Идеи для <em>двоих.</em></h2><p>Выберите настроение — дальше мы учтём вкусы каждого.</p></div><button class="text-forward" data-screen="discover" type="button">Все направления <span aria-hidden="true">↗</span></button></div>
+<div class="idea-search-wrap"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="7.5"/><path d="m16.5 16.5 5 5"/></svg><input id="ideaSearchHome" type="search" placeholder="Найти идею для свидания..." aria-label="Поиск идей для свиданий" autocomplete="off"></div>
+<div class="idea-filters" role="group" aria-label="Фильтр идей для свиданий"><button type="button" class="idea-filter is-active" data-idea-filter="all" data-where="Home" aria-pressed="true">Все идеи</button><button type="button" class="idea-filter" data-idea-filter="romance" data-where="Home" aria-pressed="false">Романтика</button><button type="button" class="idea-filter" data-idea-filter="active" data-where="Home" aria-pressed="false">Активные</button><button type="button" class="idea-filter" data-idea-filter="cozy" data-where="Home" aria-pressed="false">Уютные</button><button type="button" class="idea-filter" data-idea-filter="culture" data-where="Home" aria-pressed="false">Культурные</button><button type="button" class="idea-filter" data-idea-filter="unusual" data-where="Home" aria-pressed="false">Необычные</button><button type="button" class="idea-filter" data-idea-filter="weekend" data-where="Home" aria-pressed="false">На выходные</button></div>
+<div class="date-grid" id="dateGridHome" data-idea-grid="Home"><article class="date-card" data-idea="cafe" data-tags="all cozy romance food" data-name="кафе и кофейни уютные разговоры за кофе">
+<button type="button" class="date-card-main" data-action="date-idea" data-idea="cafe" aria-label="Начать подбор свидания: Кафе и кофейни">
+<img src="./assets/dates/cafe.webp" alt="Пара на свидании в уютном кафе" width="1672" height="941" loading="eager" decoding="async">
+<span class="date-card-shade"></span><span class="date-card-info"><strong>Кафе и кофейни</strong><small>Уютные разговоры за кофе</small></span>
+</button><button type="button" class="date-card-like" data-action="date-like" data-idea="cafe" aria-pressed="false" aria-label="Добавить в любимые идеи: Кафе и кофейни"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6c-2.1-2.1-5.4-2.1-7.5 0L12 6.5l-.5-.5C9.4 3.9 6 3.9 4 6c-2 2.1-2 5.4 0 7.4L12 21l8-7.6c2-2 2-5.3 0-7.4Z"/></svg></button>
+</article>
+<article class="date-card" data-idea="cinema" data-tags="all cozy romance" data-name="кино любимые фильмы и уютные залы">
+<button type="button" class="date-card-main" data-action="date-idea" data-idea="cinema" aria-label="Начать подбор свидания: Кино">
+<img src="./assets/dates/cinema.webp" alt="Пара вместе смотрит кино в зале" width="1672" height="941" loading="eager" decoding="async">
+<span class="date-card-shade"></span><span class="date-card-info"><strong>Кино</strong><small>Любимые фильмы и уютные залы</small></span>
+</button><button type="button" class="date-card-like" data-action="date-like" data-idea="cinema" aria-pressed="false" aria-label="Добавить в любимые идеи: Кино"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6c-2.1-2.1-5.4-2.1-7.5 0L12 6.5l-.5-.5C9.4 3.9 6 3.9 4 6c-2 2.1-2 5.4 0 7.4L12 21l8-7.6c2-2 2-5.3 0-7.4Z"/></svg></button>
+</article>
+<article class="date-card" data-idea="spa" data-tags="all cozy romance weekend" data-name="спа и релакс время для двоих без суеты">
+<button type="button" class="date-card-main" data-action="date-idea" data-idea="spa" aria-label="Начать подбор свидания: СПА и релакс">
+<img src="./assets/dates/spa.webp" alt="Пара отдыхает в бассейне спа-комплекса" width="1672" height="941" loading="eager" decoding="async">
+<span class="date-card-shade"></span><span class="date-card-info"><strong>СПА и релакс</strong><small>Время для двоих без суеты</small></span>
+</button><button type="button" class="date-card-like" data-action="date-like" data-idea="spa" aria-pressed="false" aria-label="Добавить в любимые идеи: СПА и релакс"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6c-2.1-2.1-5.4-2.1-7.5 0L12 6.5l-.5-.5C9.4 3.9 6 3.9 4 6c-2 2.1-2 5.4 0 7.4L12 21l8-7.6c2-2 2-5.3 0-7.4Z"/></svg></button>
+</article>
+<article class="date-card" data-idea="walk" data-tags="all romance active" data-name="прогулки по городу открывать москву вместе">
+<button type="button" class="date-card-main" data-action="date-idea" data-idea="walk" aria-label="Начать подбор свидания: Прогулки по городу">
+<img src="./assets/dates/walk.webp" alt="Пара гуляет по набережной Москвы" width="1672" height="941" loading="eager" decoding="async">
+<span class="date-card-shade"></span><span class="date-card-info"><strong>Прогулки по городу</strong><small>Открывать Москву вместе</small></span>
+</button><button type="button" class="date-card-like" data-action="date-like" data-idea="walk" aria-pressed="false" aria-label="Добавить в любимые идеи: Прогулки по городу"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6c-2.1-2.1-5.4-2.1-7.5 0L12 6.5l-.5-.5C9.4 3.9 6 3.9 4 6c-2 2.1-2 5.4 0 7.4L12 21l8-7.6c2-2 2-5.3 0-7.4Z"/></svg></button>
+</article>
+<article class="date-card" data-idea="culture" data-tags="all culture" data-name="музеи и выставки искусство и новые впечатления">
+<button type="button" class="date-card-main" data-action="date-idea" data-idea="culture" aria-label="Начать подбор свидания: Музеи и выставки">
+<img src="./assets/dates/culture.webp" alt="Пара рассматривает картины в музее" width="1672" height="941" loading="eager" decoding="async">
+<span class="date-card-shade"></span><span class="date-card-info"><strong>Музеи и выставки</strong><small>Искусство и новые впечатления</small></span>
+</button><button type="button" class="date-card-like" data-action="date-like" data-idea="culture" aria-pressed="false" aria-label="Добавить в любимые идеи: Музеи и выставки"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6c-2.1-2.1-5.4-2.1-7.5 0L12 6.5l-.5-.5C9.4 3.9 6 3.9 4 6c-2 2.1-2 5.4 0 7.4L12 21l8-7.6c2-2 2-5.3 0-7.4Z"/></svg></button>
+</article>
+<article class="date-card" data-idea="bowling" data-tags="all active" data-name="боулинг азарт, смех и маленькие победы">
+<button type="button" class="date-card-main" data-action="date-idea" data-idea="bowling" aria-label="Начать подбор свидания: Боулинг">
+<img src="./assets/dates/bowling.webp" alt="Молодая пара празднует страйк в боулинге" width="1672" height="941" loading="eager" decoding="async">
+<span class="date-card-shade"></span><span class="date-card-info"><strong>Боулинг</strong><small>Азарт, смех и маленькие победы</small></span>
+</button><button type="button" class="date-card-like" data-action="date-like" data-idea="bowling" aria-pressed="false" aria-label="Добавить в любимые идеи: Боулинг"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6c-2.1-2.1-5.4-2.1-7.5 0L12 6.5l-.5-.5C9.4 3.9 6 3.9 4 6c-2 2.1-2 5.4 0 7.4L12 21l8-7.6c2-2 2-5.3 0-7.4Z"/></svg></button>
+</article>
+<article class="date-card" data-idea="dinner" data-tags="all romance cozy" data-name="романтический ужин красивый вечер и вкусная еда">
+<button type="button" class="date-card-main" data-action="date-idea" data-idea="dinner" aria-label="Начать подбор свидания: Романтический ужин">
+<img src="./assets/dates/dinner.webp" alt="Романтический ужин пары с видом на вечернюю Москву" width="1672" height="941" loading="eager" decoding="async">
+<span class="date-card-shade"></span><span class="date-card-info"><strong>Романтический ужин</strong><small>Красивый вечер и вкусная еда</small></span>
+</button><button type="button" class="date-card-like" data-action="date-like" data-idea="dinner" aria-pressed="false" aria-label="Добавить в любимые идеи: Романтический ужин"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6c-2.1-2.1-5.4-2.1-7.5 0L12 6.5l-.5-.5C9.4 3.9 6 3.9 4 6c-2 2.1-2 5.4 0 7.4L12 21l8-7.6c2-2 2-5.3 0-7.4Z"/></svg></button>
+</article>
+<article class="date-card" data-idea="planetarium" data-tags="all culture unusual romance" data-name="планетарий звёзды ближе, чем кажется">
+<button type="button" class="date-card-main" data-action="date-idea" data-idea="planetarium" aria-label="Начать подбор свидания: Планетарий">
+<img src="./assets/dates/planetarium.webp" alt="Пара в планетарии смотрит на звёздный купол" width="1672" height="941" loading="eager" decoding="async">
+<span class="date-card-shade"></span><span class="date-card-info"><strong>Планетарий</strong><small>Звёзды ближе, чем кажется</small></span>
+</button><button type="button" class="date-card-like" data-action="date-like" data-idea="planetarium" aria-pressed="false" aria-label="Добавить в любимые идеи: Планетарий"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6c-2.1-2.1-5.4-2.1-7.5 0L12 6.5l-.5-.5C9.4 3.9 6 3.9 4 6c-2 2.1-2 5.4 0 7.4L12 21l8-7.6c2-2 2-5.3 0-7.4Z"/></svg></button>
+</article>
+<article class="date-card" data-idea="picnic" data-tags="all romance cozy weekend" data-name="пикники и закаты природа, свет и время вдвоём">
+<button type="button" class="date-card-main" data-action="date-idea" data-idea="picnic" aria-label="Начать подбор свидания: Пикники и закаты">
+<img src="./assets/dates/picnic.webp" alt="Пара устроила пикник на закате" width="1672" height="941" loading="eager" decoding="async">
+<span class="date-card-shade"></span><span class="date-card-info"><strong>Пикники и закаты</strong><small>Природа, свет и время вдвоём</small></span>
+</button><button type="button" class="date-card-like" data-action="date-like" data-idea="picnic" aria-pressed="false" aria-label="Добавить в любимые идеи: Пикники и закаты"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6c-2.1-2.1-5.4-2.1-7.5 0L12 6.5l-.5-.5C9.4 3.9 6 3.9 4 6c-2 2.1-2 5.4 0 7.4L12 21l8-7.6c2-2 2-5.3 0-7.4Z"/></svg></button>
+</article>
+<article class="date-card" data-idea="workshop" data-tags="all active culture unusual" data-name="мастер-классы создать что-то вместе">
+<button type="button" class="date-card-main" data-action="date-idea" data-idea="workshop" aria-label="Начать подбор свидания: Мастер-классы">
+<img src="./assets/dates/workshop.webp" alt="Пара лепит керамику за гончарными кругами" width="1672" height="941" loading="eager" decoding="async">
+<span class="date-card-shade"></span><span class="date-card-info"><strong>Мастер-классы</strong><small>Создать что-то вместе</small></span>
+</button><button type="button" class="date-card-like" data-action="date-like" data-idea="workshop" aria-pressed="false" aria-label="Добавить в любимые идеи: Мастер-классы"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6c-2.1-2.1-5.4-2.1-7.5 0L12 6.5l-.5-.5C9.4 3.9 6 3.9 4 6c-2 2.1-2 5.4 0 7.4L12 21l8-7.6c2-2 2-5.3 0-7.4Z"/></svg></button>
+</article></div><div class="date-grid-empty" id="emptyHome" hidden>Ничего не нашлось. Попробуйте другое настроение или запрос.</div>
+<p class="photo-disclaimer">Фотографии показывают настроение свиданий, а не конкретные заведения. Наличие мест и цены нужно проверять отдельно.</p>
+</div>
+<section class="container cinematic-story" id="howItWorks">
+<div class="story-visual"><img src="./assets/dates/our-tastes.webp" alt="Двое наслаждаются видом вечерней Москвы" loading="eager" width="1672" height="941"></div>
+<div class="story-copy"><div class="cinematic-eyebrow">ПРО ВАС, А НЕ ПРО ШАБЛОНЫ</div><h2>Ваши вкусы.<br><em>Ваш день.</em></h2>
+<p>Одному хочется уютного кафе. Другому — приключения. Не нужно спорить, чьи желания важнее.</p>
+<div class="story-point"><span>01</span><div><strong>Каждый отвечает отдельно</strong><p>Узнаём, что любите вы оба — и что точно не подходит.</p></div></div>
+<div class="story-point"><span>02</span><div><strong>Учитываем реальность</strong><p>Даты, бюджет, купленные билеты, темп и длительность прогулок.</p></div></div>
+<div class="story-point"><span>03</span><div><strong>Оставляем свободу</strong><p>Можно поменять остановку, сохранить место или перестроить день.</p></div></div>
+<button type="button" class="button button-primary" data-action="new">Составить наш маршрут <span aria-hidden="true">↗</span></button>
+</div></section>
+<div class="container"><section class="cinematic-wide-cta"><img src="./assets/dates/our-route.webp" loading="eager" alt="Пара на вечерней набережной Москвы" width="1672" height="941"><div class="wide-cta-shade"></div><div><div class="cinematic-eyebrow">ВМЕСТО «КУДА ПОЙДЁМ?»</div><h2>Самое интересное —<br><em>впереди.</em></h2><button class="button button-cream" type="button" data-action="new">Начать вдвоём ↗</button></div></section></div>
 </section>
 
 <section class="page discover-page" id="page-discover" hidden>
-<div class="container"><div class="discover-head"><div><div class="overline"><span class="overline-dot"></span> МАЛЕНЬКИЙ ПУТЕВОДИТЕЛЬ</div><h2>У каждого района<br><em>свой характер.</em></h2><p>Не подбирайте маршрут вслепую. Посмотрите атмосферу районов Москвы, отметьте понравившиеся места — и расскажите нам о своих желаниях.</p></div><div class="discover-stamp"><svg class="ui-icon"><use href="./assets/icons.svg#compass"></use></svg><span>8 маршрутов<br>для вдохновения</span></div></div>
-<div class="district-grid"><article class="district-card" data-district="center"><div class="district-visual"><img src="./assets/areas/center.svg" width="620" height="485" loading="eager" alt="Авторская иллюстрация района Сердце Москвы"><span class="district-index">01</span></div><div class="district-body"><div class="district-meta">МОСКВА · ИЛЛЮСТРАЦИЯ РАЙОНА</div><h3>Сердце Москвы</h3><p>Зарядье, площади и старинные улицы</p><button type="button" class="district-action" data-action="district" data-district="center">Хочу сюда <svg class="ui-icon"><use href="./assets/icons.svg#arrow"></use></svg></button></div></article><article class="district-card" data-district="zamos"><div class="district-visual"><img src="./assets/areas/zamos.svg" width="620" height="485" loading="eager" alt="Авторская иллюстрация района Замоскворечье"><span class="district-index">02</span></div><div class="district-body"><div class="district-meta">МОСКВА · ИЛЛЮСТРАЦИЯ РАЙОНА</div><h3>Замоскворечье</h3><p>Галереи, переулки и тихие дворы</p><button type="button" class="district-action" data-action="district" data-district="zamos">Хочу сюда <svg class="ui-icon"><use href="./assets/icons.svg#arrow"></use></svg></button></div></article><article class="district-card" data-district="gorky"><div class="district-visual"><img src="./assets/areas/gorky.svg" width="620" height="485" loading="eager" alt="Авторская иллюстрация района Парки и Хамовники"><span class="district-index">03</span></div><div class="district-body"><div class="district-meta">МОСКВА · ИЛЛЮСТРАЦИЯ РАЙОНА</div><h3>Парки и Хамовники</h3><p>Зелёные дорожки и река</p><button type="button" class="district-action" data-action="district" data-district="gorky">Хочу сюда <svg class="ui-icon"><use href="./assets/icons.svg#arrow"></use></svg></button></div></article><article class="district-card" data-district="arbat"><div class="district-visual"><img src="./assets/areas/arbat.svg" width="620" height="485" loading="eager" alt="Авторская иллюстрация района Арбат и бульвары"><span class="district-index">04</span></div><div class="district-body"><div class="district-meta">МОСКВА · ИЛЛЮСТРАЦИЯ РАЙОНА</div><h3>Арбат и бульвары</h3><p>Камерная Москва и культурный вечер</p><button type="button" class="district-action" data-action="district" data-district="arbat">Хочу сюда <svg class="ui-icon"><use href="./assets/icons.svg#arrow"></use></svg></button></div></article><article class="district-card" data-district="patriki"><div class="district-visual"><img src="./assets/areas/patriki.svg" width="620" height="485" loading="eager" alt="Авторская иллюстрация района Патриаршие пруды"><span class="district-index">05</span></div><div class="district-body"><div class="district-meta">МОСКВА · ИЛЛЮСТРАЦИЯ РАЙОНА</div><h3>Патриаршие пруды</h3><p>Атмосферные встречи и уют</p><button type="button" class="district-action" data-action="district" data-district="patriki">Хочу сюда <svg class="ui-icon"><use href="./assets/icons.svg#arrow"></use></svg></button></div></article><article class="district-card" data-district="city"><div class="district-visual"><img src="./assets/areas/city.svg" width="620" height="485" loading="eager" alt="Авторская иллюстрация района Москва-Сити"><span class="district-index">06</span></div><div class="district-body"><div class="district-meta">МОСКВА · ИЛЛЮСТРАЦИЯ РАЙОНА</div><h3>Москва-Сити</h3><p>Современный город и панорамы</p><button type="button" class="district-action" data-action="district" data-district="city">Хочу сюда <svg class="ui-icon"><use href="./assets/icons.svg#arrow"></use></svg></button></div></article><article class="district-card" data-district="vdnh"><div class="district-visual"><img src="./assets/areas/vdnh.svg" width="620" height="485" loading="eager" alt="Авторская иллюстрация района ВДНХ и Останкино"><span class="district-index">07</span></div><div class="district-body"><div class="district-meta">МОСКВА · ИЛЛЮСТРАЦИЯ РАЙОНА</div><h3>ВДНХ и Останкино</h3><p>Наука, выставки и впечатления</p><button type="button" class="district-action" data-action="district" data-district="vdnh">Хочу сюда <svg class="ui-icon"><use href="./assets/icons.svg#arrow"></use></svg></button></div></article><article class="district-card" data-district="kolomenskoye"><div class="district-visual"><img src="./assets/areas/kolomenskoye.svg" width="620" height="485" loading="eager" alt="Авторская иллюстрация района Коломенское"><span class="district-index">08</span></div><div class="district-body"><div class="district-meta">МОСКВА · ИЛЛЮСТРАЦИЯ РАЙОНА</div><h3>Коломенское</h3><p>История в природном ландшафте</p><button type="button" class="district-action" data-action="district" data-district="kolomenskoye">Хочу сюда <svg class="ui-icon"><use href="./assets/icons.svg#arrow"></use></svg></button></div></article></div>
-<div class="discover-bottom"><span>Иллюстрации авторские, они передают настроение района, а не фотографическую точность объектов.</span><button class="button button-primary" type="button" data-action="new">Перейти к моему маршруту ↗</button></div>
+<div class="container"><div class="discover-v06-title"><div class="cinematic-eyebrow">ИДЕИ ДЛЯ ДВОИХ · МОСКВА</div><h2>Каждое свидание —<br><em>новая история.</em></h2><p>Романтика, открытия, впечатления и простые моменты. Выберите направление, а затем расскажите о себе и партнёре.</p></div>
+<div class="idea-search-wrap"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="7.5"/><path d="m16.5 16.5 5 5"/></svg><input id="ideaSearchDiscover" type="search" placeholder="Что вам хочется попробовать вместе?" aria-label="Поиск идей для свиданий" autocomplete="off"></div>
+<div class="idea-filters" role="group" aria-label="Фильтр идей для свиданий"><button type="button" class="idea-filter is-active" data-idea-filter="all" data-where="Discover" aria-pressed="true">Все идеи</button><button type="button" class="idea-filter" data-idea-filter="romance" data-where="Discover" aria-pressed="false">Романтика</button><button type="button" class="idea-filter" data-idea-filter="active" data-where="Discover" aria-pressed="false">Активные</button><button type="button" class="idea-filter" data-idea-filter="cozy" data-where="Discover" aria-pressed="false">Уютные</button><button type="button" class="idea-filter" data-idea-filter="culture" data-where="Discover" aria-pressed="false">Культурные</button><button type="button" class="idea-filter" data-idea-filter="unusual" data-where="Discover" aria-pressed="false">Необычные</button><button type="button" class="idea-filter" data-idea-filter="weekend" data-where="Discover" aria-pressed="false">На выходные</button></div>
+<div class="date-grid" id="dateGridDiscover" data-idea-grid="Discover"><article class="date-card" data-idea="cafe" data-tags="all cozy romance food" data-name="кафе и кофейни уютные разговоры за кофе">
+<button type="button" class="date-card-main" data-action="date-idea" data-idea="cafe" aria-label="Начать подбор свидания: Кафе и кофейни">
+<img src="./assets/dates/cafe.webp" alt="Пара на свидании в уютном кафе" width="1672" height="941" loading="eager" decoding="async">
+<span class="date-card-shade"></span><span class="date-card-info"><strong>Кафе и кофейни</strong><small>Уютные разговоры за кофе</small></span>
+</button><button type="button" class="date-card-like" data-action="date-like" data-idea="cafe" aria-pressed="false" aria-label="Добавить в любимые идеи: Кафе и кофейни"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6c-2.1-2.1-5.4-2.1-7.5 0L12 6.5l-.5-.5C9.4 3.9 6 3.9 4 6c-2 2.1-2 5.4 0 7.4L12 21l8-7.6c2-2 2-5.3 0-7.4Z"/></svg></button>
+</article>
+<article class="date-card" data-idea="cinema" data-tags="all cozy romance" data-name="кино любимые фильмы и уютные залы">
+<button type="button" class="date-card-main" data-action="date-idea" data-idea="cinema" aria-label="Начать подбор свидания: Кино">
+<img src="./assets/dates/cinema.webp" alt="Пара вместе смотрит кино в зале" width="1672" height="941" loading="eager" decoding="async">
+<span class="date-card-shade"></span><span class="date-card-info"><strong>Кино</strong><small>Любимые фильмы и уютные залы</small></span>
+</button><button type="button" class="date-card-like" data-action="date-like" data-idea="cinema" aria-pressed="false" aria-label="Добавить в любимые идеи: Кино"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6c-2.1-2.1-5.4-2.1-7.5 0L12 6.5l-.5-.5C9.4 3.9 6 3.9 4 6c-2 2.1-2 5.4 0 7.4L12 21l8-7.6c2-2 2-5.3 0-7.4Z"/></svg></button>
+</article>
+<article class="date-card" data-idea="spa" data-tags="all cozy romance weekend" data-name="спа и релакс время для двоих без суеты">
+<button type="button" class="date-card-main" data-action="date-idea" data-idea="spa" aria-label="Начать подбор свидания: СПА и релакс">
+<img src="./assets/dates/spa.webp" alt="Пара отдыхает в бассейне спа-комплекса" width="1672" height="941" loading="eager" decoding="async">
+<span class="date-card-shade"></span><span class="date-card-info"><strong>СПА и релакс</strong><small>Время для двоих без суеты</small></span>
+</button><button type="button" class="date-card-like" data-action="date-like" data-idea="spa" aria-pressed="false" aria-label="Добавить в любимые идеи: СПА и релакс"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6c-2.1-2.1-5.4-2.1-7.5 0L12 6.5l-.5-.5C9.4 3.9 6 3.9 4 6c-2 2.1-2 5.4 0 7.4L12 21l8-7.6c2-2 2-5.3 0-7.4Z"/></svg></button>
+</article>
+<article class="date-card" data-idea="walk" data-tags="all romance active" data-name="прогулки по городу открывать москву вместе">
+<button type="button" class="date-card-main" data-action="date-idea" data-idea="walk" aria-label="Начать подбор свидания: Прогулки по городу">
+<img src="./assets/dates/walk.webp" alt="Пара гуляет по набережной Москвы" width="1672" height="941" loading="eager" decoding="async">
+<span class="date-card-shade"></span><span class="date-card-info"><strong>Прогулки по городу</strong><small>Открывать Москву вместе</small></span>
+</button><button type="button" class="date-card-like" data-action="date-like" data-idea="walk" aria-pressed="false" aria-label="Добавить в любимые идеи: Прогулки по городу"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6c-2.1-2.1-5.4-2.1-7.5 0L12 6.5l-.5-.5C9.4 3.9 6 3.9 4 6c-2 2.1-2 5.4 0 7.4L12 21l8-7.6c2-2 2-5.3 0-7.4Z"/></svg></button>
+</article>
+<article class="date-card" data-idea="culture" data-tags="all culture" data-name="музеи и выставки искусство и новые впечатления">
+<button type="button" class="date-card-main" data-action="date-idea" data-idea="culture" aria-label="Начать подбор свидания: Музеи и выставки">
+<img src="./assets/dates/culture.webp" alt="Пара рассматривает картины в музее" width="1672" height="941" loading="eager" decoding="async">
+<span class="date-card-shade"></span><span class="date-card-info"><strong>Музеи и выставки</strong><small>Искусство и новые впечатления</small></span>
+</button><button type="button" class="date-card-like" data-action="date-like" data-idea="culture" aria-pressed="false" aria-label="Добавить в любимые идеи: Музеи и выставки"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6c-2.1-2.1-5.4-2.1-7.5 0L12 6.5l-.5-.5C9.4 3.9 6 3.9 4 6c-2 2.1-2 5.4 0 7.4L12 21l8-7.6c2-2 2-5.3 0-7.4Z"/></svg></button>
+</article>
+<article class="date-card" data-idea="bowling" data-tags="all active" data-name="боулинг азарт, смех и маленькие победы">
+<button type="button" class="date-card-main" data-action="date-idea" data-idea="bowling" aria-label="Начать подбор свидания: Боулинг">
+<img src="./assets/dates/bowling.webp" alt="Молодая пара празднует страйк в боулинге" width="1672" height="941" loading="eager" decoding="async">
+<span class="date-card-shade"></span><span class="date-card-info"><strong>Боулинг</strong><small>Азарт, смех и маленькие победы</small></span>
+</button><button type="button" class="date-card-like" data-action="date-like" data-idea="bowling" aria-pressed="false" aria-label="Добавить в любимые идеи: Боулинг"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6c-2.1-2.1-5.4-2.1-7.5 0L12 6.5l-.5-.5C9.4 3.9 6 3.9 4 6c-2 2.1-2 5.4 0 7.4L12 21l8-7.6c2-2 2-5.3 0-7.4Z"/></svg></button>
+</article>
+<article class="date-card" data-idea="dinner" data-tags="all romance cozy" data-name="романтический ужин красивый вечер и вкусная еда">
+<button type="button" class="date-card-main" data-action="date-idea" data-idea="dinner" aria-label="Начать подбор свидания: Романтический ужин">
+<img src="./assets/dates/dinner.webp" alt="Романтический ужин пары с видом на вечернюю Москву" width="1672" height="941" loading="eager" decoding="async">
+<span class="date-card-shade"></span><span class="date-card-info"><strong>Романтический ужин</strong><small>Красивый вечер и вкусная еда</small></span>
+</button><button type="button" class="date-card-like" data-action="date-like" data-idea="dinner" aria-pressed="false" aria-label="Добавить в любимые идеи: Романтический ужин"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6c-2.1-2.1-5.4-2.1-7.5 0L12 6.5l-.5-.5C9.4 3.9 6 3.9 4 6c-2 2.1-2 5.4 0 7.4L12 21l8-7.6c2-2 2-5.3 0-7.4Z"/></svg></button>
+</article>
+<article class="date-card" data-idea="planetarium" data-tags="all culture unusual romance" data-name="планетарий звёзды ближе, чем кажется">
+<button type="button" class="date-card-main" data-action="date-idea" data-idea="planetarium" aria-label="Начать подбор свидания: Планетарий">
+<img src="./assets/dates/planetarium.webp" alt="Пара в планетарии смотрит на звёздный купол" width="1672" height="941" loading="eager" decoding="async">
+<span class="date-card-shade"></span><span class="date-card-info"><strong>Планетарий</strong><small>Звёзды ближе, чем кажется</small></span>
+</button><button type="button" class="date-card-like" data-action="date-like" data-idea="planetarium" aria-pressed="false" aria-label="Добавить в любимые идеи: Планетарий"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6c-2.1-2.1-5.4-2.1-7.5 0L12 6.5l-.5-.5C9.4 3.9 6 3.9 4 6c-2 2.1-2 5.4 0 7.4L12 21l8-7.6c2-2 2-5.3 0-7.4Z"/></svg></button>
+</article>
+<article class="date-card" data-idea="picnic" data-tags="all romance cozy weekend" data-name="пикники и закаты природа, свет и время вдвоём">
+<button type="button" class="date-card-main" data-action="date-idea" data-idea="picnic" aria-label="Начать подбор свидания: Пикники и закаты">
+<img src="./assets/dates/picnic.webp" alt="Пара устроила пикник на закате" width="1672" height="941" loading="eager" decoding="async">
+<span class="date-card-shade"></span><span class="date-card-info"><strong>Пикники и закаты</strong><small>Природа, свет и время вдвоём</small></span>
+</button><button type="button" class="date-card-like" data-action="date-like" data-idea="picnic" aria-pressed="false" aria-label="Добавить в любимые идеи: Пикники и закаты"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6c-2.1-2.1-5.4-2.1-7.5 0L12 6.5l-.5-.5C9.4 3.9 6 3.9 4 6c-2 2.1-2 5.4 0 7.4L12 21l8-7.6c2-2 2-5.3 0-7.4Z"/></svg></button>
+</article>
+<article class="date-card" data-idea="workshop" data-tags="all active culture unusual" data-name="мастер-классы создать что-то вместе">
+<button type="button" class="date-card-main" data-action="date-idea" data-idea="workshop" aria-label="Начать подбор свидания: Мастер-классы">
+<img src="./assets/dates/workshop.webp" alt="Пара лепит керамику за гончарными кругами" width="1672" height="941" loading="eager" decoding="async">
+<span class="date-card-shade"></span><span class="date-card-info"><strong>Мастер-классы</strong><small>Создать что-то вместе</small></span>
+</button><button type="button" class="date-card-like" data-action="date-like" data-idea="workshop" aria-pressed="false" aria-label="Добавить в любимые идеи: Мастер-классы"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6c-2.1-2.1-5.4-2.1-7.5 0L12 6.5l-.5-.5C9.4 3.9 6 3.9 4 6c-2 2.1-2 5.4 0 7.4L12 21l8-7.6c2-2 2-5.3 0-7.4Z"/></svg></button>
+</article></div><div class="date-grid-empty" id="emptyDiscover" hidden>Ничего не нашлось. Попробуйте другое настроение или запрос.</div>
+<p class="photo-disclaimer">Карточки — темы для планирования. Это не подтверждение бронирования или наличия мест в конкретном заведении.</p>
+<div class="district-section-head"><div class="cinematic-eyebrow">НЕЗАБЫВАЕМЫЕ ПРОГУЛКИ</div><h2>Город, который <em>ваш.</em></h2><p>Начните с района. Мы будем учитывать его при подборе маршрута.</p></div>
+<div class="mood-district-grid"><article class="mood-district"><img src="./assets/dates/culture.webp" alt="Иллюстративная фотография настроения района Сердце Москвы" loading="eager" width="1672" height="941"><div><h3>Сердце Москвы</h3><p>Зарядье, исторические улицы и вид на реку</p><button type="button" data-action="district" data-district="center">Начать здесь ↗</button></div></article><article class="mood-district"><img src="./assets/dates/cafe.webp" alt="Иллюстративная фотография настроения района Замоскворечье" loading="eager" width="1672" height="941"><div><h3>Замоскворечье</h3><p>Галереи, уютные кафе и переулки</p><button type="button" data-action="district" data-district="zamos">Начать здесь ↗</button></div></article><article class="mood-district"><img src="./assets/dates/picnic.webp" alt="Иллюстративная фотография настроения района Парки и Хамовники" loading="eager" width="1672" height="941"><div><h3>Парки и Хамовники</h3><p>Зелёные дорожки и набережные</p><button type="button" data-action="district" data-district="gorky">Начать здесь ↗</button></div></article><article class="mood-district"><img src="./assets/dates/walk.webp" alt="Иллюстративная фотография настроения района Арбат и бульвары" loading="eager" width="1672" height="941"><div><h3>Арбат и бульвары</h3><p>Прогулки и камерная городская атмосфера</p><button type="button" data-action="district" data-district="arbat">Начать здесь ↗</button></div></article><article class="mood-district"><img src="./assets/dates/dinner.webp" alt="Иллюстративная фотография настроения района Патриаршие пруды" loading="eager" width="1672" height="941"><div><h3>Патриаршие пруды</h3><p>Встречи, кофейни и неспешные вечера</p><button type="button" data-action="district" data-district="patriki">Начать здесь ↗</button></div></article><article class="mood-district"><img src="./assets/dates/our-tastes.webp" alt="Иллюстративная фотография настроения района Москва-Сити" loading="eager" width="1672" height="941"><div><h3>Москва-Сити</h3><p>Панорамы и современная архитектура</p><button type="button" data-action="district" data-district="city">Начать здесь ↗</button></div></article><article class="mood-district"><img src="./assets/dates/planetarium.webp" alt="Иллюстративная фотография настроения района ВДНХ и Останкино" loading="eager" width="1672" height="941"><div><h3>ВДНХ и Останкино</h3><p>Выставки, наука и открытия</p><button type="button" data-action="district" data-district="vdnh">Начать здесь ↗</button></div></article><article class="mood-district"><img src="./assets/dates/our-route.webp" alt="Иллюстративная фотография настроения района Коломенское" loading="eager" width="1672" height="941"><div><h3>Коломенское</h3><p>Природа, история и простор</p><button type="button" data-action="district" data-district="kolomenskoye">Начать здесь ↗</button></div></article></div>
 </div></section>
 <section class="page" id="page-wizard" hidden>
  <div class="container wizard-wrap">
@@ -101,12 +215,8 @@
       </div>
       <div class="inline-info" id="rangeInfo" aria-live="polite">Выберите даты поездки.</div>
       <div class="inline-info district-hint" id="districtSelectionNote" hidden></div>
-      <div class="field"><span class="field-label">Для кого планируем?</span><div class="choice-grid triple" data-choice="peopleMode">
-       <button type="button" class="choice active" data-value="couple" aria-pressed="true"><span>♥</span><strong>Для двоих</strong><small>У каждого свои вкусы</small></button>
-       <button type="button" class="choice" data-value="solo" aria-pressed="false"><span>✦</span><strong>Для себя</strong><small>Только мои желания</small></button>
-       <button type="button" class="choice" data-value="group" aria-pressed="false"><span>◈</span><strong>Компания</strong><small>Предпочтения двух представителей</small></button>
-      </div></div>
-      <div class="field" id="partySizeField" hidden><label for="partySize">Сколько вас всего?</label><select id="partySize" class="control"><option value="3">Трое</option><option value="4">Четверо</option><option value="5">Пятеро</option><option value="6">Шестеро</option></select></div>
+      <div class="couples-only-note"><span>♥</span><div><strong>Маршрут только для вас двоих</strong><p>Дальше каждый отдельно расскажет о своих желаниях.</p></div></div>
+      <div class="field" id="partySizeField" hidden><label for="partySize">Участников</label><select id="partySize" class="control"><option value="2">Двое</option></select></div>
       <div class="field"><span class="field-label">Как связать дни?</span><div class="choice-grid twin" data-choice="journeyMode">
        <button type="button" class="choice active" data-value="connected" aria-pressed="true"><span>⌁</span><strong>Одно путешествие</strong><small>Дни связаны, меньше повторений</small></button>
        <button type="button" class="choice" data-value="independent" aria-pressed="false"><span>▤</span><strong>Отдельные маршруты</strong><small>Своя программа на каждый день</small></button>
@@ -122,7 +232,7 @@
       <div class="field"><label class="checkbox-label"><input type="checkbox" id="overnightStay"> Понадобятся ночёвки между днями</label><small class="field-note">Необязательно: можно планировать несколько отдельных дней без гостиницы.</small></div>
       <div class="form-grid" id="reserveInputs" hidden>
        <div class="field"><label for="transportReserve">Резерв на транспорт / день, ₽</label><input id="transportReserve" class="control" type="number" min="0" max="10000000" step="100" value="500"></div>
-       <div class="field" id="hotelReserveField" hidden><label for="hotelReserve">Резерв на ночёвку, ₽</label><input id="hotelReserve" class="control" type="number" min="0" max="10000000" step="500" value="3000"><small>На всю компанию, за одну ночь.</small></div>
+       <div class="field" id="hotelReserveField" hidden><label for="hotelReserve">Резерв на ночёвку, ₽</label><input id="hotelReserve" class="control" type="number" min="0" max="10000000" step="500" value="3000"><small>На двоих, за одну ночь.</small></div>
       </div>
     </section>
 
@@ -274,7 +384,7 @@
     <div id="matchGraphic" class="match-graphic"></div>
   </section>
   <section class="plan-cover" id="planCover">
-  <div class="plan-cover-text"><span class="overline">МАРШРУТ СОСТАВЛЕН ПОД ВАШИ ОТВЕТЫ</span><h3>Не просто список точек.<br>Ваша маленькая история.</h3><p id="planCoverText"></p><div id="planInterestPills"></div></div><img src="./assets/hero-moscow.webp" alt="" width="350" height="438" loading="lazy"></section>
+  <div class="plan-cover-text"><span class="overline">МАРШРУТ СОСТАВЛЕН ПОД ВАШИ ОТВЕТЫ</span><h3>Не просто список точек.<br>Ваша маленькая история.</h3><p id="planCoverText"></p><div id="planInterestPills"></div></div><img src="./assets/dates/our-route.webp" alt="" width="1672" height="941" loading="eager"></section>
   <div class="itinerary-actions"><button class="button button-outline button-small" id="exportCalendar" type="button"><svg class="ui-icon"><use href="./assets/icons.svg#calendar"></use></svg> Добавить дни в календарь</button><button class="button button-outline button-small" id="printItinerary" type="button"><svg class="ui-icon"><use href="./assets/icons.svg#save"></use></svg> Печать / PDF</button></div>
   <div id="daysTabs" class="day-tabs" role="tablist" aria-label="Выбор дня"></div>
   <div id="dayResult"></div>
@@ -285,7 +395,9 @@
 </section>
 
 <section class="page" id="page-library" hidden>
- <div class="container library-container"><div class="overline"><span class="overline-dot"></span> Ваша небольшая коллекция</div><h2>Впечатления, которые<br>хочется сохранить.</h2><p class="library-lead">Маршруты и любимые места остаются в памяти браузера на этом устройстве. Для синхронизации между устройствами понадобится аккаунт в будущей версии.</p>
+ <div class="container library-container"><div class="overline"><span class="overline-dot"></span> Моменты, которые остаются</div><h2>Впечатления, которые<br>хочется сохранить.</h2><p class="library-lead">Ваши маршруты, идеи и воспоминания хранятся только в этом браузере. Облачная синхронизация появится позже.</p>
+ <div class="cinematic-library-image"><img src="./assets/dates/memories.webp" alt="Пара пересматривает свои совместные фотографии и маршруты" loading="eager" width="1672" height="941"><div><span>НАШИ ИСТОРИИ</span><strong>Есть моменты,<br>которые остаются.</strong></div></div>
+<section class="saved-ideas-panel panel"><div><h3>Любимые идеи свиданий</h3><p>Здесь появятся направления, которые вы отметили сердечком.</p></div><div id="savedDateIdeas" class="saved-date-ideas"></div></section>
  <div class="library-grid"><section class="panel library-panel"><h3>Маршруты</h3><div id="savedPlansList"></div></section><section class="panel library-panel"><h3>Избранные места</h3><div id="favoritePlacesList"></div></section></div>
  <section class="panel memories-panel"><div class="memories-intro"><div class="overline"><span class="overline-dot"></span> НЕ ТОЛЬКО МАРШРУТЫ</div><h3>Ваши маленькие истории.</h3><p>Сохраните момент, который хочется вспомнить. Заметки остаются на этом устройстве.</p></div><form id="memoryForm"><label for="memoryDate">Дата воспоминания</label><input class="control" type="date" id="memoryDate"><label for="memoryText">Что запомнилось?</label><textarea class="control textarea" id="memoryText" maxlength="650" rows="3" placeholder="Сегодня нашли идеальную кофейню, а потом долго гуляли под дождём…"></textarea><button class="button button-primary button-small" type="submit">Сохранить воспоминание ♡</button></form><div id="memoriesList" class="memories-list"></div></section>
  <section class="panel profile-settings">
@@ -297,7 +409,7 @@
  </div>
 </section>
 </main>
-<footer class="footer"><div class="container footer-inner"><button type="button" class="brand" data-screen="home">без планов<span>.</span></button><span>Ищем общее, оставляя место разному.</span><span>Москва · версия 0.5 · 2026</span></div></footer>
+<footer class="footer"><div class="container footer-inner"><button type="button" class="brand" data-screen="home">без планов<span>.</span></button><span>Ищем общее, оставляя место разному.</span><span>Москва · для двоих</span></div></footer>
 <nav class="mobile-bottom-nav" aria-label="Быстрая навигация">
 <button type="button" data-screen="home"><svg class="ui-icon"><use href="./assets/icons.svg#heart"></use></svg><span>Главная</span></button>
 <button type="button" data-screen="discover"><svg class="ui-icon"><use href="./assets/icons.svg#compass"></use></svg><span>Открыть</span></button>

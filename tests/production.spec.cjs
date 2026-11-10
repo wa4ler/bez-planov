@@ -10,17 +10,19 @@ test('Cloudflare actually serves the premium site and end-user flow works',async
   try{
    await page.goto('https://bez-planov.pages.dev/',{waitUntil:'domcontentloaded',timeout:25000});
    const h=await page.locator('h1').first().textContent({timeout:10000});
-   if(h?.includes('Не просто выйти')){deployed=true;break}
+   if(h?.includes('Свидания')){deployed=true;break}
    reason='Homepage still serves old version: '+h?.slice(0,60);
   }catch(e){reason=String(e).slice(0,180)}
   await page.waitForTimeout(10000);
  }
  expect(deployed,'Cloudflare deployment not verified: '+reason).toBe(true);
  await expect(page.locator('.hero-art')).toBeVisible();
+ await expect(page.locator('.hero-art')).toHaveAttribute('src','./assets/dates/picnic.webp');
  await expect.poll(()=>page.locator('.hero-art').evaluate(e=>e.complete&&e.naturalWidth>0)).toBe(true);
  await page.screenshot({path:'test-results/live-home-'+info.project.name.replace(/\W/g,'-')+'.png',fullPage:true});
  await page.locator('[data-screen="discover"]:visible').first().click();
- await expect(page.locator('.district-card')).toHaveCount(8);
+ await expect(page.locator('.mood-district')).toHaveCount(8);
+ await expect(page.locator('#dateGridDiscover .date-card')).toHaveCount(10);
  await page.screenshot({path:'test-results/live-discover-'+info.project.name.replace(/\W/g,'-')+'.png',fullPage:true});
  await page.locator('[data-action="new"]:visible').first().click();
  await expect(page.locator('#page-wizard')).toBeVisible();

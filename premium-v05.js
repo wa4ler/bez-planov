@@ -3,7 +3,8 @@
    This file adds genuine, local-first functionality. No fake AI or live availability. */
 
 const iconSVG=(name,cls='ui-icon')=>'<svg class="'+cls+'" aria-hidden="true"><use href="./assets/icons.svg#'+name+'"></use></svg>';
-const districtImage=id=>'./assets/areas/'+(AREA_BY_ID[id]?id:'center')+'.svg';
+const areaMoodImage={center:'culture',zamos:'cafe',gorky:'picnic',arbat:'walk',patriki:'dinner',city:'our-tastes',vdnh:'planetarium',kolomenskoye:'our-route'};
+const districtImage=id=>'./assets/dates/'+(areaMoodImage[id]||'walk')+'.webp';
 const MOMENTS_STORE='bezPlanovMomentsV05';
 const expandedTastes={0:false,1:false};
 const extraLabels={food:'food',walk:'route',art:'museum',history:'museum',activity:'ticket',

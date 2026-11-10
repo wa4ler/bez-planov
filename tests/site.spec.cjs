@@ -20,7 +20,7 @@ test.afterEach(async ({page},testInfo)=>{
 });
 test('Homepage loads without horizontal overflow and opens wizard',async({page})=>{
   await page.goto('/');
-  await expect(page.locator('h1')).toContainText('Не просто выйти');
+  await expect(page.locator('h1')).toContainText('Свидания');
   await expect(page.locator('.hero-art')).toBeVisible();
   await page.screenshot({path:'test-results/home-'+test.info().project.name.replace(/\W/g,'-')+'.png',fullPage:true});
   const width=await page.evaluate(()=>({screen:window.innerWidth,page:document.documentElement.scrollWidth}));
@@ -83,26 +83,30 @@ test('Couple: distinct preferences, booked event, multi-day output, favorites an
   await page.waitForTimeout(450);
   await page.screenshot({path:'test-results/couple-'+testInfo.project.name.replace(/\W/g,'-')+'.png',fullPage:true});
 });
-test('Solo flow skips partner and can select whole-period budget',async({page})=>{
-  await page.goto('/');
-  await page.locator('.hero-cta-row [data-action="new"]').click();
-  await page.locator('[data-choice="peopleMode"] [data-value="solo"]').click();
-  await page.locator('#dateStart').fill(datePlus(5));
-  await page.locator('#dateEnd').fill(datePlus(6));
-  await page.locator('#budgetAmount').fill('9000');
-  await page.locator('#budgetScope').selectOption('total');
-  await step(page);
-  await giveRatings(page,0,{nature:2,walk:1});
-  await step(page);
-  await expect(page.locator('[data-step="3"]')).toBeVisible();
-  await page.locator('#goalChoices [data-value="rest"]').click();
-  await step(page);
-  await step(page);
-  await expect(page.locator('[data-step="5"]')).toBeVisible();
-  await page.locator('#finishPlan').click();
-  await expect(page.locator('#page-result')).toBeVisible();
-  await expect(page.locator('#matchSection')).toBeHidden();
-  await expect(page.locator('#daysTabs .day-tab')).toHaveCount(2);
+test('Only couples: two profiles required and budget can cover whole period',async({page})=>{
+ await page.goto('/');
+ await page.locator('.hero-cta-row [data-action="new"]').click();
+ await expect(page.locator('[data-choice="peopleMode"]')).toHaveCount(0);
+ await expect(page.locator('.couples-only-note')).toContainText('двоих');
+ await page.locator('#dateStart').fill(datePlus(5));
+ await page.locator('#dateEnd').fill(datePlus(6));
+ await page.locator('#budgetAmount').fill('12000');
+ await page.locator('#budgetScope').selectOption('total');
+ await step(page);
+ await giveRatings(page,0,{nature:2,walk:1});
+ await step(page);
+ await expect(page.locator('[data-step="2"]')).toBeVisible();
+ await giveRatings(page,1,{art:2,nature:1});
+ await step(page);
+ await page.locator('#goalChoices [data-value="rest"]').click();
+ await step(page);await step(page);
+ await page.locator('#finishPlan').click();
+ await expect(page.locator('#page-result')).toBeVisible();
+ await expect(page.locator('#matchSection')).toBeVisible();
+ await expect(page.locator('#daysTabs .day-tab')).toHaveCount(2);
+ const config=await page.evaluate(()=>currentPlan.config);
+ expect(config.peopleMode).toBe('couple');
+ expect(config.partySize).toBe(2);
 });
 test('Hard restriction removes museum suggestions for both-person plan',async({page})=>{
   await page.goto('/');
@@ -139,7 +143,7 @@ test('Personal profile persists between new routes and can be cleared locally',a
   await expect(page.locator('[data-step="1"]')).toBeVisible();
   await expect(page.locator('#nameOne')).toHaveValue('Маша');
   await page.locator('[data-screen="home"]').first().click();
-  await page.locator('[data-action="new"]').first().click();
+  await page.locator('[data-action="new"]:visible').first().click();
   await expect(page.locator('#nameOne')).toHaveValue('Маша');
   await expect(page.locator('#tasteOne [data-pref="nature"][data-rating="2"]')).toHaveAttribute('aria-pressed','true');
   await page.locator('[data-screen="library"]:visible').first().click();

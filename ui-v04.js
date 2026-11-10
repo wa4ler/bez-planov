@@ -82,9 +82,10 @@ function cfgToFields(){
  renderTaste();reflectMode();reflectBudget();reflectDates();renderEvents();
 }
 function reflectMode(){
- $('partySizeField').hidden=draft.peopleMode!=='group';
- const person1=$('personOneTitle');
- person1.textContent=draft.peopleMode==='solo'?'А что нравится именно вам?':'А что нравится вам?';
+ // Launch scope: exclusively a pair, not solo or group.
+ draft.peopleMode='couple';draft.partySize=2;
+ $('partySizeField').hidden=true;
+ $('personOneTitle').textContent='А что нравится вам?';
 }
 function reflectBudget(){
  $('reserveInputs').hidden=draft.budgetCovers!=='all';
@@ -103,7 +104,7 @@ function reflectDates(){
  $('eventDate').min=draft.from;$('eventDate').max=draft.to;
  if(!dates.includes($('eventDate').value))$('eventDate').value=draft.from;
 }
-function effectiveStepList(){return draft.peopleMode==='solo'?[0,1,3,4,5]:[0,1,2,3,4,5]}
+function effectiveStepList(){return [0,1,2,3,4,5]}
 function goStep(n){
  currentStep=n;
  document.querySelectorAll('.wizard-step').forEach(s=>s.hidden=Number(s.dataset.step)!==n);
@@ -168,7 +169,7 @@ function freshWizard(){
    !window.confirm('Начать новый маршрут? Мы сохраним ваши предпочтения, но даты и закреплённые события будут сброшены.'))return;
  draft=buildDefault();
  // Product promise: a couple should not have to teach the planner about themselves every time.
- const keep=['peopleMode','partySize','profiles','foodNeeds','restrictions','walkingLevel',
+ const keep=['profiles','foodNeeds','restrictions','walkingLevel',
    'alreadyVisited','dreamPlaces',
    'venuePreference','transport','stepFree','startLocation','hotelAddress'];
  for(const key of keep)draft[key]=clone(current[key]);
@@ -230,6 +231,7 @@ function renderReview(){
 }
 function updateSavedCount(){const n=getSaved().length;$('savedNumber').textContent=n?'('+n+')':''}
 function startPlan(){
+ draft.peopleMode='couple';draft.partySize=2;
  if(currentStep!==5)return;
  const err=validateConfig(draft);
  if(err){$('wizardError').textContent=err;return}
@@ -456,7 +458,7 @@ function toggleFavorite(id){
 }
 function normalizeLegacy(p){
  const cfg=buildDefault();Object.assign(cfg,p.config||{});
- cfg.peopleMode='couple';cfg.partySize=Number(cfg.groupSize)||2;
+ cfg.peopleMode='couple';cfg.partySize=2;
  cfg.profiles=[{name:'',ratings:{},likes:'',dream:'',avoid:''},{name:'',ratings:{},likes:'',dream:'',avoid:''}];
  cfg.from=p.config?.from||p.days[0]?.date||cfg.from;
  cfg.to=p.config?.to||p.days[p.days.length-1]?.date||cfg.from;
@@ -468,7 +470,7 @@ function normalizeLegacy(p){
  return {schema:4,id:'legacy-'+p.id,config:cfg,days,signals:textSignals(cfg),createdAt:p.createdAt||new Date().toISOString(),meta:{engine:'legacy'}};
 }
 function renderLibrary(){
- const plans=getSaved(),favs=getFavorites(),legacy=getLegacy();
+ const plans=getSaved().filter(p=>!p.config?.peopleMode||p.config.peopleMode==='couple'),favs=getFavorites(),legacy=getLegacy();
  $('savedPlansList').innerHTML=plans.length||legacy.length?
   plans.map(p=>'<div class="saved-entry"><div><h4>'+escapeHTML(p.days.length===1?'День в Москве':p.days.length+' '+dayWord(p.days.length)+' в Москве')+'</h4>'+
    '<p>'+escapeHTML(dateLabel(p.config.from))+(p.config.to!==p.config.from?' — '+escapeHTML(dateLabel(p.config.to)):'')+
@@ -527,7 +529,7 @@ function handleGlobalClick(e){
  }
  if(action==='clear-local'){
    if(!window.confirm('Удалить ответы анкеты, избранное, отзывы и все сохранённые маршруты из этого браузера?'))return;
-   for(const key of [STORE_PLANS,STORE_FAV,STORE_DRAFT,STORE_FEEDBACK,STORE_PREVIOUS,'bezPlanovPlans','bezPlanovMomentsV05'])
+   for(const key of [STORE_PLANS,STORE_FAV,STORE_DRAFT,STORE_FEEDBACK,STORE_PREVIOUS,'bezPlanovPlans','bezPlanovMomentsV05','bezPlanovSavedThemesV06','bezPlanovSavedThemesV06'])
      localStorage.removeItem(key);
    draft=buildDefault();cfgToFields();updateSavedCount();renderLibrary();
    notify('Локальные данные удалены');
@@ -611,6 +613,8 @@ function init(){
   draft={...buildDefault(),...previous,profiles:previous.profiles.map(p=>({...buildDefault().profiles[0],...p}))};
   if(!datesBetween(draft.from,draft.to).length||draft.from<localISO(new Date())){draft.from=localISO(new Date());draft.to=draft.from;draft.events=[]}
  }else draft=buildDefault();
+ // Keep existing answers while enforcing the two-person launch experience.
+ draft.peopleMode='couple';draft.partySize=2;
  cfgToFields();goStep(0);updateSavedCount();
  document.addEventListener('click',handleGlobalClick);
  $('wizard').addEventListener('click',handleFormClick);

@@ -3,18 +3,16 @@ function future(days){const d=new Date();d.setDate(d.getDate()+days);const p=n=>
 async function begin(page){await page.goto('/');await page.locator('.hero-cta-row [data-action="new"]').click()}
 async function next(page){await page.locator('#nextStep').click()}
 async function rate(page,p,key,val){await page.locator('#taste'+(p===0?'One':'Two')+' [data-pref="'+key+'"][data-rating="'+val+'"]').click()}
-test('Hand-painted hero, all eight illustrated districts, and district selection work',async({page})=>{
+test('Cinematic hero, ten date ideas, and eight neighborhood starters',async({page})=>{
  await page.goto('/');
  await expect(page.locator('.hero-art')).toBeVisible();
- await expect.poll(()=>page.locator('.hero-art').evaluate(e=>e.complete&&e.naturalWidth>0)).toBe(true);
- await expect(page.locator('.hero-art')).toHaveAttribute('src','./assets/hero-moscow.webp');
+ await expect.poll(()=>page.locator('.hero-art').evaluate(e=>e.complete&&e.naturalWidth>=1600)).toBe(true);
+ await expect(page.locator('.hero-art')).toHaveAttribute('src','./assets/dates/picnic.webp');
+ await expect(page.locator('#dateGridHome .date-card')).toHaveCount(10);
  await page.locator('[data-screen="discover"]:visible').first().click();
  await expect(page.locator('#page-discover')).toBeVisible();
- await expect(page.locator('.district-card')).toHaveCount(8);
- const cards=page.locator('.district-card img');
- expect(await cards.count()).toBe(8);
- await expect.poll(()=>cards.first().evaluate(e=>e.complete&&e.naturalWidth>0)).toBe(true);
- await page.locator('.district-card[data-district="zamos"] .district-action').click();
+ await expect(page.locator('.mood-district')).toHaveCount(8);
+ await page.locator('.mood-district button[data-district="zamos"]').click();
  await expect(page.locator('#page-wizard')).toBeVisible();
  await expect(page.locator('#districtSelectionNote')).toContainText('Замоскворечье');
  await page.screenshot({path:'test-results/premium-discover-'+test.info().project.name.replace(/\W/g,'-')+'.png',fullPage:true});
@@ -55,11 +53,13 @@ test('16 interests, free answers, visited exclusions and desired venue appear in
 test('Calendar export contains complete selected dates and print contains every day',async({page})=>{
  await page.goto('/');
  await page.locator('.hero-cta-row [data-action="new"]').click();
- await page.locator('[data-choice="peopleMode"] [data-value="solo"]').click();
+ await expect(page.locator('[data-choice="peopleMode"]')).toHaveCount(0);
  await page.locator('#dateStart').fill(future(8));
  await page.locator('#dateEnd').fill(future(10));
  await next(page);
  await rate(page,0,'walk','2');await rate(page,0,'nature','1');
+ await next(page);
+ await rate(page,1,'walk','1');await rate(page,1,'art','2');
  await next(page);
  await page.locator('#goalChoices [data-value="rest"]').click();
  await next(page);await next(page);
@@ -88,7 +88,7 @@ test('Memories are private, persisted across reloads, and deleted when confirmed
 test('Mobile all screens remain in viewport without horizontal overflow',async({page})=>{
  await page.goto('/');
  for(const name of ['home','discover','library','wizard']){
-  if(name==='wizard')await page.locator('[data-action="new"]').first().click();
+  if(name==='wizard')await page.locator('[data-action="new"]:visible').first().click();
   else await page.locator('[data-screen="'+name+'"]:visible').first().click();
   await expect(page.locator('#page-'+name)).toBeVisible();
   const sizes=await page.evaluate(()=>({view:innerWidth,scroll:document.documentElement.scrollWidth}));

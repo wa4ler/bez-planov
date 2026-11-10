@@ -133,10 +133,10 @@ const SIGNAL_WORDS=[
  {key:'walk',rx:/гуля|прогул|пешком|улиц|переул|набережн|дворик/i},
  {key:'art',rx:/музе|выстав|галере|искусств|картин/i},
  {key:'history',rx:/истори|старин|архитектур|собор|дворц|храм/i},
- {key:'activity',rx:/развлеч|квест|игр[уаы]|активн|аттракцион/i},
- {key:'nature',rx:/природ|пар[к][аеу]?|лес|зелень|саду|сада|сквер/i},
- {key:'romance',rx:/романт|уют|красив|атмосфер|свидан/i},
- {key:'unusual',rx:/необыч|нов[оы]е|удив|космос|планетар|эксперимент/i},
+ {key:'activity',rx:/развлеч|квест|игр[уаы]|активн|аттракцион|боулинг|картинг|каток/i},
+ {key:'nature',rx:/природ|пар[к][аеу]?|лес|зелень|саду|сада|сквер|пикник|закат/i},
+ {key:'romance',rx:/романт|уют|красив|атмосфер|свидан|спа|массаж|релакс/i},
+ {key:'unusual',rx:/необыч|нов[оы]е|удив|космос|планетар|эксперимент|мастер-класс|гончар|керамик/i},
  {key:'views',rx:/вид[ыа]|панорам|крыше|высот|смотров/i},
  {key:'cinema',rx:/кино|театр|спектакл/i},
  {key:'coffee',rx:/кофейн|кофей|кофе|капучино|латте|завтрак/i},
@@ -364,8 +364,7 @@ function validateConfig(cfg){
  if(!d.length)return 'Выберите даты начала и окончания.';
  if(d.length>14)return 'Период пока ограничен 14 днями.';
  if(cfg.from<localISO(new Date()))return 'Поставьте сегодняшнюю или будущую дату.';
- if(!['couple','solo','group'].includes(cfg.peopleMode))return 'Выберите формат компании.';
- if(cfg.peopleMode==='group'&&!(cfg.partySize>=3&&cfg.partySize<=6))return 'Укажите число участников от 3 до 6.';
+ if(cfg.peopleMode!=='couple'||cfg.partySize!==2)return 'Пока создаём маршруты только для двоих.';
  if(!Number.isFinite(cfg.budgetAmount)||cfg.budgetAmount<500||cfg.budgetAmount>10000000)return 'Укажите бюджет от 500 до 10 000 000 ₽.';
  if(!['daily','total'].includes(cfg.budgetScope))return 'Выберите режим бюджета.';
  const start=minutes(cfg.dayStart),end=minutes(cfg.dayEnd);
