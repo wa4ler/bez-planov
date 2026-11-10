@@ -46,7 +46,7 @@
      <div class="hero-footnote"><span class="mini-stars">✷ ✷ ✷</span> От одного вечера до двух недель. Без регистрации.</div>
    </div>
    <div class="hero-scene">
-     <img src="./assets/hero-moscow.webp" alt="Авторская живописная иллюстрация: пара гуляет по набережной Москвы на закате" class="hero-art" width="350" height="438" fetchpriority="high">
+     <img src="./assets/design-v1/01-hero-couple-moscow.svg" alt="Авторская иллюстрация двух людей на московской набережной в лучах заката" class="hero-art" width="1600" height="1200" fetchpriority="high">
      <div class="floating-tag floating-one"><span class="tag-icon">♥</span><span><strong>Любит атмосферу</strong><small>Партнёр 1</small></span></div>
      <div class="floating-tag floating-two"><span class="tag-icon">✦</span><span><strong>Обожает открытия</strong><small>Партнёр 2</small></span></div>
      <div class="floating-match"><span class="match-icon">✳</span><span>Не выбираем между вами.<br><strong>Собираем общее.</strong></span></div>
@@ -68,6 +68,7 @@
 </section>
  <div class="container home-story" id="howItWorks">
    <div class="section-intro"><div class="overline"><span class="overline-dot"></span> Не анкета ради анкеты</div><h2>Мы спрашиваем<br>о <em>важном.</em></h2><p>Хороший маршрут нельзя собрать по двум галочкам «кафе» и «прогулки». Мы узнаём и мечты, и маленькие «только не это».</p></div>
+   <div class="story-premium-art"><img src="./assets/design-v1/02-how-it-works.svg" width="1400" height="860" loading="lazy" alt="Визуальная история: путевой дневник, маршрут с несколькими точками и открытка из путешествия"><div class="story-art-label">Не просто анкета. Начало вашей истории.</div></div>
    <div class="story-grid">
      <article class="story-card"><div class="story-mark">✧</div><span class="story-step">Шаг 01</span><h3>У каждого — свой вкус.</h3><p>Пусть один любит искусство, а другой — городские приключения. Отвечайте отдельно, выбирайте не только «нравится», но и «не моё».</p><div class="story-illustration"><span>Я · ♥ искусство</span><span>Мы · ♥ прогулки</span><span>Ты · ♥ открытия</span></div></article>
      <article class="story-card"><div class="story-mark">✦</div><span class="story-step">Шаг 02</span><h3>Говорите своими словами.</h3><p>Можно своими словами описать идеальный вечер, место мечты и то, что испортит настроение. Эти ответы останутся в вашем профиле.</p><div class="story-quote">«Хочу место, где можно говорить часами, а потом гулять до темноты»</div></article>
@@ -175,9 +176,9 @@
       <button type="button" class="select-chip" data-value="move">Больше движения</button>
      </div></div>
      <div class="field"><span class="field-label">Каким должен быть ритм?</span><div class="choice-grid triple" data-choice="pace">
-      <button type="button" class="choice" data-value="slow" aria-pressed="false"><span>☁</span><strong>Без спешки</strong><small>Меньше мест, больше времени</small></button>
-      <button type="button" class="choice active" data-value="balanced" aria-pressed="true"><span>◒</span><strong>В меру</strong><small>События и паузы</small></button>
-      <button type="button" class="choice" data-value="active" aria-pressed="false"><span>✳</span><strong>Насыщенно</strong><small>Максимум впечатлений</small></button>
+      <button type="button" class="choice" data-value="slow" aria-pressed="false"><span><svg class="pace-svg" aria-hidden="true"><use href="./assets/design-v1/06-pace.svg#slow"></use></svg></span><strong>Без спешки</strong><small>Меньше мест, больше времени</small></button>
+      <button type="button" class="choice active" data-value="balanced" aria-pressed="true"><span><svg class="pace-svg" aria-hidden="true"><use href="./assets/design-v1/06-pace.svg#balanced"></use></svg></span><strong>В меру</strong><small>События и паузы</small></button>
+      <button type="button" class="choice" data-value="active" aria-pressed="false"><span><svg class="pace-svg" aria-hidden="true"><use href="./assets/design-v1/06-pace.svg#active"></use></svg></span><strong>Насыщенно</strong><small>Максимум впечатлений</small></button>
      </div></div>
      <div class="field"><label for="surpriseLevel">Насколько важны новые впечатления?</label><input class="range" id="surpriseLevel" type="range" min="0" max="100" step="25" value="50"><div class="range-extremes"><span>Любимые проверенные места</span><span>Хочется удивляться</span></div></div>
      <div class="field"><label for="perfectDay">Представьте идеальный день вместе. Какой он?</label><textarea id="perfectDay" class="control textarea" rows="4" maxlength="850" placeholder="Например: нет спешки, сначала вкусно позавтракать, потом погулять по необычному району, попасть куда-то красивое, а вечером посидеть вдвоём с видом на город…"></textarea></div>
@@ -194,7 +195,7 @@
      </div>
      <div class="form-grid">
       <div class="field"><label for="startLocation">Откуда стартуете?</label><input id="startLocation" class="control" maxlength="120" placeholder="Метро Тверская, адрес или район"></div>
-      <div class="field"><label for="transport">Как будете перемещаться?</label><select id="transport" class="control"><option value="walk">Метро и пешком</option><option value="foot">Пешком, если возможно</option><option value="taxi">Такси</option><option value="car">На машине</option></select></div>
+      <div class="field"><label for="transport">Как будете перемещаться?</label><select id="transport" class="control"><option value="walk">Метро и пешком</option><option value="foot">Пешком, если возможно</option><option value="taxi">Такси</option><option value="car">На машине</option></select><div class="transport-grid" role="group" aria-label="Быстрый выбор транспорта"><button type="button" class="transport-pick active" data-transport-mode="walk" aria-pressed="true"><svg class="design-icon" aria-hidden="true"><use href="./assets/design-v1/07-transport.svg#metro"></use></svg><span>Метро</span></button><button type="button" class="transport-pick" data-transport-mode="foot" aria-pressed="false"><svg class="design-icon" aria-hidden="true"><use href="./assets/design-v1/07-transport.svg#walk"></use></svg><span>Пешком</span></button><button type="button" class="transport-pick" data-transport-mode="taxi" aria-pressed="false"><svg class="design-icon" aria-hidden="true"><use href="./assets/design-v1/07-transport.svg#taxi"></use></svg><span>Такси</span></button><button type="button" class="transport-pick" data-transport-mode="car" aria-pressed="false"><svg class="design-icon" aria-hidden="true"><use href="./assets/design-v1/07-transport.svg#car"></use></svg><span>Авто</span></button></div></div>
      </div>
      <div class="form-grid">
       <div class="field"><label for="walkingLevel">Сколько ходить комфортно?</label><select id="walkingLevel" class="control"><option value="low">Мало · без долгих прогулок</option><option value="medium" selected>Умеренно</option><option value="high">Любим много гулять</option></select></div>
@@ -239,7 +240,7 @@
       <div id="eventList" class="event-list" aria-live="polite"></div>
      </div>
      <div class="final-review">
-       <div class="review-head"><span class="review-icon">◈</span><div><strong>Ваши предпочтения</strong><p>Посмотрите, как мы сопоставили ваши ответы.</p></div></div>
+       <div class="review-head"><span class="review-icon"><svg class="design-icon" aria-hidden="true"><use href="./assets/design-v1/10-insights.svg#match"></use></svg></span><div><strong>Ваши предпочтения</strong><p>Посмотрите, как мы сопоставили ваши ответы.</p></div></div>
        <div id="pairPreview"></div>
        <div id="recognizedPreview" class="recognized-box"></div>
        <div id="reviewInfo" class="review-info"></div>
@@ -267,14 +268,14 @@
 
 <section class="page" id="page-result" hidden>
  <div class="container results-container">
-  <div class="results-top"><div><div class="overline"><span class="overline-dot"></span> Маршрут, в котором вы оба</div><h2 id="resultsTitle">Ваши дни в Москве.</h2><p id="resultsSubtitle"></p></div><div class="result-actions"><button type="button" class="button button-outline button-small" id="editPlan">⚙ Изменить анкету</button><button type="button" class="button button-outline button-small" id="sharePlan">↗ Поделиться</button><button type="button" class="button button-primary button-small" id="savePlan">♡ Сохранить</button></div></div>
+  <div class="results-top"><div><div class="overline"><span class="overline-dot"></span> Маршрут, в котором вы оба</div><h2 id="resultsTitle">Ваши дни в Москве.</h2><p id="resultsSubtitle"></p></div><div class="result-actions"><button type="button" class="button button-outline button-small" id="editPlan"><svg class="design-icon" aria-hidden="true"><use href="./assets/design-v1/08-actions.svg#edit"></use></svg> Изменить анкету</button><button type="button" class="button button-outline button-small" id="sharePlan"><svg class="design-icon" aria-hidden="true"><use href="./assets/design-v1/08-actions.svg#share"></use></svg> Поделиться</button><button type="button" class="button button-primary button-small" id="savePlan"><svg class="design-icon" aria-hidden="true"><use href="./assets/design-v1/08-actions.svg#favorite"></use></svg> Сохранить</button></div></div>
   <div id="planStats" class="stat-grid"></div>
   <section class="match-section panel" id="matchSection" aria-label="Сходство ваших интересов">
     <div class="match-copy"><span class="overline">Ваш общий маршрут</span><h3>Где ваши вкусы<br>встречаются?</h3><p id="matchExplanation"></p></div>
     <div id="matchGraphic" class="match-graphic"></div>
   </section>
   <section class="plan-cover" id="planCover">
-  <div class="plan-cover-text"><span class="overline">МАРШРУТ СОСТАВЛЕН ПОД ВАШИ ОТВЕТЫ</span><h3>Не просто список точек.<br>Ваша маленькая история.</h3><p id="planCoverText"></p><div id="planInterestPills"></div></div><img src="./assets/hero-moscow.webp" alt="" width="350" height="438" loading="lazy"></section>
+  <div class="plan-cover-text"><span class="overline"><svg class="design-icon" aria-hidden="true"><use href="./assets/design-v1/10-insights.svg#match"></use></svg> МАРШРУТ СОСТАВЛЕН ПОД ВАШИ ОТВЕТЫ</span><h3>Не просто список точек.<br>Ваша маленькая история.</h3><p id="planCoverText"></p><div id="planInterestPills"></div></div><img src="./assets/design-v1/03-route-map.svg" alt="" width="1400" height="860" loading="lazy"></section>
   <div class="itinerary-actions"><button class="button button-outline button-small" id="exportCalendar" type="button"><svg class="ui-icon"><use href="./assets/icons.svg#calendar"></use></svg> Добавить дни в календарь</button><button class="button button-outline button-small" id="printItinerary" type="button"><svg class="ui-icon"><use href="./assets/icons.svg#save"></use></svg> Печать / PDF</button></div>
   <div id="daysTabs" class="day-tabs" role="tablist" aria-label="Выбор дня"></div>
   <div id="dayResult"></div>
@@ -286,6 +287,7 @@
 
 <section class="page" id="page-library" hidden>
  <div class="container library-container"><div class="overline"><span class="overline-dot"></span> Ваша небольшая коллекция</div><h2>Впечатления, которые<br>хочется сохранить.</h2><p class="library-lead">Маршруты и любимые места остаются в памяти браузера на этом устройстве. Для синхронизации между устройствами понадобится аккаунт в будущей версии.</p>
+ <div class="library-premium-art"><img src="./assets/design-v1/04-memories-library.svg" width="1400" height="860" loading="lazy" alt="Иллюстрация путевого альбома с сохранёнными открытками, местами и воспоминаниями"><div class="library-art-copy"><strong>Моменты остаются.</strong><span>Ваши маршруты, любимые места и небольшие истории.</span></div></div>
  <div class="library-grid"><section class="panel library-panel"><h3>Маршруты</h3><div id="savedPlansList"></div></section><section class="panel library-panel"><h3>Избранные места</h3><div id="favoritePlacesList"></div></section></div>
  <section class="panel memories-panel"><div class="memories-intro"><div class="overline"><span class="overline-dot"></span> НЕ ТОЛЬКО МАРШРУТЫ</div><h3>Ваши маленькие истории.</h3><p>Сохраните момент, который хочется вспомнить. Заметки остаются на этом устройстве.</p></div><form id="memoryForm"><label for="memoryDate">Дата воспоминания</label><input class="control" type="date" id="memoryDate"><label for="memoryText">Что запомнилось?</label><textarea class="control textarea" id="memoryText" maxlength="650" rows="3" placeholder="Сегодня нашли идеальную кофейню, а потом долго гуляли под дождём…"></textarea><button class="button button-primary button-small" type="submit">Сохранить воспоминание ♡</button></form><div id="memoriesList" class="memories-list"></div></section>
  <section class="panel profile-settings">
