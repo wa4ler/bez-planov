@@ -207,11 +207,11 @@
    <div class="wizard-main panel">
     <section class="wizard-step" data-step="0">
       <div class="step-kicker">01 / ВРЕМЯ И ВОЗМОЖНОСТИ</div>
-      <h3>Когда отправимся?</h3>
+      <h3 class="bp-calendar-heading"><img class="bp-calendar-icon" src="./assets/icon-calendar-premium.svg" width="27" height="27" alt="" aria-hidden="true">Когда отправимся?</h3>
       <p class="section-description">Один красивый вечер, длинные выходные или несколько дней открытий — подойдёт любой формат.</p>
       <div class="form-grid">
-        <div class="field"><label for="dateStart">Начало</label><input type="date" class="control" id="dateStart" required></div>
-        <div class="field"><label for="dateEnd">Окончание</label><input type="date" class="control" id="dateEnd" required></div>
+        <div class="field bp-calendar-field"><label for="dateStart"><img class="bp-calendar-icon" src="./assets/icon-calendar-premium.svg" width="27" height="27" alt="" aria-hidden="true">Начало</label><input type="date" class="control" id="dateStart" required></div>
+        <div class="field bp-calendar-field"><label for="dateEnd"><img class="bp-calendar-icon" src="./assets/icon-calendar-premium.svg" width="27" height="27" alt="" aria-hidden="true">Окончание</label><input type="date" class="control" id="dateEnd" required></div>
       </div>
       <div class="inline-info" id="rangeInfo" aria-live="polite">Выберите даты поездки.</div>
       <div class="inline-info district-hint" id="districtSelectionNote" hidden></div>
@@ -385,7 +385,7 @@
   </section>
   <section class="plan-cover" id="planCover">
   <div class="plan-cover-text"><span class="overline">МАРШРУТ СОСТАВЛЕН ПОД ВАШИ ОТВЕТЫ</span><h3>Не просто список точек.<br>Ваша маленькая история.</h3><p id="planCoverText"></p><div id="planInterestPills"></div></div><img src="./assets/dates/our-route.webp" alt="" width="1672" height="941" loading="eager"></section>
-  <div class="itinerary-actions"><button class="button button-outline button-small" id="exportCalendar" type="button"><svg class="ui-icon"><use href="./assets/icons.svg#calendar"></use></svg> Добавить дни в календарь</button><button class="button button-outline button-small" id="printItinerary" type="button"><svg class="ui-icon"><use href="./assets/icons.svg#save"></use></svg> Печать / PDF</button></div>
+  <div class="itinerary-actions"><button class="button button-outline button-small" id="exportCalendar" type="button"><img class="bp-calendar-icon" src="./assets/icon-calendar-premium.svg" width="27" height="27" alt="" aria-hidden="true"> Добавить дни в календарь</button><button class="button button-outline button-small" id="printItinerary" type="button"><svg class="ui-icon"><use href="./assets/icons.svg#save"></use></svg> Печать / PDF</button></div>
   <div id="daysTabs" class="day-tabs" role="tablist" aria-label="Выбор дня"></div>
   <div id="dayResult"></div>
   <div id="accommodationSummary" class="accommodation-summary" hidden></div>
