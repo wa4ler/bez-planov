@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Календарь">
+<defs><linearGradient id="rose" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#FFE1C6"/><stop offset=".48" stop-color="#DFA1B2"/><stop offset="1" stop-color="#B777A4"/></linearGradient><linearGradient id="glass" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#593648" stop-opacity=".85"/><stop offset="1" stop-color="#2D2038" stop-opacity=".45"/></linearGradient></defs>
+<rect x="7" y="11" width="50" height="47" rx="13" fill="url(#glass)" stroke="url(#rose)" stroke-width="2.8"/>
+<path d="M8 26.5h48" stroke="url(#rose)" stroke-width="2.7"/>
+<path d="M21 7.5v11M43 7.5v11" fill="none" stroke="url(#rose)" stroke-width="4.2" stroke-linecap="round"/>
+<path d="M19 36h5M19 45h5M39 36h5" fill="none" stroke="#EEC5CE" stroke-width="3.2" stroke-linecap="round"/>
+<path d="M32 48.5s-7.7-4.5-7.7-9.3a4.3 4.3 0 0 1 7.7-2.4 4.3 4.3 0 0 1 7.7 2.4c0 4.8-7.7 9.3-7.7 9.3Z" transform="translate(0 -1.5)" fill="url(#rose)"/>
+</svg>
