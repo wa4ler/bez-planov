@@ -29,7 +29,7 @@ function showPage(name){
 function personRatingsRendered(person){
  return PREFS.map(p=>{
    const selected=rated(draft.profiles[person],p.key);
-   return '<div class="taste-row"><div class="taste-label"><span class="taste-icon">'+p.icon+'</span><div><strong>'+escapeHTML(p.title)+'</strong><small>'+escapeHTML(p.sub)+'</small></div></div>'+
+   return '<div class="taste-row"><div class="taste-label"><span class="taste-icon"><svg class="interest-svg" aria-hidden="true"><use href="./assets/design-v1/05-interests.svg#'+escapeHTML(p.key)+'"></use></svg></span><div><strong>'+escapeHTML(p.title)+'</strong><small>'+escapeHTML(p.sub)+'</small></div></div>'+
    '<div class="taste-options" role="group" aria-label="'+escapeHTML(p.title)+'">'+RATINGS.map(r=>
      '<button type="button" class="taste-btn'+(selected===r.value?' selected':'')+'" data-action="rating" data-person="'+person+'" data-pref="'+p.key+'" data-rating="'+r.value+'" aria-pressed="'+(selected===r.value)+'" title="'+escapeHTML(r.label)+'" aria-label="'+escapeHTML(p.title)+': '+escapeHTML(r.label)+'">'+r.symbol+'</button>'
    ).join('')+'</div></div>';
@@ -274,7 +274,7 @@ function renderResult(){
  $('daysTabs').innerHTML=days.map((d,i)=>
   '<button role="tab" type="button" aria-selected="'+(i===currentDay)+'" class="day-tab'+(i===currentDay?' active':'')+'" data-action="day" data-index="'+i+'">День '+(i+1)+'<small>'+escapeHTML(shortDate(d.date))+'</small></button>'
  ).join('');
- $('savePlan').textContent=savedIsSame()?'✓ Сохранено':'♡ Сохранить';
+ $('savePlan').innerHTML='<svg class="design-icon" aria-hidden="true"><use href="./assets/design-v1/08-actions.svg#'+(savedIsSame()?'check':'favorite')+'"></use></svg> '+(savedIsSame()?'Сохранено':'Сохранить');
  $('accommodationSummary').hidden=!(cfg.overnightStay&&cfg.hotelAddress);
  if(cfg.hotelAddress){
   $('accommodationSummary').innerHTML='<strong>⌂ Ваша база на время поездки:</strong> '+escapeHTML(cfg.hotelAddress)+
@@ -360,7 +360,7 @@ function saveCurrent(){
  const plans=getSaved().filter(x=>x.id!==currentPlan.id);
  plans.unshift(clone(currentPlan));
  if(!writeStore(STORE_PLANS,plans.slice(0,40))){notify('Не удалось сохранить: память браузера недоступна');return}
- updateSavedCount();$('savePlan').textContent='✓ Сохранено';notify('Маршрут сохранён на этом устройстве');
+ updateSavedCount();$('savePlan').innerHTML='<svg class="design-icon" aria-hidden="true"><use href="./assets/design-v1/08-actions.svg#check"></use></svg> Сохранено';notify('Маршрут сохранён на этом устройстве');
 }
 function shareCurrent(){
  if(!currentPlan)return;
