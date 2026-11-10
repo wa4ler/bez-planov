@@ -52,6 +52,9 @@ test('Selecting a date idea opens the real two-partner wizard without inventing 
  await page.locator('#dateEnd').fill('2027-02-19');
  await page.locator('#nextStep').click();
  await expect(page.locator('#tasteOne [data-pref="coffee"][data-rating="1"]')).toHaveAttribute('aria-pressed','false');
+ // Each partner must independently give at least two answers; choosing a card does not answer for them.
+ await page.locator('#tasteOne [data-pref="coffee"][data-rating="1"]').click();
+ await page.locator('#tasteOne [data-pref="art"][data-rating="1"]').click();
  await page.locator('#nextStep').click();
  await expect(page.locator('[data-step="2"]')).toBeVisible();
 });
