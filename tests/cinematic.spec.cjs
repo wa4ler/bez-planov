@@ -1,0 +1,66 @@
+const {test,expect}=require('@playwright/test');
+test('Cinematic homepage matches the approved dark photographic direction and works on phones',async({page})=>{
+ await page.goto('/');
+ await expect(page.getByRole('heading',{name:/Свидания/}).first()).toBeVisible();
+ await expect(page.locator('#dateGridHome .date-card')).toHaveCount(10);
+ await expect(page.locator('#dateGridHome .date-card img')).toHaveCount(10);
+ await expect(page.locator('.hero-art')).toHaveAttribute('src','./assets/dates/picnic.webp');
+ await expect.poll(()=>page.locator('.hero-art').evaluate(i=>i.complete&&i.naturalWidth>=1600)).toBe(true);
+ const width=await page.evaluate(()=>({window:innerWidth,scroll:document.documentElement.scrollWidth}));
+ expect(width.scroll).toBeLessThanOrEqual(width.window+2);
+ await page.screenshot({path:'test-results/cinematic-home-'+test.info().project.name.replace(/\W/g,'-')+'.png',fullPage:true});
+});
+test('Date mood filters and search actually filter the displayed cards',async({page})=>{
+ await page.goto('/');
+ await page.locator('[data-idea-filter="active"][data-where="Home"]').click();
+ await expect(page.locator('#dateGridHome .date-card:visible')).toHaveCount(3);
+ await page.locator('[data-idea-filter="all"][data-where="Home"]').click();
+ await page.locator('#ideaSearchHome').fill('планетарий');
+ await expect(page.locator('#dateGridHome .date-card:visible')).toHaveCount(1);
+ await expect(page.locator('#dateGridHome .date-card[data-idea="planetarium"]')).toBeVisible();
+ await page.locator('#ideaSearchHome').fill('нет такого');
+ await expect(page.locator('#emptyHome')).toBeVisible();
+});
+test('Save and remove favorite ideas locally without a fake account',async({page})=>{
+ await page.goto('/');
+ const heart=page.locator('#dateGridHome [data-action="date-like"][data-idea="cinema"]');
+ await heart.click();
+ await expect(heart).toHaveAttribute('aria-pressed','true');
+ await page.locator('[data-screen="library"]:visible').first().click();
+ await expect(page.locator('#savedDateIdeas')).toContainText('Кино');
+ await page.reload();
+ await page.locator('[data-screen="library"]:visible').first().click();
+ await expect(page.locator('#savedDateIdeas')).toContainText('Кино');
+ await page.locator('#savedDateIdeas [data-action="date-like"][data-idea="cinema"]').click();
+ await expect(page.locator('#savedDateIdeas')).not.toContainText('Кино');
+});
+test('Selecting a date idea opens the real two-partner wizard without inventing bookings',async({page})=>{
+ await page.goto('/');
+ await page.locator('#dateGridHome [data-action="date-idea"][data-idea="cafe"]').click();
+ await expect(page.locator('#page-wizard')).toBeVisible();
+ await expect(page.locator('#districtSelectionNote')).toContainText('Кафе');
+ await expect(page.locator('.couples-only-note')).toContainText('двоих');
+ await expect(page.locator('[data-choice="peopleMode"]')).toHaveCount(0);
+ const state=await page.evaluate(()=>({
+   mode:draft.peopleMode,partySize:draft.partySize,
+   first:draft.profiles[0].ratings.coffee,
+   second:draft.profiles[1].ratings.coffee
+ }));
+ expect(state).toEqual({mode:'couple',partySize:2,first:1,second:1});
+ await page.locator('#dateStart').fill('2027-02-18');
+ await page.locator('#dateEnd').fill('2027-02-19');
+ await page.locator('#nextStep').click();
+ await expect(page.locator('#tasteOne [data-pref="coffee"][data-rating="1"]')).toHaveAttribute('aria-pressed','true');
+ await page.locator('#nextStep').click();
+ await expect(page.locator('[data-step="2"]')).toBeVisible();
+});
+test('Both participants remain required even when restoring an old solo draft',async({page})=>{
+ await page.goto('/');
+ await page.evaluate(()=>{
+   draft.peopleMode='solo';draft.partySize=1;persistDraft();
+ });
+ await page.reload();
+ await page.locator('[data-action="new"]:visible').first().click();
+ const state=await page.evaluate(()=>({mode:draft.peopleMode,people:draft.partySize,steps:effectiveStepList()}));
+ expect(state).toEqual({mode:'couple',people:2,steps:[0,1,2,3,4,5]});
+});
