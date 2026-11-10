@@ -54,7 +54,7 @@ function normalizePlaceQuery(t){return String(t||'').toLowerCase().replace(/ё/g
 function mentionedPlaceIds(text){
  const full=normalizePlaceQuery(text);
  if(!full)return [];
- const words=full.split(/[^\\p{L}\\p{N}]+/u);
+ const words=full.split(' ');
  function containsName(name){
    const needle=normalizePlaceQuery(name);
    if(needle.length<3)return false;
