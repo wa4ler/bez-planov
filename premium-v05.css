@@ -331,3 +331,8 @@ p{color:var(--muted)}
  .day-tabs{display:none!important}
 }
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;animation:none!important;transition:none!important}}
+
+/* An explicit origin makes map links useful when traveling from home or a hotel. */
+.route-origin-note{border:1px solid #e2eadb;background:#f2f7ee;border-radius:14px;padding:13px 15px;margin:17px 0 7px;color:#4a6a50;font-size:12px;line-height:1.55}
+.route-origin-note strong{display:block;margin-bottom:3px;color:#2e5840;font-size:12px}
+.route-origin-note small{display:block;margin-top:5px;color:#758b78;font-size:10px;line-height:1.55}
