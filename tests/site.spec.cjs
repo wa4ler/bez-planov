@@ -20,7 +20,7 @@ test.afterEach(async ({page},testInfo)=>{
 });
 test('Homepage loads without horizontal overflow and opens wizard',async({page})=>{
   await page.goto('/');
-  await expect(page.locator('h1')).toContainText('Два человека');
+  await expect(page.locator('h1')).toContainText('Не просто выйти');
   await expect(page.locator('.hero-art')).toBeVisible();
   await page.screenshot({path:'test-results/home-'+test.info().project.name.replace(/\W/g,'-')+'.png',fullPage:true});
   const width=await page.evaluate(()=>({screen:window.innerWidth,page:document.documentElement.scrollWidth}));
@@ -75,7 +75,7 @@ test('Couple: distinct preferences, booked event, multi-day output, favorites an
   await expect(page.locator('#dayResult')).not.toContainText('Третьяковская галерея');
   await page.locator('#savePlan').click();
   await expect(page.locator('#savePlan')).toHaveText('✓ Сохранено');
-  await page.locator('[data-screen="library"]').first().click();
+  await page.locator('[data-screen="library"]:visible').first().click();
   await expect(page.locator('#savedPlansList')).toContainText('3 дня');
   await page.locator('[data-action="open-saved"]').first().click();
   await expect(page.locator('#page-result')).toBeVisible();
@@ -132,7 +132,7 @@ test('Personal profile persists between new routes and can be cleared locally',a
   await page.locator('#nameOne').fill('Маша');
   await giveRatings(page,0,{nature:2,food:1});
   await page.locator('#likesOne').fill('Люблю уютные кофейни и парки.');
-  await page.locator('[data-screen="library"]').first().click();
+  await page.locator('[data-screen="library"]:visible').first().click();
   await expect(page.locator('#profileSummary')).toContainText('Маша');
   await expect(page.locator('#profileSummary')).toContainText('Парки и природа');
   await page.locator('[data-action="edit-draft"]').click();
@@ -142,7 +142,7 @@ test('Personal profile persists between new routes and can be cleared locally',a
   await page.locator('[data-action="new"]').first().click();
   await expect(page.locator('#nameOne')).toHaveValue('Маша');
   await expect(page.locator('#tasteOne [data-pref="nature"][data-rating="2"]')).toHaveAttribute('aria-pressed','true');
-  await page.locator('[data-screen="library"]').first().click();
+  await page.locator('[data-screen="library"]:visible').first().click();
   page.once('dialog',dialog=>dialog.accept());
   await page.locator('[data-action="clear-local"]').click();
   await expect(page.locator('#profileSummary')).not.toContainText('Маша');
@@ -170,7 +170,7 @@ test('Planned preferences honor avoidance and secure map links',async({page})=>{
   await expect(page.locator('[data-action="swap-menu"]').first()).toBeEnabled();
   await page.locator('[data-action="feedback-no"]').first().click();
   await expect(page.locator('#page-result')).toBeVisible();
-  await page.locator('[data-screen="library"]').first().click();
+  await page.locator('[data-screen="library"]:visible').first().click();
   page.once('dialog',dialog=>dialog.accept());
   await page.locator('[data-action="reset-feedback"]').click();
   await expect(page.locator('#toast')).toContainText('Все места снова доступны');

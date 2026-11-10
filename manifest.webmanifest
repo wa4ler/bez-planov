@@ -1,0 +1,18 @@
+{
+  "name": "Без планов — ваши дни в Москве",
+  "short_name": "Без планов",
+  "description": "Маршруты и впечатления для двоих",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#f8f7f2",
+  "theme_color": "#173b33",
+  "icons": [
+    {
+      "src": "assets/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

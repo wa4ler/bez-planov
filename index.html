@@ -4,21 +4,29 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#f8f7f2">
+<meta name="color-scheme" content="light">
+<meta property="og:title" content="Без планов — ваши истории начинаются здесь">
+<meta property="og:description" content="Маршруты, в которых есть место вашим желаниям. Москва — для двоих и для себя.">
+<link rel="icon" type="image/svg+xml" href="./assets/favicon.svg">
+<link rel="manifest" href="./manifest.webmanifest">
 <meta name="description" content="Без планов — маршруты, которые учитывают ваши разные вкусы. Для свиданий, выходных и путешествий по Москве.">
 <title>Без планов — маршрут, в котором есть вы оба</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="./style-v04.css">
+<link rel="stylesheet" href="./premium-v05.css">
 <script src="./catalog.js" defer></script>
 <script src="./planner-v04.js" defer></script>
 <script src="./ui-v04.js" defer></script>
+<script src="./premium-v05.js" defer></script>
 </head>
 <body>
 <header class="header">
  <div class="container header-inner">
    <button type="button" class="brand" data-screen="home" aria-label="Без планов — на главную">без планов<span>.</span></button>
    <nav class="navigation" aria-label="Основное меню">
-     <button class="nav-link mobile-hide" type="button" data-screen="home">Идея</button>
+     <button class="nav-link mobile-hide" type="button" data-screen="home">Главная</button>
+     <button class="nav-link mobile-hide" type="button" data-screen="discover">Места и идеи</button>
      <button class="nav-link" type="button" data-screen="library">Мои маршруты <span id="savedNumber"></span></button>
      <button class="nav-cta" type="button" data-action="new">Создать маршрут <span aria-hidden="true">↗</span></button>
    </nav>
@@ -28,17 +36,17 @@
 <section class="page home-page" id="page-home">
  <div class="container hero">
    <div class="hero-copy">
-     <div class="overline"><span class="overline-dot"></span> Москва, которая подходит вам обоим</div>
-     <h1>Два человека.<br><em>Тысяча желаний.</em><br>Одна история.</h1>
-     <p class="hero-lead">Один мечтает о тихом парке. Другой — об удивительном месте, о котором расскажут друзьям. Не нужно выбирать, чьи желания важнее. Соберём дни, в которых интересно обоим.</p>
+     <div class="overline"><span class="overline-dot"></span> ВАШИ ЛУЧШИЕ ДНИ НАЧИНАЮТСЯ ЗДЕСЬ</div>
+     <h1>Не просто выйти.<br><em>Прожить своё.</em><br>Вместе.</h1>
+     <p class="hero-lead">Свидание, выходные или путешествие на несколько дней. Расскажите, что любите вы и ваш близкий человек — мы соберём маршрут из мест, впечатлений и моментов, которые хочется запомнить.</p>
      <div class="hero-cta-row">
        <button type="button" class="button button-primary button-large" data-action="new">Найти наш маршрут <span aria-hidden="true">↗</span></button>
-       <button type="button" class="button button-ghost button-large" data-action="example">Как это работает</button>
+       <button type="button" class="button button-ghost button-large" data-screen="discover">Посмотреть места</button>
      </div>
      <div class="hero-footnote"><span class="mini-stars">✷ ✷ ✷</span> От одного вечера до двух недель. Без регистрации.</div>
    </div>
    <div class="hero-scene">
-     <img src="./art-moscow.svg" alt="Авторская иллюстрация Москвы с башнями, куполами и рекой" class="hero-art">
+     <img src="./assets/hero-moscow.webp" alt="Авторская живописная иллюстрация: пара гуляет по набережной Москвы на закате" class="hero-art" width="350" height="438" fetchpriority="high">
      <div class="floating-tag floating-one"><span class="tag-icon">♥</span><span><strong>Любит атмосферу</strong><small>Партнёр 1</small></span></div>
      <div class="floating-tag floating-two"><span class="tag-icon">✦</span><span><strong>Обожает открытия</strong><small>Партнёр 2</small></span></div>
      <div class="floating-match"><span class="match-icon">✳</span><span>Не выбираем между вами.<br><strong>Собираем общее.</strong></span></div>
@@ -48,19 +56,32 @@
  <div class="container promise-row">
    <div class="promise"><span class="promise-index">01</span><div><strong>Сначала — вы</strong><p>Узнаём, что любит каждый, и чего лучше избегать.</p></div></div>
    <div class="promise"><span class="promise-index">02</span><div><strong>Потом — ваши дни</strong><p>Связываем места, настроение, бюджет и время.</p></div></div>
-   <div class="promise"><span class="promise-index">03</span><div><strong>Никакой магии «на словах»</strong><p>Показываем, почему место оказалось в плане.</p></div></div>
+   <div class="promise"><span class="promise-index">03</span><div><strong>Никакой магии «на словах»</strong><p>Объясняем выбор и даём менять даже одну остановку.</p></div></div>
  </div>
+ <section class="container editorial-preview">
+  <div class="editorial-heading"><div><div class="overline"><span class="overline-dot"></span> НЕ СЛУЧАЙНЫЕ СПИСКИ</div><h2>Открывайте Москву<br><em>по настроению.</em></h2></div><button class="button button-outline" data-screen="discover" type="button">Все восемь районов <svg class="ui-icon"><use href="./assets/icons.svg#arrow"></use></svg></button></div>
+  <div class="editorial-grid">
+    <button type="button" class="editorial-tile editorial-large" data-action="district" data-district="zamos"><img src="./assets/areas/zamos.svg" alt="Авторский рисунок Замоскворечья" width="620" height="485" loading="lazy"><span class="editorial-tile-copy"><small>Тихая Москва</small><strong>Переулки, в которых<br>хочется потеряться.</strong><span>Замоскворечье ↗</span></span></button>
+    <button type="button" class="editorial-tile" data-action="district" data-district="city"><img src="./assets/areas/city.svg" alt="Авторский рисунок Москва-Сити" width="620" height="485" loading="lazy"><span class="editorial-tile-copy"><small>Увидеть по-новому</small><strong>Современная Москва<br>и невероятные виды.</strong><span>Москва-Сити ↗</span></span></button>
+    <button type="button" class="editorial-tile" data-action="district" data-district="gorky"><img src="./assets/areas/gorky.svg" alt="Авторский рисунок парка" width="620" height="485" loading="lazy"><span class="editorial-tile-copy"><small>Никуда не торопиться</small><strong>Пауза среди зелени<br>и городских набережных.</strong><span>Парк Горького ↗</span></span></button>
+  </div>
+</section>
  <div class="container home-story" id="howItWorks">
    <div class="section-intro"><div class="overline"><span class="overline-dot"></span> Не анкета ради анкеты</div><h2>Мы спрашиваем<br>о <em>важном.</em></h2><p>Хороший маршрут нельзя собрать по двум галочкам «кафе» и «прогулки». Мы узнаём и мечты, и маленькие «только не это».</p></div>
    <div class="story-grid">
      <article class="story-card"><div class="story-mark">✧</div><span class="story-step">Шаг 01</span><h3>У каждого — свой вкус.</h3><p>Пусть один любит искусство, а другой — городские приключения. Отвечайте отдельно, выбирайте не только «нравится», но и «не моё».</p><div class="story-illustration"><span>Я · ♥ искусство</span><span>Мы · ♥ прогулки</span><span>Ты · ♥ открытия</span></div></article>
-     <article class="story-card"><div class="story-mark">✦</div><span class="story-step">Шаг 02</span><h3>Слова важнее галочек.</h3><p>Можно своими словами описать идеальный вечер, место мечты и то, что испортит настроение. Эти ответы останутся в вашем профиле.</p><div class="story-quote">«Хочу место, где можно говорить часами, а потом гулять до темноты»</div></article>
+     <article class="story-card"><div class="story-mark">✦</div><span class="story-step">Шаг 02</span><h3>Говорите своими словами.</h3><p>Можно своими словами описать идеальный вечер, место мечты и то, что испортит настроение. Эти ответы останутся в вашем профиле.</p><div class="story-quote">«Хочу место, где можно говорить часами, а потом гулять до темноты»</div></article>
      <article class="story-card story-card-dark"><div class="story-mark">↗</div><span class="story-step">Шаг 03</span><h3>План можно менять.</h3><p>От одного дня до четырнадцати. Закрепляйте купленные билеты, заменяйте остановки, сохраняйте понравившиеся места.</p><div class="story-timeline"><i></i><span>12:00 · прогулка</span><i></i><span>14:00 · ваше место</span><i></i><span>17:00 · сюрприз</span></div></article>
    </div>
    <div class="story-banner"><div><div class="overline">Вместо «куда пойдём?»</div><h2>Пусть начнётся<br>ваша история.</h2></div><button type="button" class="button button-light" data-action="new">Собрать маршрут ↗</button></div>
  </div>
 </section>
 
+<section class="page discover-page" id="page-discover" hidden>
+<div class="container"><div class="discover-head"><div><div class="overline"><span class="overline-dot"></span> МАЛЕНЬКИЙ ПУТЕВОДИТЕЛЬ</div><h2>У каждого района<br><em>свой характер.</em></h2><p>Не подбирайте маршрут вслепую. Посмотрите атмосферу районов Москвы, отметьте понравившиеся места — и расскажите нам о своих желаниях.</p></div><div class="discover-stamp"><svg class="ui-icon"><use href="./assets/icons.svg#compass"></use></svg><span>8 маршрутов<br>для вдохновения</span></div></div>
+<div class="district-grid"><article class="district-card" data-district="center"><div class="district-visual"><img src="./assets/areas/center.svg" width="620" height="485" loading="lazy" alt="Авторская иллюстрация района Сердце Москвы"><span class="district-index">01</span></div><div class="district-body"><div class="district-meta">МОСКВА · ИЛЛЮСТРАЦИЯ РАЙОНА</div><h3>Сердце Москвы</h3><p>Зарядье, площади и старинные улицы</p><button type="button" class="district-action" data-action="district" data-district="center">Хочу сюда <svg class="ui-icon"><use href="./assets/icons.svg#arrow"></use></svg></button></div></article><article class="district-card" data-district="zamos"><div class="district-visual"><img src="./assets/areas/zamos.svg" width="620" height="485" loading="lazy" alt="Авторская иллюстрация района Замоскворечье"><span class="district-index">02</span></div><div class="district-body"><div class="district-meta">МОСКВА · ИЛЛЮСТРАЦИЯ РАЙОНА</div><h3>Замоскворечье</h3><p>Галереи, переулки и тихие дворы</p><button type="button" class="district-action" data-action="district" data-district="zamos">Хочу сюда <svg class="ui-icon"><use href="./assets/icons.svg#arrow"></use></svg></button></div></article><article class="district-card" data-district="gorky"><div class="district-visual"><img src="./assets/areas/gorky.svg" width="620" height="485" loading="lazy" alt="Авторская иллюстрация района Парки и Хамовники"><span class="district-index">03</span></div><div class="district-body"><div class="district-meta">МОСКВА · ИЛЛЮСТРАЦИЯ РАЙОНА</div><h3>Парки и Хамовники</h3><p>Зелёные дорожки и река</p><button type="button" class="district-action" data-action="district" data-district="gorky">Хочу сюда <svg class="ui-icon"><use href="./assets/icons.svg#arrow"></use></svg></button></div></article><article class="district-card" data-district="arbat"><div class="district-visual"><img src="./assets/areas/arbat.svg" width="620" height="485" loading="lazy" alt="Авторская иллюстрация района Арбат и бульвары"><span class="district-index">04</span></div><div class="district-body"><div class="district-meta">МОСКВА · ИЛЛЮСТРАЦИЯ РАЙОНА</div><h3>Арбат и бульвары</h3><p>Камерная Москва и культурный вечер</p><button type="button" class="district-action" data-action="district" data-district="arbat">Хочу сюда <svg class="ui-icon"><use href="./assets/icons.svg#arrow"></use></svg></button></div></article><article class="district-card" data-district="patriki"><div class="district-visual"><img src="./assets/areas/patriki.svg" width="620" height="485" loading="lazy" alt="Авторская иллюстрация района Патриаршие пруды"><span class="district-index">05</span></div><div class="district-body"><div class="district-meta">МОСКВА · ИЛЛЮСТРАЦИЯ РАЙОНА</div><h3>Патриаршие пруды</h3><p>Атмосферные встречи и уют</p><button type="button" class="district-action" data-action="district" data-district="patriki">Хочу сюда <svg class="ui-icon"><use href="./assets/icons.svg#arrow"></use></svg></button></div></article><article class="district-card" data-district="city"><div class="district-visual"><img src="./assets/areas/city.svg" width="620" height="485" loading="lazy" alt="Авторская иллюстрация района Москва-Сити"><span class="district-index">06</span></div><div class="district-body"><div class="district-meta">МОСКВА · ИЛЛЮСТРАЦИЯ РАЙОНА</div><h3>Москва-Сити</h3><p>Современный город и панорамы</p><button type="button" class="district-action" data-action="district" data-district="city">Хочу сюда <svg class="ui-icon"><use href="./assets/icons.svg#arrow"></use></svg></button></div></article><article class="district-card" data-district="vdnh"><div class="district-visual"><img src="./assets/areas/vdnh.svg" width="620" height="485" loading="lazy" alt="Авторская иллюстрация района ВДНХ и Останкино"><span class="district-index">07</span></div><div class="district-body"><div class="district-meta">МОСКВА · ИЛЛЮСТРАЦИЯ РАЙОНА</div><h3>ВДНХ и Останкино</h3><p>Наука, выставки и впечатления</p><button type="button" class="district-action" data-action="district" data-district="vdnh">Хочу сюда <svg class="ui-icon"><use href="./assets/icons.svg#arrow"></use></svg></button></div></article><article class="district-card" data-district="kolomenskoye"><div class="district-visual"><img src="./assets/areas/kolomenskoye.svg" width="620" height="485" loading="lazy" alt="Авторская иллюстрация района Коломенское"><span class="district-index">08</span></div><div class="district-body"><div class="district-meta">МОСКВА · ИЛЛЮСТРАЦИЯ РАЙОНА</div><h3>Коломенское</h3><p>История в природном ландшафте</p><button type="button" class="district-action" data-action="district" data-district="kolomenskoye">Хочу сюда <svg class="ui-icon"><use href="./assets/icons.svg#arrow"></use></svg></button></div></article></div>
+<div class="discover-bottom"><span>Иллюстрации авторские, они передают настроение района, а не фотографическую точность объектов.</span><button class="button button-primary" type="button" data-action="new">Перейти к моему маршруту ↗</button></div>
+</div></section>
 <section class="page" id="page-wizard" hidden>
  <div class="container wizard-wrap">
   <div class="wizard-intro">
@@ -79,6 +100,7 @@
         <div class="field"><label for="dateEnd">Окончание</label><input type="date" class="control" id="dateEnd" required></div>
       </div>
       <div class="inline-info" id="rangeInfo" aria-live="polite">Выберите даты поездки.</div>
+      <div class="inline-info district-hint" id="districtSelectionNote" hidden></div>
       <div class="field"><span class="field-label">Для кого планируем?</span><div class="choice-grid triple" data-choice="peopleMode">
        <button type="button" class="choice active" data-value="couple" aria-pressed="true"><span>♥</span><strong>Для двоих</strong><small>У каждого свои вкусы</small></button>
        <button type="button" class="choice" data-value="solo" aria-pressed="false"><span>✦</span><strong>Для себя</strong><small>Только мои желания</small></button>
@@ -187,6 +209,16 @@
       <button type="button" class="select-chip" data-value="heights">Высоту</button>
       <button type="button" class="select-chip" data-value="animals">Места с животными</button>
      </div></div>
+     <div class="field field-highlighted">
+   <div class="overline"><span class="overline-dot"></span> ОПЫТ И МЕЧТЫ</div>
+   <h4>Чтобы каждый маршрут был действительно новым.</h4>
+   <p>Расскажите, где вы уже были и какие места давно хотите посетить. Мы не будем намеренно повторять знакомые места, а точные совпадения из нашей подборки постараемся включить.</p>
+   <label for="alreadyVisited">Где уже были? <small>Необязательно</small></label>
+   <textarea id="alreadyVisited" maxlength="650" class="control textarea" rows="3" placeholder="Например: Третьяковская галерея, Патриаршие пруды, ГУМ, парк Горького..."></textarea>
+   <label for="dreamPlaces">Какие места мечтаете посетить?</label>
+   <textarea id="dreamPlaces" maxlength="650" class="control textarea" rows="3" placeholder="Например: планетарий, ГЭС-2, Москвариум или целый район..."></textarea>
+   <small class="field-note">Если вы указали место за пределами нашей подборки, мы покажем, что не смогли его сопоставить, вместо того чтобы обещать визит.</small>
+ </div>
      <div class="field"><label for="foodNeeds">Питание, аллергии и другие важные пожелания</label><textarea id="foodNeeds" class="control textarea" rows="2" maxlength="450" placeholder="Например: вегетарианство, аллергия на орехи, еда без острого, кофе без молока…"></textarea><small class="field-note">Мы сохраним ваши пожелания в плане, но не можем подтвердить меню и безопасность блюд без проверки заведения.</small></div>
      <div class="field"><label class="checkbox-label"><input type="checkbox" id="stepFree"> Важен маршрут без ступеней и барьеров</label><small class="field-note">Доступность конкретных объектов пока не проверяется. Мы явно предупредим об этом в результатах.</small></div>
      <div class="field" id="hotelAddressField" hidden><label for="hotelAddress">Где вы остановитесь? <small>Если поездка многодневная</small></label><input id="hotelAddress" class="control" maxlength="180" placeholder="Название гостиницы, адрес или район"><small class="field-note">Поможет запомнить базовую точку, но реальное время пути от неё пока не рассчитывается.</small></div>
@@ -241,6 +273,9 @@
     <div class="match-copy"><span class="overline">Ваш общий маршрут</span><h3>Где ваши вкусы<br>встречаются?</h3><p id="matchExplanation"></p></div>
     <div id="matchGraphic" class="match-graphic"></div>
   </section>
+  <section class="plan-cover" id="planCover">
+  <div class="plan-cover-text"><span class="overline">МАРШРУТ СОСТАВЛЕН ПОД ВАШИ ОТВЕТЫ</span><h3>Не просто список точек.<br>Ваша маленькая история.</h3><p id="planCoverText"></p><div id="planInterestPills"></div></div><img src="./assets/hero-moscow.webp" alt="" width="350" height="438" loading="lazy"></section>
+  <div class="itinerary-actions"><button class="button button-outline button-small" id="exportCalendar" type="button"><svg class="ui-icon"><use href="./assets/icons.svg#calendar"></use></svg> Добавить дни в календарь</button><button class="button button-outline button-small" id="printItinerary" type="button"><svg class="ui-icon"><use href="./assets/icons.svg#save"></use></svg> Печать / PDF</button></div>
   <div id="daysTabs" class="day-tabs" role="tablist" aria-label="Выбор дня"></div>
   <div id="dayResult"></div>
   <div id="accommodationSummary" class="accommodation-summary" hidden></div>
@@ -252,6 +287,7 @@
 <section class="page" id="page-library" hidden>
  <div class="container library-container"><div class="overline"><span class="overline-dot"></span> Ваша небольшая коллекция</div><h2>Впечатления, которые<br>хочется сохранить.</h2><p class="library-lead">Маршруты и любимые места остаются в памяти браузера на этом устройстве. Для синхронизации между устройствами понадобится аккаунт в будущей версии.</p>
  <div class="library-grid"><section class="panel library-panel"><h3>Маршруты</h3><div id="savedPlansList"></div></section><section class="panel library-panel"><h3>Избранные места</h3><div id="favoritePlacesList"></div></section></div>
+ <section class="panel memories-panel"><div class="memories-intro"><div class="overline"><span class="overline-dot"></span> НЕ ТОЛЬКО МАРШРУТЫ</div><h3>Ваши маленькие истории.</h3><p>Сохраните момент, который хочется вспомнить. Заметки остаются на этом устройстве.</p></div><form id="memoryForm"><label for="memoryDate">Дата воспоминания</label><input class="control" type="date" id="memoryDate"><label for="memoryText">Что запомнилось?</label><textarea class="control textarea" id="memoryText" maxlength="650" rows="3" placeholder="Сегодня нашли идеальную кофейню, а потом долго гуляли под дождём…"></textarea><button class="button button-primary button-small" type="submit">Сохранить воспоминание ♡</button></form><div id="memoriesList" class="memories-list"></div></section>
  <section class="panel profile-settings">
   <div><span class="overline">Ваш профиль в этом браузере</span><h3>Помним ваши интересы.</h3><p>Вернуться к вопросам можно в любой момент. Ответы хранятся только на этом устройстве.</p><div id="profileSummary"></div></div>
   <button type="button" class="button button-outline" data-action="edit-draft">Изменить предпочтения ↗</button>
@@ -261,7 +297,13 @@
  </div>
 </section>
 </main>
-<footer class="footer"><div class="container footer-inner"><button type="button" class="brand" data-screen="home">без планов<span>.</span></button><span>Ищем общее, оставляя место разному.</span><span>Москва · версия 0.4 · 2026</span></div></footer>
+<footer class="footer"><div class="container footer-inner"><button type="button" class="brand" data-screen="home">без планов<span>.</span></button><span>Ищем общее, оставляя место разному.</span><span>Москва · версия 0.5 · 2026</span></div></footer>
+<nav class="mobile-bottom-nav" aria-label="Быстрая навигация">
+<button type="button" data-screen="home"><svg class="ui-icon"><use href="./assets/icons.svg#heart"></use></svg><span>Главная</span></button>
+<button type="button" data-screen="discover"><svg class="ui-icon"><use href="./assets/icons.svg#compass"></use></svg><span>Открыть</span></button>
+<button type="button" data-action="new" class="mobile-create"><svg class="ui-icon"><use href="./assets/icons.svg#spark"></use></svg><span>Маршрут</span></button>
+<button type="button" data-screen="library"><svg class="ui-icon"><use href="./assets/icons.svg#book"></use></svg><span>Моё</span></button>
+</nav>
 <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
 </body>
 </html>
