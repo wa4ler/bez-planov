@@ -56,6 +56,11 @@ function openDateTheme(id){
  const theme=DATE_THEMES[id];
  if(!theme)return;
  freshWizard();
+ // If the chosen idea is in the advanced interest set, reveal its controls
+ // for both participants instead of hiding the very topic they selected.
+ if(PREFS.findIndex(x=>x.key===theme.interest)>=10){
+  expandedTastes[0]=true;expandedTastes[1]=true;
+ }
  // The old draft may come from a prelaunch solo/group experiment.
  draft.peopleMode='couple';draft.partySize=2;
  // Browsing an idea is a shared suggestion, NOT consent from both partners.
