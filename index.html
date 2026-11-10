@@ -229,7 +229,7 @@
        <button type="button" class="choice active" data-value="activities" aria-pressed="true"><span>☕</span><strong>Еда и впечатления</strong><small>Проезд и ночёвки отдельно</small></button>
        <button type="button" class="choice" data-value="all" aria-pressed="false"><span>◎</span><strong>Все расходы</strong><small>Учтём выбранные резервы на дорогу и ночёвки</small></button>
       </div></div>
-      <div class="field"><label class="checkbox-label"><input type="checkbox" id="overnightStay"> Понадобятся ночёвки между днями</label><small class="field-note">Необязательно: можно планировать несколько отдельных дней без гостиницы.</small></div>
+      <div class="field"><label class="checkbox-label bp-v07-overnight-label"><input type="checkbox" id="overnightStay"><img class="bp-v07-miniicon" src="./assets/icon-overnight-approved.webp" width="44" height="44" alt="" aria-hidden="true" decoding="async"><span>Понадобятся ночёвки между днями</span></label><small class="field-note">Необязательно: можно планировать несколько отдельных дней без гостиницы.</small></div>
       <div class="form-grid" id="reserveInputs" hidden>
        <div class="field"><label for="transportReserve">Резерв на транспорт / день, ₽</label><input id="transportReserve" class="control" type="number" min="0" max="10000000" step="100" value="500"></div>
        <div class="field" id="hotelReserveField" hidden><label for="hotelReserve">Резерв на ночёвку, ₽</label><input id="hotelReserve" class="control" type="number" min="0" max="10000000" step="500" value="3000"><small>На двоих, за одну ночь.</small></div>
