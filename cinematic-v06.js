@@ -58,13 +58,9 @@ function openDateTheme(id){
  freshWizard();
  // The old draft may come from a prelaunch solo/group experiment.
  draft.peopleMode='couple';draft.partySize=2;
- // An idea click expresses tentative interest, not two confirmed preferences.
- // Never override an existing explicit dislike or rating from either partner.
- for(const partner of draft.profiles){
-  if(!Object.prototype.hasOwnProperty.call(partner.ratings,theme.interest)){
-    partner.ratings[theme.interest]=1;
-  }
- }
+ // Browsing an idea is a shared suggestion, NOT consent from both partners.
+ // Put it into an editable free-text wish, leaving all individual ratings untouched.
+ draft.perfectDay='Хотим попробовать: '+theme.title+'.';
  cfgToFields();persistDraft();goStep(0);showPage('wizard');
  const note=$('districtSelectionNote');
  if(note){
