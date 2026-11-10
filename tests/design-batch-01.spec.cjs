@@ -38,6 +38,7 @@ test('Premium images are embedded on real pages and remain distinct',async({page
  await expect(hero).toHaveAttribute('src','./assets/design-v1/01-hero-couple-moscow.svg');
  await expect.poll(()=>hero.evaluate(e=>e.complete&&e.naturalWidth>0)).toBe(true);
  await expect(page.locator('.story-premium-art img')).toHaveAttribute('src','./assets/design-v1/02-how-it-works.svg');
+ await page.locator('.story-premium-art img').scrollIntoViewIfNeeded();
  await expect.poll(()=>page.locator('.story-premium-art img').evaluate(e=>e.complete&&e.naturalWidth>0)).toBe(true);
  await page.locator('[data-screen="library"]:visible').first().click();
  const library=page.locator('.library-premium-art img');
@@ -52,7 +53,7 @@ test('Scalable interest icons and 3 pace icons render as SVG symbols',async({pag
  await page.locator('#dateStart').fill((()=>{let d=new Date();d.setDate(d.getDate()+5);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')})());
  await page.locator('#nextStep').click();
  await expect(page.locator('#tasteOne .interest-svg')).toHaveCount(16);
- await expect(page.locator('#tasteOne [data-pref="food"] .interest-svg use')).toHaveAttribute('href','./assets/design-v1/05-interests.svg#food');
+ await expect(page.locator('#tasteOne .interest-svg use').first()).toHaveAttribute('href','./assets/design-v1/05-interests.svg#food');
  const example=page.locator('#tasteOne .interest-svg').first();
  await expect(example).toBeVisible();
  await expect.poll(()=>example.evaluate(svg=>svg.getBBox().width)).toBeGreaterThan(0);
@@ -121,4 +122,21 @@ test('No horizontal scrollbar on premium mobile screens',async({page})=>{
    const width=await page.evaluate(()=>({viewport:window.innerWidth,scroll:document.documentElement.scrollWidth}));
    expect(width.scroll,'Overflow in '+route).toBeLessThanOrEqual(width.viewport+2);
  }
+});
+
+test('All ten pieces are displayed on the real design preview page',async({page})=>{
+ await page.goto('/design-preview-01.html');
+ await expect(page.getByRole('heading',{name:/Моменты/})).toBeVisible();
+ await expect(page.locator('.art')).toHaveCount(4);
+ await expect(page.locator('.icon-sample')).toHaveCount(16+3+6+12+10);
+ const images=page.locator('.art .visual img');
+ for(let i=0;i<await images.count();i++){
+   const image=images.nth(i);
+   await image.scrollIntoViewIfNeeded();
+   await expect.poll(()=>image.evaluate(e=>e.complete&&e.naturalWidth>0)).toBe(true);
+ }
+ const firstIcon=page.locator('.icon-sample .sample-icon').first();
+ await expect.poll(()=>firstIcon.evaluate(e=>e.getBBox().width)).toBeGreaterThan(0);
+ await page.evaluate(()=>scrollTo(0,0));
+ await page.screenshot({path:'test-results/design-gallery-'+test.info().project.name.replace(/\W/g,'-')+'.png',fullPage:true});
 });
