@@ -38,13 +38,15 @@ test('Route link starts at the requested address; subsequent overnight days star
 test('Exported ICS uses UTC instants, preserving Moscow event times abroad',async({page})=>{
  await page.goto('/');
  await page.locator('.hero-cta-row [data-action="new"]').click();
- await page.locator('[data-choice="peopleMode"] [data-value="solo"]').click();
+
  const day=future(9);
  await page.locator('#dateStart').fill(day);
  await page.locator('#dateEnd').fill(day);
  await page.locator('#nextStep').click();
  await page.locator('#tasteOne [data-pref="walk"][data-rating="2"]').click();
  await page.locator('#tasteOne [data-pref="nature"][data-rating="1"]').click();
+ await page.locator('#nextStep').click();
+ await page.locator('#tasteTwo [data-pref="food"][data-rating="2"]').click();
  await page.locator('#nextStep').click();
  await page.locator('#goalChoices [data-value="rest"]').click();
  await page.locator('#nextStep').click();
