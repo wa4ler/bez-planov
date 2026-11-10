@@ -361,18 +361,3 @@ input,textarea,select{color-scheme:dark}
  .page:not(#page-result){display:none!important}
  .stat,.day-panel,.stop-box,.day-sidebar{background:white!important;color:#111!important;border-color:#bbb!important}
 }
-
-/* Bespoke premium calendar icon — date-range planning */
-.bp-calendar-heading{display:flex;align-items:center;gap:12px}
-.bp-calendar-icon{display:inline-block;object-fit:contain;flex:0 0 auto;width:27px;height:27px;vertical-align:middle}
-.bp-calendar-heading>.bp-calendar-icon{width:34px;height:34px;filter:drop-shadow(0 3px 10px rgba(207,123,163,.22))}
-.bp-calendar-field>label{display:flex;align-items:center;gap:7px}
-.bp-calendar-field .bp-calendar-icon{width:21px;height:21px}
-.itinerary-actions .bp-calendar-icon{width:23px;height:23px}
-@media(max-width:650px){.bp-calendar-heading>.bp-calendar-icon{width:29px;height:29px}.bp-calendar-heading{gap:9px}}
-
-/* Bespoke premium journey icon */
-.bp-premium-icon{display:inline-block;vertical-align:middle;object-fit:contain;flex-shrink:0;width:30px;height:30px}
-.choice>.bp-premium-icon{display:block;margin-bottom:10px}
-.mobile-bottom-nav .bp-premium-icon{width:25px;height:25px}
-@media(max-width:650px){.choice>.bp-premium-icon{width:27px;height:27px;margin-bottom:7px}}
