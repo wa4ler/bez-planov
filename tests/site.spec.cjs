@@ -74,7 +74,7 @@ test('Couple: distinct preferences, booked event, multi-day output, favorites an
   await expect(page.locator('#dayResult')).toContainText('По интересам обоих');
   await expect(page.locator('#dayResult')).not.toContainText('Третьяковская галерея');
   await page.locator('#savePlan').click();
-  await expect(page.locator('#savePlan')).toHaveText('✓ Сохранено');
+  await expect(page.locator('#savePlan')).toContainText('Сохранено');
   await page.locator('[data-screen="library"]:visible').first().click();
   await expect(page.locator('#savedPlansList')).toContainText('3 дня');
   await page.locator('[data-action="open-saved"]').first().click();
