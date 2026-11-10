@@ -370,3 +370,7 @@ input,textarea,select{color-scheme:dark}
 .bp-v07-date-label .bp-v07-calendar{width:27px;height:27px;border:1px solid rgba(235,190,148,.27);border-radius:8px}
 .itinerary-actions .bp-v07-calendar{width:26px;height:26px;border-radius:7px}
 @media(max-width:650px){.bp-v07-date-heading{gap:9px}.bp-v07-date-heading .bp-v07-calendar{width:42px;height:42px}}
+
+/* Approved unique journey icon #2 — same premium family as calendar */
+.choice .bp-v07-journey-icon{display:block;width:47px;height:47px;margin:1px 0 10px;border-radius:12px;object-fit:contain;flex-shrink:0;filter:drop-shadow(0 3px 11px rgba(235,158,97,.14))}
+@media(max-width:650px){.choice .bp-v07-journey-icon{width:43px;height:43px;margin-bottom:8px}}
