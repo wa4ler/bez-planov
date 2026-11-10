@@ -91,3 +91,16 @@ test('Planner rejects solo and group modes while public launch is couples-only',
  expect(errors[1]).toContain('для двоих');
  expect(errors[2]).toBe('');
 });
+
+test('All thirteen approved high-resolution photographs actually decode',async({page,request})=>{
+ await page.goto('/');
+ const names=['bowling','cafe','cinema','culture','dinner','memories','our-route','our-tastes','picnic','planetarium','spa','walk','workshop'];
+ const results=await page.evaluate(async(names)=>Promise.all(names.map(async(name)=>{
+  const image=new Image();image.src='./assets/dates/'+name+'.webp';
+  try{await image.decode();return {name,width:image.naturalWidth,height:image.naturalHeight}}catch(e){return {name,width:0,height:0,error:String(e)}}
+ })),names);
+ for(const result of results){
+  expect(result.width,result.name+' did not decode').toBeGreaterThanOrEqual(1600);
+  expect(result.height,result.name+' unexpectedly lost detail').toBeGreaterThanOrEqual(900);
+ }
+});
