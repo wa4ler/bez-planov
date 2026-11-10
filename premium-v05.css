@@ -442,3 +442,16 @@ p{color:var(--muted)}
 @media (prefers-reduced-motion:reduce){
  .transport-pick{transition:none!important}
 }
+
+/* Visual audit: restore readable contrast on the third storytelling card.
+   Earlier broad .story-card rules accidentally overrode its dark theme. */
+.story-card.story-card-dark{
+ background:linear-gradient(145deg,#28243b,#443149 78%,#664a60);
+ color:#fff2de;border-color:#71566c
+}
+.story-card.story-card-dark .story-mark{color:#e5bda3}
+.story-card.story-card-dark .story-step{color:#f5c5a3}
+.story-card.story-card-dark h3{color:#fff3df}
+.story-card.story-card-dark p{color:#e2d0d8}
+.story-card.story-card-dark .story-timeline{color:#f0d6d3}
+.story-card.story-card-dark .story-timeline i{background:#e5b18d}
