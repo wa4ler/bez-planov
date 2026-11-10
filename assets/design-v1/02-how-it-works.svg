@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 860" width="1400" height="860" role="img" aria-label="Авторская иллюстрация путевого дневника для двоих"><defs><linearGradient id="sky" x1="0" y1="0" x2=".35" y2="1"><stop stop-color="#16172e"/><stop offset=".33" stop-color="#514369"/><stop offset=".67" stop-color="#b36b83"/><stop offset="1" stop-color="#ffb98b"/></linearGradient><radialGradient id="sun"><stop stop-color="#ffe3b2" stop-opacity=".95"/><stop offset=".4" stop-color="#f9b992" stop-opacity=".5"/><stop offset="1" stop-color="#f6ad99" stop-opacity="0"/></radialGradient><linearGradient id="river" x1="0" y1="0" x2=".8" y2="1"><stop stop-color="#56516e"/><stop offset=".5" stop-color="#242c46"/><stop offset="1" stop-color="#101e32"/></linearGradient><linearGradient id="paper" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff3df"/><stop offset="1" stop-color="#e4ccb2"/></linearGradient><linearGradient id="cover" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#33273a"/><stop offset="1" stop-color="#151d30"/></linearGradient><filter id="glow"><feGaussianBlur stdDeviation="22"/></filter><filter id="soft"><feGaussianBlur stdDeviation="4"/></filter><pattern id="grain" width="49" height="61" patternUnits="userSpaceOnUse"><circle cx="5" cy="12" r=".9" fill="#fff7dc" opacity=".12"/><circle cx="28" cy="41" r=".65" fill="#fff7dc" opacity=".14"/><circle cx="42" cy="6" r=".8" fill="#1f1630" opacity=".12"/></pattern></defs><rect width="1400" height="860" rx="56" fill="#241e31"/><circle cx="1180" cy="120" r="340" fill="#965c72" opacity=".24" filter="url(#glow)"/>
+<!-- desk hints -->
+<path d="M0 723q330-77 680 19t720-19" stroke="#634d55" stroke-width="10" fill="none"/>
+<g transform="rotate(-7 706 433)"><rect x="240" y="128" width="915" height="641" rx="38" fill="#0d1526" opacity=".45"/><rect x="226" y="109" width="915" height="641" rx="36" fill="url(#paper)"/><path d="M687 109v641" stroke="#caa992" stroke-width="8" opacity=".65"/><path d="M252 149h409v568H252Z" fill="#f7e9d5"/><path d="M708 149h401v568H708Z" fill="#eedac6"/>
+<!-- route with motifs -->
+<path d="M307 575C391 494 278 361 416 294S562 385 588 240s192 46 232 109 193-54 218 98" stroke="#bb8d74" stroke-width="8" fill="none" stroke-dasharray="5 18" stroke-linecap="round"/>
+<g fill="#be785f" stroke="#fff0d7" stroke-width="8"><circle cx="316" cy="566" r="23"/><circle cx="409" cy="297" r="23"/><circle cx="570" cy="252" r="23"/><circle cx="802" cy="346" r="23"/><circle cx="1030" cy="446" r="23"/></g>
+<!-- handwritten-like lines no embedded words -->
+<path d="M304 190h250m-250 22h190m-190 22h220" stroke="#d5bda6" stroke-width="8" stroke-linecap="round"/>
+<path d="M765 577h276m-276 24h207m-207 24h242" stroke="#d2b49f" stroke-width="7" stroke-linecap="round"/>
+<path d="M315 646h225" stroke="#a2ab95" stroke-width="5"/>
+</g>
+<!-- photo polaroid -->
+<g transform="translate(930 78) rotate(13)"><rect x="0" y="0" width="265" height="277" rx="12" fill="#fff2dc" stroke="#c5a68f" stroke-width="4"/><rect x="17" y="17" width="230" height="212" rx="5" fill="url(#sky)"/><path d="M17 175l50-45 40 33 42-68 62 80 36-19v74H17Z" fill="#4d425f"/><circle cx="165" cy="77" r="36" fill="#facd9f" opacity=".7"/></g>
+<!-- magnifier and compass -->
+<g transform="translate(150 618)"><circle cx="0" cy="0" r="92" fill="#c69b73" opacity=".28"/><circle cx="0" cy="0" r="65" fill="none" stroke="#e4bb87" stroke-width="19"/><path d="M44 44l80 80" stroke="#e4bb87" stroke-width="22" stroke-linecap="round"/></g>
+<g transform="translate(1161 626)"><circle r="94" fill="#b28b6b" stroke="#f1c997" stroke-width="12"/><circle r="74" fill="#2b2838" stroke="#dab088" stroke-width="4"/><path d="M0-61 20 0 0 61-20 0Z" fill="#e5b37f"/><path d="M0-61 20 0H0Z" fill="#f7ddae"/></g>
+<path d="M81 113c33-43 79-43 109-6m-53-42 30 20 18-20" stroke="#da9a8a" stroke-width="9" fill="none" stroke-linecap="round"/>
+<rect width="1400" height="860" fill="url(#grain)" rx="56"/></svg>
