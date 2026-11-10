@@ -27,6 +27,20 @@ showPage=function(name){
  originalShowPage(name);
  refreshMobileNavigation(name);
 };
+// An illustrated transport picker mirrors the native select; both change the same configuration.
+function synchronizeTransportChoices(){
+ const select=$('transport');if(!select)return;
+ document.querySelectorAll('[data-transport-mode]').forEach(b=>{
+  const selected=b.dataset.transportMode===select.value;
+  b.classList.toggle('active',selected);
+  b.setAttribute('aria-pressed',String(selected));
+ });
+}
+const originalCfgToFields=cfgToFields;
+cfgToFields=function(){
+ originalCfgToFields();
+ synchronizeTransportChoices();
+};
 const originalRenderTaste=renderTaste;
 renderTaste=function(){
  originalRenderTaste();
@@ -79,6 +93,17 @@ renderResult=function(){
  if(!currentPlan)return;
  const cfg=currentPlan.config;
  const days=currentPlan.days.length;
+ // Icons are SVG symbols, not font glyphs; they remain sharp on Retina displays.
+ const iconIds=['date','location','budget','budget'];
+ $('planStats').querySelectorAll('.stat').forEach((item,i)=>{
+  const mark=document.createElementNS('http://www.w3.org/2000/svg','svg');
+  mark.setAttribute('class','insight-stat-icon');
+  mark.setAttribute('aria-hidden','true');
+  const use=document.createElementNS('http://www.w3.org/2000/svg','use');
+  use.setAttribute('href','./assets/design-v1/10-insights.svg#'+(iconIds[i]||'details'));
+  mark.appendChild(use);
+  item.prepend(mark);
+ });
  const pair=pairStats(cfg);
  const who=cfg.peopleMode==='solo'?'вашим личным интересам':cfg.peopleMode==='couple'?'вашим общим и индивидуальным желаниям':'пожеланиям компании';
  $('planCoverText').textContent='Мы собрали '+days+' '+dayWord(days)+' по '+who+
@@ -121,8 +146,9 @@ renderDay=function(){
    const s=day.stops[i];if(!s)return;
    const visual=el.querySelector('.stop-visual');
    if(visual){
-     const tag=s.kind==='fixed'?'ticket':extraLabels[PLACES[s.id]?.tags[0]]||'spark';
-     visual.innerHTML=iconSVG(tag);
+     const tag=s.kind==='fixed'?'calendar':(PLACES[s.id]?.tags[0]||'unusual');
+     const sprite=s.kind==='fixed'?'08-actions.svg':'05-interests.svg';
+     visual.innerHTML='<svg class="design-icon" aria-hidden="true"><use href="./assets/design-v1/'+sprite+'#'+escapeHTML(tag)+'"></use></svg>';
    }
    const why=el.querySelector('.stop-why');
    if(why&&s.kind==='place'&&mentionedPlaceIds(cfg.dreamPlaces).includes(s.id)){
@@ -251,6 +277,16 @@ function usePremium(){
  const root=document.body;
  document.querySelectorAll('.mobile-bottom-nav [data-screen]').forEach(b=>b.setAttribute('aria-current',b.dataset.screen==='home'?'page':'false'));
  $('exportCalendar').addEventListener('click',exportCalendar);
+ synchronizeTransportChoices();
+ $('transport').addEventListener('change',synchronizeTransportChoices);
+ document.querySelectorAll('[data-transport-mode]').forEach(b=>{
+  b.addEventListener('click',()=>{
+   const el=$('transport');
+   el.value=b.dataset.transportMode;
+   el.dispatchEvent(new Event('change',{bubbles:true}));
+   synchronizeTransportChoices();
+  });
+ });
  $('printItinerary').addEventListener('click',printAllDays);
  $('memoryDate').value=localISO(new Date());
  $('memoryForm').addEventListener('submit',addMemory);
