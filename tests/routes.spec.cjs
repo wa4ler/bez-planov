@@ -47,6 +47,7 @@ test('Exported ICS uses UTC instants, preserving Moscow event times abroad',asyn
  await page.locator('#tasteOne [data-pref="nature"][data-rating="1"]').click();
  await page.locator('#nextStep').click();
  await page.locator('#tasteTwo [data-pref="food"][data-rating="2"]').click();
+ await page.locator('#tasteTwo [data-pref="art"][data-rating="1"]').click();
  await page.locator('#nextStep').click();
  await page.locator('#goalChoices [data-value="rest"]').click();
  await page.locator('#nextStep').click();
