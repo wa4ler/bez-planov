@@ -201,12 +201,17 @@ function exportCalendar(){
    const addr=s.kind==='place'?p?.address:s.address;
    if(!title)continue;
    const start=minutes(s.time),end=start+(Number(s.duration)||60);
-   const dt=day.date.replace(/-/g,'');
-   const t=ns=>String(Math.floor(ns/60)).padStart(2,'0')+String(ns%60).padStart(2,'0')+'00';
+   // Convert Moscow-local event times to UTC so calendars in other time zones
+   // display the correct local instant, without relying on VTIMEZONE support.
+   const asUTC=ns=>{
+     const hh=String(Math.floor(ns/60)).padStart(2,'0'),mm=String(ns%60).padStart(2,'0');
+     return new Date(day.date+'T'+hh+':'+mm+':00+03:00').toISOString()
+       .replace(/[-:]/g,'').replace(/\.\d{3}Z$/,'Z');
+   };
    lines.push('BEGIN:VEVENT','UID:'+icsEscape(currentPlan.id+'-'+day.date+'-'+s.id)+'@bez-planov.pages.dev',
      'DTSTAMP:'+new Date().toISOString().replace(/[-:]/g,'').replace(/\.\d+Z/,'Z'),
-     'DTSTART;TZID=Europe/Moscow:'+dt+'T'+t(start),
-     'DTEND;TZID=Europe/Moscow:'+dt+'T'+t(Math.min(end,1439)),
+     'DTSTART:'+asUTC(start),
+     'DTEND:'+asUTC(Math.min(end,1439)),
      'SUMMARY:'+icsEscape('Без планов · '+title),
      'DESCRIPTION:'+icsEscape('Планируемое посещение. Проверьте время работы и билеты.'),
      'LOCATION:'+icsEscape(addr||'Москва'),'END:VEVENT');
