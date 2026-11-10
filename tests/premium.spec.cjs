@@ -88,7 +88,7 @@ test('Memories are private, persisted across reloads, and deleted when confirmed
 test('Mobile all screens remain in viewport without horizontal overflow',async({page})=>{
  await page.goto('/');
  for(const name of ['home','discover','library','wizard']){
-  if(name==='wizard')await page.locator('[data-action="new"]').first().click();
+  if(name==='wizard')await page.locator('[data-action="new"]:visible').first().click();
   else await page.locator('[data-screen="'+name+'"]:visible').first().click();
   await expect(page.locator('#page-'+name)).toBeVisible();
   const sizes=await page.evaluate(()=>({view:innerWidth,scroll:document.documentElement.scrollWidth}));
