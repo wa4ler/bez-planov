@@ -7,7 +7,7 @@ test('Hand-painted hero, all eight illustrated districts, and district selection
  await page.goto('/');
  await expect(page.locator('.hero-art')).toBeVisible();
  await expect.poll(()=>page.locator('.hero-art').evaluate(e=>e.complete&&e.naturalWidth>0)).toBe(true);
- await expect(page.locator('.hero-art')).toHaveAttribute('src','./assets/hero-moscow.webp');
+ await expect(page.locator('.hero-art')).toHaveAttribute('src','./assets/design-v1/01-hero-couple-moscow.svg');
  await page.locator('[data-screen="discover"]:visible').first().click();
  await expect(page.locator('#page-discover')).toBeVisible();
  await expect(page.locator('.district-card')).toHaveCount(8);
