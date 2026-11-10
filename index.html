@@ -207,19 +207,19 @@
    <div class="wizard-main panel">
     <section class="wizard-step" data-step="0">
       <div class="step-kicker">01 / ВРЕМЯ И ВОЗМОЖНОСТИ</div>
-      <h3 class="bp-calendar-heading"><img class="bp-calendar-icon" src="./assets/icon-calendar-premium.svg" width="27" height="27" alt="" aria-hidden="true">Когда отправимся?</h3>
+      <h3>Когда отправимся?</h3>
       <p class="section-description">Один красивый вечер, длинные выходные или несколько дней открытий — подойдёт любой формат.</p>
       <div class="form-grid">
-        <div class="field bp-calendar-field"><label for="dateStart"><img class="bp-calendar-icon" src="./assets/icon-calendar-premium.svg" width="27" height="27" alt="" aria-hidden="true">Начало</label><input type="date" class="control" id="dateStart" required></div>
-        <div class="field bp-calendar-field"><label for="dateEnd"><img class="bp-calendar-icon" src="./assets/icon-calendar-premium.svg" width="27" height="27" alt="" aria-hidden="true">Окончание</label><input type="date" class="control" id="dateEnd" required></div>
+        <div class="field"><label for="dateStart">Начало</label><input type="date" class="control" id="dateStart" required></div>
+        <div class="field"><label for="dateEnd">Окончание</label><input type="date" class="control" id="dateEnd" required></div>
       </div>
       <div class="inline-info" id="rangeInfo" aria-live="polite">Выберите даты поездки.</div>
       <div class="inline-info district-hint" id="districtSelectionNote" hidden></div>
       <div class="couples-only-note"><span>♥</span><div><strong>Маршрут только для вас двоих</strong><p>Дальше каждый отдельно расскажет о своих желаниях.</p></div></div>
       <div class="field" id="partySizeField" hidden><label for="partySize">Участников</label><select id="partySize" class="control"><option value="2">Двое</option></select></div>
       <div class="field"><span class="field-label">Как связать дни?</span><div class="choice-grid twin" data-choice="journeyMode">
-       <button type="button" class="choice active" data-value="connected" aria-pressed="true"><img class="bp-premium-icon" src="./assets/icon-journey-premium.svg" width="30" height="30" alt="" aria-hidden="true"><strong>Одно путешествие</strong><small>Дни связаны, меньше повторений</small></button>
-       <button type="button" class="choice" data-value="independent" aria-pressed="false"><img class="bp-premium-icon" src="./assets/icon-days-premium.svg" width="30" height="30" alt="" aria-hidden="true"><strong>Отдельные маршруты</strong><small>Своя программа на каждый день</small></button>
+       <button type="button" class="choice active" data-value="connected" aria-pressed="true"><span>⌁</span><strong>Одно путешествие</strong><small>Дни связаны, меньше повторений</small></button>
+       <button type="button" class="choice" data-value="independent" aria-pressed="false"><span>▤</span><strong>Отдельные маршруты</strong><small>Своя программа на каждый день</small></button>
       </div></div>
       <div class="form-grid">
        <div class="field"><label for="budgetAmount">Ваш бюджет, ₽</label><input type="number" id="budgetAmount" class="control" min="500" max="10000000" step="500" value="10000" inputmode="numeric"></div>
@@ -385,7 +385,7 @@
   </section>
   <section class="plan-cover" id="planCover">
   <div class="plan-cover-text"><span class="overline">МАРШРУТ СОСТАВЛЕН ПОД ВАШИ ОТВЕТЫ</span><h3>Не просто список точек.<br>Ваша маленькая история.</h3><p id="planCoverText"></p><div id="planInterestPills"></div></div><img src="./assets/dates/our-route.webp" alt="" width="1672" height="941" loading="eager"></section>
-  <div class="itinerary-actions"><button class="button button-outline button-small" id="exportCalendar" type="button"><img class="bp-calendar-icon" src="./assets/icon-calendar-premium.svg" width="27" height="27" alt="" aria-hidden="true"> Добавить дни в календарь</button><button class="button button-outline button-small" id="printItinerary" type="button"><svg class="ui-icon"><use href="./assets/icons.svg#save"></use></svg> Печать / PDF</button></div>
+  <div class="itinerary-actions"><button class="button button-outline button-small" id="exportCalendar" type="button"><svg class="ui-icon"><use href="./assets/icons.svg#calendar"></use></svg> Добавить дни в календарь</button><button class="button button-outline button-small" id="printItinerary" type="button"><svg class="ui-icon"><use href="./assets/icons.svg#save"></use></svg> Печать / PDF</button></div>
   <div id="daysTabs" class="day-tabs" role="tablist" aria-label="Выбор дня"></div>
   <div id="dayResult"></div>
   <div id="accommodationSummary" class="accommodation-summary" hidden></div>
@@ -413,7 +413,7 @@
 <nav class="mobile-bottom-nav" aria-label="Быстрая навигация">
 <button type="button" data-screen="home"><svg class="ui-icon"><use href="./assets/icons.svg#heart"></use></svg><span>Главная</span></button>
 <button type="button" data-screen="discover"><svg class="ui-icon"><use href="./assets/icons.svg#compass"></use></svg><span>Открыть</span></button>
-<button type="button" data-action="new" class="mobile-create"><img class="bp-premium-icon" src="./assets/icon-journey-premium.svg" width="25" height="25" alt="" aria-hidden="true"><span>Маршрут</span></button>
+<button type="button" data-action="new" class="mobile-create"><svg class="ui-icon"><use href="./assets/icons.svg#spark"></use></svg><span>Маршрут</span></button>
 <button type="button" data-screen="library"><svg class="ui-icon"><use href="./assets/icons.svg#book"></use></svg><span>Моё</span></button>
 </nav>
 <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
