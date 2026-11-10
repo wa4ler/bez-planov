@@ -388,3 +388,7 @@ input,textarea,select{color-scheme:dark}
 .bp-v07-overnight-label>input{margin:0!important}
 .bp-v07-overnight-label>span{flex:1;min-width:0}
 .bp-v07-overnight-label .bp-v07-miniicon{flex-shrink:0}
+
+/* Icon #6 — approved food and experiences */
+.choice .bp-v07-food-icon{display:block;width:47px;height:47px;margin:1px 0 10px;border-radius:12px;object-fit:contain;flex-shrink:0;filter:drop-shadow(0 3px 11px rgba(235,158,97,.14))}
+@media(max-width:650px){.choice .bp-v07-food-icon{width:43px;height:43px;margin-bottom:8px}}
