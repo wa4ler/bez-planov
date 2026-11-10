@@ -216,7 +216,7 @@
       <div class="inline-info" id="rangeInfo" aria-live="polite">Выберите даты поездки.</div>
       <div class="inline-info district-hint" id="districtSelectionNote" hidden></div>
       <div class="couples-only-note"><span>♥</span><div><strong>Маршрут только для вас двоих</strong><p>Дальше каждый отдельно расскажет о своих желаниях.</p></div></div>
-      <div class="field" id="partySizeField" hidden><label for="partySize">Сколько вас всего?</label><select id="partySize" class="control"><option value="3">Трое</option><option value="4">Четверо</option><option value="5">Пятеро</option><option value="6">Шестеро</option></select></div>
+      <div class="field" id="partySizeField" hidden><label for="partySize">Участников</label><select id="partySize" class="control"><option value="2">Двое</option></select></div>
       <div class="field"><span class="field-label">Как связать дни?</span><div class="choice-grid twin" data-choice="journeyMode">
        <button type="button" class="choice active" data-value="connected" aria-pressed="true"><span>⌁</span><strong>Одно путешествие</strong><small>Дни связаны, меньше повторений</small></button>
        <button type="button" class="choice" data-value="independent" aria-pressed="false"><span>▤</span><strong>Отдельные маршруты</strong><small>Своя программа на каждый день</small></button>
@@ -232,7 +232,7 @@
       <div class="field"><label class="checkbox-label"><input type="checkbox" id="overnightStay"> Понадобятся ночёвки между днями</label><small class="field-note">Необязательно: можно планировать несколько отдельных дней без гостиницы.</small></div>
       <div class="form-grid" id="reserveInputs" hidden>
        <div class="field"><label for="transportReserve">Резерв на транспорт / день, ₽</label><input id="transportReserve" class="control" type="number" min="0" max="10000000" step="100" value="500"></div>
-       <div class="field" id="hotelReserveField" hidden><label for="hotelReserve">Резерв на ночёвку, ₽</label><input id="hotelReserve" class="control" type="number" min="0" max="10000000" step="500" value="3000"><small>На всю компанию, за одну ночь.</small></div>
+       <div class="field" id="hotelReserveField" hidden><label for="hotelReserve">Резерв на ночёвку, ₽</label><input id="hotelReserve" class="control" type="number" min="0" max="10000000" step="500" value="3000"><small>На двоих, за одну ночь.</small></div>
       </div>
     </section>
 
