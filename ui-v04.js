@@ -346,6 +346,8 @@ function renderDay(){
     '<div class="day-total">'+formatMoney(sum.total)+'</div><div class="budget-track"><span style="width:'+percentage+'%"></span></div>'+
     '<div class="budget-legend"><span>Лимит: '+formatMoney(day.limit)+'</span><span>Остаток: '+formatMoney(Math.max(0,day.limit-sum.total))+'</span></div>'+
     costLine(day,cfg)+
+    (itineraryOrigin(day,cfg)?'<div class="route-origin-note"><strong>Старт маршрута:</strong> '+escapeHTML(itineraryOrigin(day,cfg))+
+    '<small>Указан в ссылке на карты; точное время от места старта не рассчитано.</small></div>':'')+
     '<a class="button button-primary" href="'+escapeHTML(dayMap(day,cfg))+'" target="_blank" rel="noopener noreferrer">Открыть маршрут в картах ↗</a>'+
     '<button type="button" class="button button-outline" data-action="reroll-day">↻ Пересобрать этот день</button>'+
     '<div class="sidebar-note"><strong>План, а не обещание</strong> Время остановок предварительное: на переезды между ними заложен буфер, а реальное время в пути не рассчитывается. Часы работы, билеты и погоду проверьте самостоятельно.'+
