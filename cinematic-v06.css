@@ -383,3 +383,8 @@ input,textarea,select{color-scheme:dark}
 .bp-v07-illustrated-label{display:flex!important;align-items:center;gap:11px;min-height:44px}
 .bp-v07-miniicon{display:inline-block;flex:0 0 auto;width:44px;height:44px;border-radius:12px;object-fit:cover;filter:drop-shadow(0 2px 8px rgba(207,156,95,.15))}
 @media(max-width:650px){.bp-v07-miniicon{width:39px;height:39px;border-radius:11px}.bp-v07-illustrated-label{gap:9px;min-height:39px}}
+
+.bp-v07-overnight-label{display:flex!important;align-items:center!important;gap:11px;margin:12px 0!important}
+.bp-v07-overnight-label>input{margin:0!important}
+.bp-v07-overnight-label>span{flex:1;min-width:0}
+.bp-v07-overnight-label .bp-v07-miniicon{flex-shrink:0}
