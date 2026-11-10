@@ -378,3 +378,8 @@ input,textarea,select{color-scheme:dark}
 /* Approved unique icon #3: separate days */
 .choice .bp-v07-independent-icon{display:block;width:47px;height:47px;margin:1px 0 10px;border-radius:12px;object-fit:contain;flex-shrink:0;filter:drop-shadow(0 3px 11px rgba(235,158,97,.14))}
 @media(max-width:650px){.choice .bp-v07-independent-icon{width:43px;height:43px;margin-bottom:8px}}
+
+/* Premium user-approved pictograms next to corresponding inputs */
+.bp-v07-illustrated-label{display:flex!important;align-items:center;gap:11px;min-height:44px}
+.bp-v07-miniicon{display:inline-block;flex:0 0 auto;width:44px;height:44px;border-radius:12px;object-fit:cover;filter:drop-shadow(0 2px 8px rgba(207,156,95,.15))}
+@media(max-width:650px){.bp-v07-miniicon{width:39px;height:39px;border-radius:11px}.bp-v07-illustrated-label{gap:9px;min-height:39px}}
