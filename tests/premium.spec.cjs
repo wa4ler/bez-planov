@@ -7,7 +7,7 @@ test('Hand-painted hero, all eight illustrated districts, and district selection
  await page.goto('/');
  await expect(page.locator('.hero-art')).toBeVisible();
  await expect.poll(()=>page.locator('.hero-art').evaluate(e=>e.complete&&e.naturalWidth>0)).toBe(true);
- await expect(page.locator('.hero-art')).toHaveAttribute('src','./assets/hero-moscow.webp');
+ await expect(page.locator('.hero-art')).toHaveAttribute('src','./assets/approved/05-inspiration-rooftop.webp');
  await page.locator('[data-screen="discover"]:visible').first().click();
  await expect(page.locator('#page-discover')).toBeVisible();
  await expect(page.locator('.district-card')).toHaveCount(8);
@@ -55,11 +55,13 @@ test('16 interests, free answers, visited exclusions and desired venue appear in
 test('Calendar export contains complete selected dates and print contains every day',async({page})=>{
  await page.goto('/');
  await page.locator('.hero-cta-row [data-action="new"]').click();
- await page.locator('[data-choice="peopleMode"] [data-value="solo"]').click();
+
  await page.locator('#dateStart').fill(future(8));
  await page.locator('#dateEnd').fill(future(10));
  await next(page);
  await rate(page,0,'walk','2');await rate(page,0,'nature','1');
+ await next(page);
+ await rate(page,1,'food','2');await rate(page,1,'art','1');
  await next(page);
  await page.locator('#goalChoices [data-value="rest"]').click();
  await next(page);await next(page);
