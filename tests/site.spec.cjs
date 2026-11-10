@@ -143,7 +143,7 @@ test('Personal profile persists between new routes and can be cleared locally',a
   await expect(page.locator('[data-step="1"]')).toBeVisible();
   await expect(page.locator('#nameOne')).toHaveValue('Маша');
   await page.locator('[data-screen="home"]').first().click();
-  await page.locator('[data-action="new"]').first().click();
+  await page.locator('[data-action="new"]:visible').first().click();
   await expect(page.locator('#nameOne')).toHaveValue('Маша');
   await expect(page.locator('#tasteOne [data-pref="nature"][data-rating="2"]')).toHaveAttribute('aria-pressed','true');
   await page.locator('[data-screen="library"]:visible').first().click();
