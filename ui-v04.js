@@ -529,7 +529,7 @@ function handleGlobalClick(e){
  }
  if(action==='clear-local'){
    if(!window.confirm('Удалить ответы анкеты, избранное, отзывы и все сохранённые маршруты из этого браузера?'))return;
-   for(const key of [STORE_PLANS,STORE_FAV,STORE_DRAFT,STORE_FEEDBACK,STORE_PREVIOUS,'bezPlanovPlans','bezPlanovMomentsV05','bezPlanovSavedThemesV06'])
+   for(const key of [STORE_PLANS,STORE_FAV,STORE_DRAFT,STORE_FEEDBACK,STORE_PREVIOUS,'bezPlanovPlans','bezPlanovMomentsV05','bezPlanovSavedThemesV06','bezPlanovSavedThemesV06'])
      localStorage.removeItem(key);
    draft=buildDefault();cfgToFields();updateSavedCount();renderLibrary();
    notify('Локальные данные удалены');
