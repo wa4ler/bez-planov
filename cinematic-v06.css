@@ -374,3 +374,7 @@ input,textarea,select{color-scheme:dark}
 /* Approved unique journey icon #2 — same premium family as calendar */
 .choice .bp-v07-journey-icon{display:block;width:47px;height:47px;margin:1px 0 10px;border-radius:12px;object-fit:contain;flex-shrink:0;filter:drop-shadow(0 3px 11px rgba(235,158,97,.14))}
 @media(max-width:650px){.choice .bp-v07-journey-icon{width:43px;height:43px;margin-bottom:8px}}
+
+/* Approved unique icon #3: separate days */
+.choice .bp-v07-independent-icon{display:block;width:47px;height:47px;margin:1px 0 10px;border-radius:12px;object-fit:contain;flex-shrink:0;filter:drop-shadow(0 3px 11px rgba(235,158,97,.14))}
+@media(max-width:650px){.choice .bp-v07-independent-icon{width:43px;height:43px;margin-bottom:8px}}
