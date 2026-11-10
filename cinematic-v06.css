@@ -361,3 +361,12 @@ input,textarea,select{color-scheme:dark}
  .page:not(#page-result){display:none!important}
  .stat,.day-panel,.stop-box,.day-sidebar{background:white!important;color:#111!important;border-color:#bbb!important}
 }
+
+/* Approved dark-metal calendar icon, v0.7 — loaded as one real visual asset */
+.bp-v07-calendar{display:inline-block;object-fit:contain;flex-shrink:0;vertical-align:middle;border-radius:11px}
+.bp-v07-date-heading{display:flex;align-items:center;gap:12px}
+.bp-v07-date-heading .bp-v07-calendar{width:48px;height:48px;border-radius:13px;filter:drop-shadow(0 6px 14px rgba(232,168,99,.17))}
+.bp-v07-date-label{display:flex!important;align-items:center;gap:8px;min-height:29px}
+.bp-v07-date-label .bp-v07-calendar{width:27px;height:27px;border:1px solid rgba(235,190,148,.27);border-radius:8px}
+.itinerary-actions .bp-v07-calendar{width:26px;height:26px;border-radius:7px}
+@media(max-width:650px){.bp-v07-date-heading{gap:9px}.bp-v07-date-heading .bp-v07-calendar{width:42px;height:42px}}
