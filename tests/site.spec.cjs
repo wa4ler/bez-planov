@@ -83,16 +83,20 @@ test('Couple: distinct preferences, booked event, multi-day output, favorites an
   await page.waitForTimeout(450);
   await page.screenshot({path:'test-results/couple-'+testInfo.project.name.replace(/\W/g,'-')+'.png',fullPage:true});
 });
-test('Solo flow skips partner and can select whole-period budget',async({page})=>{
+test('Couples-only flow keeps two individual profiles and supports whole-period budget',async({page})=>{
   await page.goto('/');
   await page.locator('.hero-cta-row [data-action="new"]').click();
-  await page.locator('[data-choice="peopleMode"] [data-value="solo"]').click();
+  await expect(page.locator('.couple-only-note')).toBeVisible();
+  await expect(page.locator('[data-choice="peopleMode"]')).toHaveCount(0);
   await page.locator('#dateStart').fill(datePlus(5));
   await page.locator('#dateEnd').fill(datePlus(6));
   await page.locator('#budgetAmount').fill('9000');
   await page.locator('#budgetScope').selectOption('total');
   await step(page);
   await giveRatings(page,0,{nature:2,walk:1});
+  await step(page);
+  await expect(page.locator('[data-step="2"]')).toBeVisible();
+  await giveRatings(page,1,{food:2,art:1});
   await step(page);
   await expect(page.locator('[data-step="3"]')).toBeVisible();
   await page.locator('#goalChoices [data-value="rest"]').click();
@@ -101,8 +105,10 @@ test('Solo flow skips partner and can select whole-period budget',async({page})=
   await expect(page.locator('[data-step="5"]')).toBeVisible();
   await page.locator('#finishPlan').click();
   await expect(page.locator('#page-result')).toBeVisible();
-  await expect(page.locator('#matchSection')).toBeHidden();
+  await expect(page.locator('#matchSection')).toBeVisible();
   await expect(page.locator('#daysTabs .day-tab')).toHaveCount(2);
+  expect(await page.evaluate(()=>currentPlan.config.peopleMode)).toBe('couple');
+  expect(await page.evaluate(()=>currentPlan.config.partySize)).toBe(2);
 });
 test('Hard restriction removes museum suggestions for both-person plan',async({page})=>{
   await page.goto('/');
