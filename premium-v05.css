@@ -336,3 +336,109 @@ p{color:var(--muted)}
 .route-origin-note{border:1px solid #e2eadb;background:#f2f7ee;border-radius:14px;padding:13px 15px;margin:17px 0 7px;color:#4a6a50;font-size:12px;line-height:1.55}
 .route-origin-note strong{display:block;margin-bottom:3px;color:#2e5840;font-size:12px}
 .route-origin-note small{display:block;margin-top:5px;color:#758b78;font-size:10px;line-height:1.55}
+
+
+/* DESIGN V1 — handcrafted illustration/icon system, batch 01 (ten assets) */
+.design-icon,.interest-svg,.pace-svg,.insight-stat-icon{
+  width:22px;height:22px;display:block;flex:none;fill:none;
+  stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round
+}
+.button .design-icon{width:17px;height:17px}
+.hero-scene{background:#262337;isolation:isolate;border:1px solid rgba(232,183,161,.28)}
+.hero-art{width:100%;height:100%;object-fit:cover;object-position:center center;filter:none}
+.hero-scene:after{background:linear-gradient(180deg,transparent 29%,rgba(12,18,34,.08) 56%,rgba(14,18,31,.54) 100%)}
+.floating-match{background:rgba(19,23,40,.86);border:1px solid rgba(247,205,158,.26)}
+.floating-tag{background:rgba(255,244,223,.93);border-color:rgba(255,226,190,.72)}
+.floating-tag .tag-icon{color:#9b5e70;background:#f7e6d7}
+.story-premium-art{
+ position:relative;overflow:hidden;border-radius:28px;max-height:405px;min-height:340px;
+ background:#242037;margin:26px 0 23px;box-shadow:0 24px 47px rgba(25,28,46,.11)
+}
+.story-premium-art img{display:block;width:100%;height:405px;object-fit:cover;object-position:center 48%}
+.story-premium-art:after{
+ content:"";position:absolute;inset:45% 0 0;pointer-events:none;
+ background:linear-gradient(180deg,transparent,rgba(13,17,29,.79))
+}
+.story-art-label{position:absolute;z-index:2;bottom:26px;left:32px;right:32px;color:#fff1db;
+ font:600 clamp(20px,2.9vw,31px)/1.24 'Playfair Display',Georgia,serif;
+ letter-spacing:-.025em;text-shadow:0 3px 15px rgba(0,0,0,.28)}
+.story-banner{
+ background:linear-gradient(115deg,rgba(20,29,47,.91),rgba(73,47,78,.74)),
+ url("./assets/design-v1/09-decorative-texture.svg") center center/cover no-repeat;
+ border-color:#755c73
+}
+.story-banner h2{color:#fff4df}
+.story-banner .overline{color:#fac9a3}
+.library-premium-art{position:relative;overflow:hidden;border-radius:25px;height:270px;margin:25px 0 29px;background:#27233b}
+.library-premium-art img{width:100%;height:100%;object-fit:cover;object-position:center 52%}
+.library-premium-art:after{content:"";position:absolute;inset:0;pointer-events:none;
+ background:linear-gradient(90deg,rgba(18,22,38,.85) 0%,rgba(18,22,38,.4) 46%,transparent 82%)}
+.library-art-copy{position:absolute;z-index:2;top:50%;left:44px;transform:translateY(-50%);display:flex;flex-direction:column;gap:11px}
+.library-art-copy strong{font:700 clamp(28px,3.6vw,48px)/1.1 'Playfair Display',Georgia,serif;color:#fff0dc;letter-spacing:-.04em}
+.library-art-copy span{font-size:13px;line-height:1.75;color:#f2d9c7;max-width:300px}
+.plan-cover{background:linear-gradient(110deg,#202039,#503a5a)}
+.plan-cover img{object-fit:cover;object-position:48% center;filter:saturate(1.05)}
+.plan-cover .overline{display:flex;align-items:center;gap:9px}
+.plan-cover .overline .design-icon{width:18px;height:18px}
+.plan-cover h3{color:#ffe6ce}
+.plan-cover p{color:#d9cdd8}
+.taste-icon{color:#965b65;background:linear-gradient(145deg,#f9e8d8,#f4e3dd)}
+.taste-icon .interest-svg{width:26px;height:26px;stroke:#985e6b;stroke-width:1.75}
+.taste-row:hover .taste-icon{background:#f3dccc}
+.choice .pace-svg{width:27px;height:27px;color:#aa735e}
+.choice.active .pace-svg{color:#8f5669}
+.choice span:has(.pace-svg){display:flex;align-items:center;justify-content:flex-start;height:30px}
+.review-icon .design-icon{color:#567762;width:26px;height:26px}
+.transport-grid{
+ display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin-top:9px
+}
+.transport-pick{
+ display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;
+ min-height:73px;border:1px solid #e4dfd9;border-radius:14px;padding:11px 4px;
+ background:#fffefa;color:#867a79;font-size:10px;font-weight:750;line-height:1.15;
+ transition:background .2s,border-color .2s,color .2s,transform .2s
+}
+.transport-pick .design-icon{width:25px;height:25px;color:#997278}
+.transport-pick.active,.transport-pick[aria-pressed="true"]{background:#f8ebe2;color:#7e4e5e;border-color:#c5988b}
+.transport-pick.active .design-icon{color:#a66064}
+.transport-pick:hover:not(:disabled){transform:translateY(-2px);border-color:#c79d91}
+.stat{position:relative;overflow:hidden;isolation:isolate}
+.stat .insight-stat-icon{width:31px;height:31px;color:#ad7780;stroke-width:1.55;margin-bottom:12px}
+.stat:nth-child(2) .insight-stat-icon{color:#78988d}
+.stat:nth-child(3) .insight-stat-icon{color:#a5876d}
+.stat:nth-child(4) .insight-stat-icon{color:#b18a9d}
+.stop-visual .design-icon{width:27px;height:27px;stroke-width:1.6}
+.stop.fixed .stop-visual .design-icon{color:#b17665}
+#matchSection{position:relative;overflow:hidden}
+#matchSection:before{content:"";position:absolute;right:-145px;bottom:-200px;width:380px;height:380px;
+ background:url("./assets/design-v1/09-decorative-texture.svg") center/cover;opacity:.12;border-radius:50%;pointer-events:none}
+#matchSection>*{position:relative;z-index:1}
+@media (max-width:900px){
+ .story-premium-art{min-height:245px}
+ .story-premium-art img{height:305px}
+ .library-premium-art{height:235px}
+}
+@media (max-width:650px){
+ .hero-art{object-position:48% center}
+ .hero-scene{border-radius:26px}
+ .story-premium-art{min-height:0;height:235px;border-radius:20px;margin:17px 0 17px}
+ .story-premium-art img{height:235px;object-position:50% 50%}
+ .story-art-label{bottom:19px;left:19px;right:19px;font-size:20px}
+ .library-premium-art{height:214px;border-radius:20px;margin:18px 0}
+ .library-premium-art img{object-position:58% center}
+ .library-art-copy{left:20px;right:20px}
+ .library-art-copy strong{font-size:28px}
+ .library-art-copy span{font-size:11px;line-height:1.5;max-width:235px}
+ .transport-grid{gap:5px}
+ .transport-pick{min-height:68px;padding:8px 3px;border-radius:11px;font-size:9px}
+ .transport-pick .design-icon{height:22px;width:22px}
+ .stat .insight-stat-icon{height:26px;width:26px;margin-bottom:9px}
+ .taste-icon .interest-svg{width:22px;height:22px}
+ .plan-cover{grid-template-columns:1fr 34%}
+ .plan-cover img{object-position:49% center}
+ .plan-cover .overline .design-icon{width:16px;height:16px}
+ .story-banner{background-position:center}
+}
+@media (prefers-reduced-motion:reduce){
+ .transport-pick{transition:none!important}
+}
