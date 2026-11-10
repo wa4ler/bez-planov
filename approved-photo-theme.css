@@ -1,0 +1,90 @@
+/* Без планов · approved cinematic imagery
+   Real approved assets, 1670px+ originals, no raster upscaling. */
+:root{
+  --photo-ink:#242632;
+  --photo-warm:#d7a482;
+  --photo-cream:#faf4eb;
+  --photo-rose:#b88486;
+}
+.hero-scene{background:#262335;border:1px solid rgba(244,203,170,.22);box-shadow:0 25px 70px rgba(34,35,46,.20)}
+.hero-art{width:100%;height:100%;object-fit:cover;object-position:50% 50%;filter:none}
+.hero-scene:after{background:linear-gradient(180deg,transparent 24%,rgba(17,21,32,.07) 50%,rgba(16,21,30,.67) 100%)}
+.floating-match{background:rgba(22,26,39,.86);border:1px solid rgba(239,206,171,.26);color:#fff1df;backdrop-filter:blur(16px)}
+.floating-match span,.floating-match strong{color:#fff1df}
+.floating-one,.floating-two{background:rgba(255,248,237,.94);border:1px solid rgba(255,239,218,.82)}
+.editorial-tile{background:#251e28}
+.editorial-tile img{filter:saturate(.93);object-position:center center}
+.editorial-tile:after{background:linear-gradient(180deg,rgba(14,16,28,.02) 18%,rgba(19,22,32,.82) 100%)}
+.editorial-large img{object-position:53% 45%}
+.editorial-preview .editorial-heading .button{border-color:#ddd0c2;color:#68524a}
+.ideas-wrap{margin:20px 0 66px}
+.ideas-head{max-width:740px;margin-bottom:25px}
+.ideas-head h3{font-size:clamp(31px,3.6vw,49px);line-height:1.18;margin:10px 0 13px;letter-spacing:-.055em}
+.ideas-head h3 em{font-family:'Playfair Display',Georgia,serif;font-weight:600;color:#b27d68}
+.ideas-head p{font-size:13px;line-height:1.8;max-width:650px}
+.ideas-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:15px}
+.idea-card{appearance:none;text-align:left;display:block;position:relative;border:0;border-radius:21px;overflow:hidden;background:#262334;min-height:260px;box-shadow:0 13px 38px rgba(26,33,34,.08);isolation:isolate;cursor:pointer}
+.idea-card:focus-visible{outline:3px solid #c59270;outline-offset:4px}
+.idea-card img{width:100%;height:100%;position:absolute;inset:0;display:block;object-fit:cover;transition:transform .45s ease,filter .3s ease;filter:saturate(.95)}
+.idea-card:hover img,.idea-card:focus-visible img{transform:scale(1.045);filter:saturate(1.06)}
+.idea-card:after{content:'';position:absolute;inset:0;z-index:0;background:linear-gradient(180deg,transparent 12%,rgba(16,20,31,.11) 41%,rgba(16,18,28,.90) 100%)}
+.idea-card-content{position:absolute;z-index:1;left:22px;right:18px;bottom:21px;display:flex;flex-direction:column;gap:7px}
+.idea-card-content small{font-size:9px;font-weight:800;letter-spacing:.17em;color:#ecd2b5}
+.idea-card-content strong{color:#fff5e5;font-weight:850;font-size:24px;line-height:1.13;letter-spacing:-.045em}
+.idea-card-content>span{color:#e8d8d0;font-size:11px;line-height:1.5}
+.ideas-disclaimer{font-size:11px;line-height:1.65;margin:17px 0 0;color:#889285}
+.brand-concepts{margin:32px 0 4px;background:#fffefa;border-radius:18px;padding:16px 19px;border:1px solid #e9e5db}
+.brand-concepts summary{cursor:pointer;font-size:12px;font-weight:800;color:#637864;list-style:revert}
+.brand-concepts>div{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-top:19px}
+.brand-concepts img{width:100%;height:auto;aspect-ratio:1.7;object-fit:cover;border-radius:12px;box-shadow:0 6px 20px rgba(31,35,33,.1)}
+.brand-concepts p{font-size:10px;line-height:1.6;margin:13px 0 0}
+.approved-library-banner{position:relative;isolation:isolate;overflow:hidden;min-height:242px;border-radius:25px;background:#26243a;margin:20px 0 28px}
+.approved-library-banner img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 49%}
+.approved-library-banner:after{position:absolute;inset:0;content:'';z-index:0;background:linear-gradient(90deg,rgba(17,20,32,.9),rgba(17,22,34,.58) 52%,rgba(17,20,32,.05))}
+.approved-library-banner>div{position:relative;z-index:1;display:flex;flex-direction:column;gap:13px;justify-content:center;min-height:242px;padding:28px 35px}
+.approved-library-banner span{color:#edc19c;letter-spacing:.13em;font-size:10px;text-transform:uppercase;font-weight:800}
+.approved-library-banner strong{color:#fff4e5;line-height:1.18;letter-spacing:-.045em;font:700 clamp(26px,3.8vw,42px)/1.13 'Playfair Display',Georgia,serif}
+.plan-cover{background:linear-gradient(120deg,#241f34,#534054)}
+.plan-cover img{mask-image:linear-gradient(to right,transparent,#000 25%);object-position:52% center}
+.plan-cover-text .overline{color:#efbf9b}
+.plan-cover h3{color:#ffefdf}
+.plan-cover p{color:#e4d6d6}
+.day-header img{filter:saturate(.89)}
+.approved-stop-picture{margin:17px 0 2px;padding:0;border-radius:14px;overflow:hidden;background:#eee6dd;border:1px solid #eae5db}
+.approved-stop-picture img{display:block;width:100%;aspect-ratio:2.3/1;object-fit:cover;object-position:center 48%}
+.approved-stop-picture figcaption{padding:8px 11px;background:#fff9f0;font-size:9px;line-height:1.4;color:#86766e}
+.couple-only-note{padding:17px 21px;border-radius:16px;background:linear-gradient(110deg,#f5e9dc,#eff4ec);border:1px solid #ebe6d9}
+.couple-only-note p{font-size:12px;line-height:1.7;margin:6px 0 0;color:#607567}
+#page-discover .district-grid{margin-top:29px}
+@media(max-width:1060px){.ideas-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:650px){
+ .hero-scene{min-height:390px;height:390px}
+ .hero-art{object-position:center center}
+ .editorial-tile img{object-position:center 42%}
+ .idea-card{min-height:212px;border-radius:17px}
+ .ideas-grid{gap:9px}
+ .idea-card-content{left:12px;right:11px;bottom:13px;gap:5px}
+ .idea-card-content small{font-size:8px;letter-spacing:.10em}
+ .idea-card-content strong{font-size:17px}
+ .idea-card-content>span{font-size:10px}
+ .ideas-head h3{font-size:34px}
+ .ideas-head p{font-size:12px}
+ .ideas-wrap{margin:9px 0 46px}
+ .brand-concepts{padding:13px 15px}
+ .approved-library-banner{min-height:198px;border-radius:19px}
+ .approved-library-banner>div{min-height:198px;padding:19px}
+ .approved-library-banner span{font-size:9px}
+ .approved-library-banner strong{font-size:26px}
+ .approved-stop-picture{margin-top:12px}
+ .approved-stop-picture img{aspect-ratio:1.9/1}
+ .couple-only-note{padding:14px 16px}
+ .couple-only-note p{font-size:11px}
+}
+@media(max-width:365px){
+ .ideas-grid{grid-template-columns:1fr}
+ .idea-card{min-height:245px}
+ .brand-concepts>div{grid-template-columns:1fr}
+}
+@media(prefers-reduced-motion:reduce){
+ .idea-card img{transition:none}
+}

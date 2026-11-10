@@ -2,6 +2,37 @@
 /* Без планов · premium visual and product layer 0.5
    This file adds genuine, local-first functionality. No fake AI or live availability. */
 
+// Commissioned photographic illustrations; these depict categories, never a specific venue.
+const APPROVED_PHOTOS={
+ rooftop:'05-inspiration-rooftop',cafe:'06-cafe-date',cinema:'07-cinema-date',
+ spa:'08-spa-date',walk:'09-promenade-date',museum:'10-museum-date',
+ pottery:'11-pottery-date',bowling:'12-bowling-strike',dinner:'13-dinner-date',
+ planetarium:'14-planetarium-date',picnic:'15-picnic-date',route:'03-route-evening'
+};
+const photoUrl=key=>'./assets/approved/'+(APPROVED_PHOTOS[key]||APPROVED_PHOTOS.walk)+'.webp';
+function districtPhoto(area){
+ const names={center:'route',zamos:'museum',gorky:'walk',arbat:'cafe',
+  patriki:'dinner',city:'rooftop',vdnh:'planetarium',kolomenskoye:'picnic'};
+ return photoUrl(names[area]||'walk');
+}
+function stopPhoto(stop){
+ if(stop.kind!=='place')return null;
+ const place=PLACES[stop.id];if(!place)return null;
+ const id=place.id||'';
+ const tags=place.tags||[];
+ if(/planetarium|cosmos|space|sun-moscow/.test(id))return photoUrl('planetarium');
+ if(/tretyakov|museum|ges2|gallery|exhibition|history/.test(id))return photoUrl('museum');
+ if(/bowling|arcade/.test(id))return photoUrl('bowling');
+ if(/park|garden|neskuchny|kolom|botanic/.test(id))return photoUrl('picnic');
+ if(tags.includes('cinema'))return photoUrl('cinema');
+ if(tags.includes('art')||tags.includes('history'))return photoUrl('museum');
+ if(tags.includes('food'))return photoUrl(tags.includes('romance')?'dinner':'cafe');
+ if(tags.includes('romance'))return photoUrl('walk');
+ if(tags.includes('activity'))return photoUrl('pottery');
+ if(tags.includes('nature'))return photoUrl('picnic');
+ return photoUrl('walk');
+}
+
 const iconSVG=(name,cls='ui-icon')=>'<svg class="'+cls+'" aria-hidden="true"><use href="./assets/icons.svg#'+name+'"></use></svg>';
 const districtImage=id=>'./assets/areas/'+(AREA_BY_ID[id]?id:'center')+'.svg';
 const MOMENTS_STORE='bezPlanovMomentsV05';
@@ -112,8 +143,8 @@ renderDay=function(){
  if(header){
   header.querySelectorAll('img').forEach(x=>x.remove());
   const img=document.createElement('img');
-  img.src=districtImage(day.areaId);
-  img.alt='';img.loading='lazy';img.width=620;img.height=485;
+  img.src=districtPhoto(day.areaId);
+  img.alt='';img.loading='lazy';img.width=1672;img.height=941;
   header.prepend(img);
  }
  const stops=Array.from(document.querySelectorAll('#dayResult .stop'));
@@ -123,6 +154,18 @@ renderDay=function(){
    if(visual){
      const tag=s.kind==='fixed'?'ticket':extraLabels[PLACES[s.id]?.tags[0]]||'spark';
      visual.innerHTML=iconSVG(tag);
+   }
+   const stopBox=el.querySelector('.stop-box');
+   const photo=stopPhoto(s);
+   if(stopBox&&photo&&i<4){
+     const figure=document.createElement('figure');
+     figure.className='approved-stop-picture';
+     const image=document.createElement('img');
+     image.src=photo;image.alt='';image.loading='lazy';
+     image.width=1672;image.height=941;
+     const caption=document.createElement('figcaption');
+     caption.textContent='Иллюстрация атмосферы, не фотография конкретного заведения';
+     figure.append(image,caption);stopBox.append(figure);
    }
    const why=el.querySelector('.stop-why');
    if(why&&s.kind==='place'&&mentionedPlaceIds(cfg.dreamPlaces).includes(s.id)){
@@ -255,6 +298,18 @@ function usePremium(){
  $('memoryDate').value=localISO(new Date());
  $('memoryForm').addEventListener('submit',addMemory);
  document.addEventListener('click',e=>{
+  const interest=e.target.closest('[data-action="idea"]');
+  if(interest){
+   const key=interest.dataset.interest;
+   if(!PREF_BY_KEY[key])return;
+   freshWizard();
+   draft.peopleMode='couple';draft.partySize=2;
+   draft.profiles[0].ratings[key]=2;
+   draft.profiles[1].ratings[key]=2;
+   persistDraft();renderTaste();
+   notify('Настроение «'+(PREF_BY_KEY[key].title||'свидание')+'» отмечено для вас обоих');
+   return;
+  }
   const btn=e.target.closest('[data-action="expand-tastes"]');
   if(btn){
    const p=Number(btn.dataset.person);

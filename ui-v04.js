@@ -82,9 +82,10 @@ function cfgToFields(){
  renderTaste();reflectMode();reflectBudget();reflectDates();renderEvents();
 }
 function reflectMode(){
- $('partySizeField').hidden=draft.peopleMode!=='group';
+ draft.peopleMode='couple';
+ draft.partySize=2;
  const person1=$('personOneTitle');
- person1.textContent=draft.peopleMode==='solo'?'А что нравится именно вам?':'А что нравится вам?';
+ person1.textContent='А что нравится вам?';
 }
 function reflectBudget(){
  $('reserveInputs').hidden=draft.budgetCovers!=='all';
@@ -172,6 +173,7 @@ function freshWizard(){
    'alreadyVisited','dreamPlaces',
    'venuePreference','transport','stepFree','startLocation','hotelAddress'];
  for(const key of keep)draft[key]=clone(current[key]);
+ draft.peopleMode='couple';draft.partySize=2;
  cfgToFields();persistDraft();goStep(0);showPage('wizard');
  if(current.profiles.some(p=>Object.keys(p.ratings||{}).length||p.likes))
    notify('Ваши вкусы сохранены, осталось выбрать новые даты');
@@ -231,6 +233,7 @@ function renderReview(){
 function updateSavedCount(){const n=getSaved().length;$('savedNumber').textContent=n?'('+n+')':''}
 function startPlan(){
  if(currentStep!==5)return;
+ draft.peopleMode='couple';draft.partySize=2;
  const err=validateConfig(draft);
  if(err){$('wizardError').textContent=err;return}
  try{
@@ -611,6 +614,8 @@ function init(){
   draft={...buildDefault(),...previous,profiles:previous.profiles.map(p=>({...buildDefault().profiles[0],...p}))};
   if(!datesBetween(draft.from,draft.to).length||draft.from<localISO(new Date())){draft.from=localISO(new Date());draft.to=draft.from;draft.events=[]}
  }else draft=buildDefault();
+ // Previously saved solo/group drafts must never revive hidden modes.
+ draft.peopleMode='couple';draft.partySize=2;
  cfgToFields();goStep(0);updateSavedCount();
  document.addEventListener('click',handleGlobalClick);
  $('wizard').addEventListener('click',handleFormClick);
