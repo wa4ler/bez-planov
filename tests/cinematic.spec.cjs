@@ -43,14 +43,15 @@ test('Selecting a date idea opens the real two-partner wizard without inventing 
  await expect(page.locator('[data-choice="peopleMode"]')).toHaveCount(0);
  const state=await page.evaluate(()=>({
    mode:draft.peopleMode,partySize:draft.partySize,
-   first:draft.profiles[0].ratings.coffee,
-   second:draft.profiles[1].ratings.coffee
+   first:draft.profiles[0].ratings.coffee??null,
+   second:draft.profiles[1].ratings.coffee??null,
+   shared:draft.perfectDay
  }));
- expect(state).toEqual({mode:'couple',partySize:2,first:1,second:1});
+ expect(state).toEqual({mode:'couple',partySize:2,first:null,second:null,shared:'Хотим попробовать: Кафе и кофейни.'});
  await page.locator('#dateStart').fill('2027-02-18');
  await page.locator('#dateEnd').fill('2027-02-19');
  await page.locator('#nextStep').click();
- await expect(page.locator('#tasteOne [data-pref="coffee"][data-rating="1"]')).toHaveAttribute('aria-pressed','true');
+ await expect(page.locator('#tasteOne [data-pref="coffee"][data-rating="1"]')).toHaveAttribute('aria-pressed','false');
  await page.locator('#nextStep').click();
  await expect(page.locator('[data-step="2"]')).toBeVisible();
 });
@@ -63,4 +64,30 @@ test('Both participants remain required even when restoring an old solo draft',a
  await page.locator('[data-action="new"]:visible').first().click();
  const state=await page.evaluate(()=>({mode:draft.peopleMode,people:draft.partySize,steps:effectiveStepList()}));
  expect(state).toEqual({mode:'couple',people:2,steps:[0,1,2,3,4,5]});
+});
+
+test('Deleting personal browser data also removes favorite date categories',async({page})=>{
+ await page.goto('/');
+ await page.locator('#dateGridHome [data-action="date-like"][data-idea="cinema"]').click();
+ await expect(page.locator('#dateGridHome [data-action="date-like"][data-idea="cinema"]')).toHaveAttribute('aria-pressed','true');
+ await page.locator('[data-screen="library"]:visible').first().click();
+ page.once('dialog',dialog=>dialog.accept());
+ await page.locator('[data-action="clear-local"]').click();
+ await expect(page.locator('#savedDateIdeas')).not.toContainText('Кино');
+ await page.reload();
+ await page.locator('[data-screen="library"]:visible').first().click();
+ await expect(page.locator('#savedDateIdeas')).not.toContainText('Кино');
+});
+test('Planner rejects solo and group modes while public launch is couples-only',async({page})=>{
+ await page.goto('/');
+ const errors=await page.evaluate(()=>{
+  const c=buildDefault();
+  const a={...c,peopleMode:'solo',partySize:1};
+  const b={...c,peopleMode:'group',partySize:4};
+  const two={...c,peopleMode:'couple',partySize:2};
+  return [validateConfig(a),validateConfig(b),validateConfig(two)];
+ });
+ expect(errors[0]).toContain('для двоих');
+ expect(errors[1]).toContain('для двоих');
+ expect(errors[2]).toBe('');
 });
