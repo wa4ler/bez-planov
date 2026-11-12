@@ -1,0 +1,19 @@
+/* Moscow route showcase — independent from planner logic */
+.bp-map-section{position:relative;padding:clamp(38px,6vw,94px) 0;background:radial-gradient(ellipse at 75% 50%,rgba(151,93,42,.11),transparent 55%),linear-gradient(180deg,#100f16 0%,#17121b 55%,#120f15 100%);overflow:hidden}
+.bp-map-wrap{display:grid;grid-template-columns:minmax(240px,.75fr) minmax(0,1.4fr);align-items:center;gap:clamp(25px,4.4vw,75px)}
+.bp-map-copy{max-width:430px;position:relative;z-index:2}
+.bp-map-kicker{display:inline-flex;align-items:center;gap:10px;color:#dcb380;font-size:11px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;margin-bottom:20px}
+.bp-map-kicker:before{content:'';width:27px;height:1px;background:linear-gradient(90deg,#e2af70,transparent)}
+.bp-map-copy h2{font-size:clamp(32px,4.6vw,65px);line-height:1.09;letter-spacing:-.035em;margin:0 0 20px;color:#fff8ee;font-weight:650}
+.bp-map-copy h2 em{color:#e9b477;font-weight:500}
+.bp-map-copy p{color:#c5b9ba;font-size:clamp(14px,1.24vw,17px);line-height:1.75;margin:0 0 26px}
+.bp-map-highlights{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:30px}
+.bp-map-highlights span{font-size:12px;color:#e0cbb4;border:1px solid rgba(225,176,114,.22);padding:8px 11px;border-radius:24px;background:rgba(244,190,128,.055)}
+.bp-map-visual{position:relative;min-width:0}
+.bp-map-visual::before{content:'';position:absolute;inset:14% -8%;z-index:0;filter:blur(54px);background:radial-gradient(ellipse,rgba(179,104,44,.20),transparent 68%);pointer-events:none}
+.bp-map-visual img{position:relative;display:block;width:100%;height:auto;aspect-ratio:1200/780;object-fit:contain;border-radius:21px;box-shadow:0 21px 90px rgba(0,0,0,.31)}
+.bp-map-footnote{font-size:11px;line-height:1.5;color:#887c85;margin-top:12px;text-align:right}
+.bp-map-cta{white-space:normal}
+@media(max-width:850px){.bp-map-wrap{grid-template-columns:1fr;gap:27px}.bp-map-copy{max-width:660px}.bp-map-copy h2{max-width:580px}.bp-map-visual{width:100%}.bp-map-footnote{text-align:left}}
+@media(max-width:550px){.bp-map-section{padding:45px 0 50px}.bp-map-kicker{margin-bottom:13px}.bp-map-copy h2{font-size:34px;margin-bottom:15px}.bp-map-copy p{font-size:14px;margin-bottom:20px}.bp-map-highlights{gap:6px;margin-bottom:22px}.bp-map-highlights span{font-size:11px;padding:7px 9px}.bp-map-visual img{border-radius:14px}.bp-map-footnote{font-size:10px}}
+@media print{.bp-map-section{display:none!important}}
