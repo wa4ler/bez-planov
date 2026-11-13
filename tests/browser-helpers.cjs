@@ -1,4 +1,20 @@
 const { expect } = require('@playwright/test');
+const { randomBytes } = require('node:crypto');
+
+// Each isolated local browser represents a different client. Apply the address at
+// context level so the complete simulated-provider redirect chain inherits it.
+// A route override only sees the initial navigation and misses later redirects.
+async function isolateLocalClient(context, baseURL) {
+  const origin = new URL(baseURL);
+  if (!['localhost', '127.0.0.1', '[::1]'].includes(origin.hostname)) return;
+  const groups = randomBytes(12).toString('hex').match(/.{4}/g);
+  await context.setExtraHTTPHeaders({ 'CF-Connecting-IP': '2001:db8:' + groups.join(':') });
+  // Do not send the synthetic local-test address to public font/CDN requests.
+  await context.route(url => ['http:', 'https:'].includes(url.protocol) && url.origin !== origin.origin, route => {
+    const headers = route.request().headers(); delete headers['cf-connecting-ip'];
+    return route.continue({ headers });
+  });
+}
 
 function future(days = 10) {
   const date = new Date();
@@ -32,4 +48,4 @@ async function expectClickableCenter(locator) {
   expect(hit, 'Visible action must receive the tap instead of a header/footer overlay').toMatchObject({ insideViewport: true, hit: true });
 }
 
-module.exports = { future, expectNoOverflow, expectClickableCenter };
+module.exports = { future, expectNoOverflow, expectClickableCenter, isolateLocalClient };

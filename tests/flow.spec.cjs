@@ -1,6 +1,6 @@
 const { test, expect } = require('@playwright/test');
 const fs = require('node:fs/promises');
-const { future, expectNoOverflow, expectClickableCenter } = require('./browser-helpers.cjs');
+const { future, expectNoOverflow, expectClickableCenter, isolateLocalClient } = require('./browser-helpers.cjs');
 
 async function begin(page, { from = future(10), to = from, budget = '16000', scope = 'daily' } = {}) {
   await page.goto('/');
@@ -49,7 +49,8 @@ async function generate(page) {
   await expectNoOverflow(page);
 }
 
-test.beforeEach(async ({ page }) => {
+test.beforeEach(async ({ page, context, baseURL }) => {
+  await isolateLocalClient(context, baseURL);
   page.clientErrors = [];
   page.on('pageerror', error => page.clientErrors.push(error.message));
 });

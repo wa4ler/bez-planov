@@ -1,8 +1,8 @@
 const { test, expect } = require('@playwright/test');
+const { isolateLocalClient } = require('./browser-helpers.cjs');
 
 async function login(page, info) {
   const subject = 'race-' + info.project.name + '-' + info.title + '-' + Date.now();
-  await page.route('**/api/auth/yandex', route => route.continue({ headers: { ...route.request().headers(), 'CF-Connecting-IP': 'local-' + Buffer.from(subject).toString('hex').slice(-80) } }));
   await page.goto('/__test/login?provider=yandex&subject=' + encodeURIComponent(subject) + '&email=shared%40yandex.ru');
   await expect(page.locator('#accountMember')).toBeVisible();
 }
@@ -14,8 +14,9 @@ async function putState(context, baseURL, state, revision) {
   return response.json();
 }
 
-test.beforeEach(async ({}, info) => {
+test.beforeEach(async ({ context, baseURL }, info) => {
   test.skip(!!process.env.BASE_URL, 'Delayed collaboration regressions require isolated local OAuth fixtures');
+  await isolateLocalClient(context, baseURL);
 });
 
 test('A delayed refresh cannot replace a draft typed while the request is in flight', async ({ page, context, baseURL }, info) => {

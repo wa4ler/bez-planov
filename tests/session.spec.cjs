@@ -1,10 +1,12 @@
 const { test, expect } = require('@playwright/test');
+const { isolateLocalClient } = require('./browser-helpers.cjs');
 
 test('Separate devices share one pair account, detect conflicts, and keep other pairs isolated', async ({ browser, baseURL }, info) => {
   test.skip(!!process.env.BASE_URL, 'Local OAuth fixtures must never be used against a deployed website');
   const first = await browser.newContext({ baseURL });
   const second = await browser.newContext({ baseURL });
   const otherPair = await browser.newContext({ baseURL });
+  await Promise.all([first, second, otherPair].map(context => isolateLocalClient(context, baseURL)));
   const subject = 'pair-' + info.project.name.replace(/\W/g, '') + '-' + Date.now();
   const mutateHeaders = { Origin: new URL(baseURL).origin, 'Sec-Fetch-Site': 'same-origin' };
   try {

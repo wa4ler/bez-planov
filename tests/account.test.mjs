@@ -70,6 +70,23 @@ test('OAuth state is browser-bound, consumed once and cannot be replayed', async
   assert.equal((await f.DB.prepare('SELECT COUNT(*) AS n FROM sessions').first()).n, 1);
 });
 
+test('OAuth start allows thirty attempts per IP, then throttles without blocking another IP', async t => {
+  const f = await fixture(); t.after(() => f.DB.close());
+  const states = new Set();
+  for (let i = 0; i < 30; i++) {
+    const response = await f.call('/api/auth/yandex', { headers: { 'CF-Connecting-IP': '192.0.2.10' } });
+    assert.equal(response.status, 303);
+    states.add(new URL(response.headers.get('Location')).searchParams.get('state'));
+  }
+  assert.equal(states.size, 30);
+  const blocked = await f.call('/api/auth/yandex', { headers: { 'CF-Connecting-IP': '192.0.2.10' } });
+  assert.equal(blocked.status, 429);
+  assert.deepEqual(await blocked.json(), { error: 'too_many_requests' });
+  assert.ok(Number(blocked.headers.get('Retry-After')) > 0);
+  const separateIP = await f.call('/api/auth/yandex', { headers: { 'CF-Connecting-IP': '192.0.2.11' } });
+  assert.equal(separateIP.status, 303);
+});
+
 test('provider failure returns generic redirect without leaking secrets', async t => {
   const f = await fixture(); t.after(() => f.DB.close());
   const result = await f.login({ exchangeFailure: true });
