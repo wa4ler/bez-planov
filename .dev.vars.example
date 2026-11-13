@@ -1,0 +1,8 @@
+# Set these server-side in Cloudflare Pages Settings → Variables and Secrets.
+# Never use real secrets in this example or any tracked file.
+APP_ORIGIN=https://bez-planov.pages.dev
+YANDEX_CLIENT_ID=
+YANDEX_CLIENT_SECRET=
+MAILRU_CLIENT_ID=
+MAILRU_CLIENT_SECRET=
+# D1 database binding name: DB (configure in Pages settings).
