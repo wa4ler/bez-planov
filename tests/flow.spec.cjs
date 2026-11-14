@@ -141,7 +141,7 @@ test('The two partners answer independently and invalid dates cannot skip the fi
 });
 
 test('Unavailable OAuth is explained honestly and the guest route remains usable', async ({ page }) => {
-  await page.route('**/api/auth/config', route => route.fulfill({ json: { configured: false, providers: { yandex: false, mailru: false } } }));
+  await page.route('**/api/auth/config', route => route.fulfill({ json: { configured: false, providers: { yandex: false, mailru: false, vk: false } } }));
   await page.route('**/api/session', route => route.fulfill({ json: { configured: false, user: null, state: { draft: null, plans: [], favorites: [] }, revision: 0 } }));
   await page.goto('/');
   await page.locator('#accountOpen').click();

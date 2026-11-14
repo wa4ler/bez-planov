@@ -20,7 +20,8 @@ module.exports = defineConfig({
     { name:'Mobile Chrome 320', use: { ...chromium, viewport:{width:320,height:740}, isMobile:true, hasTouch:true } },
     { name:'Mobile Chrome 390', use: { ...chromium, viewport:{width:390,height:844}, isMobile:true, hasTouch:true } },
     { name:'Mobile Chrome 430', use: { ...chromium, viewport:{width:430,height:932}, isMobile:true, hasTouch:true } },
-    { name:'Desktop Chrome', use: { ...devices['Desktop Chrome'], ...chromium, viewport:{width:1440,height:960} } }
+    { name:'Desktop Chrome', use: { ...devices['Desktop Chrome'], ...chromium, viewport:{width:1440,height:960} } },
+    { name:'Desktop Firefox', use: { ...devices['Desktop Firefox'], viewport:{width:1440,height:960}, launchOptions: proxy ? { proxy } : {} } }
   ],
   webServer: process.env.BASE_URL ? undefined : { command:'node scripts/dev-server.mjs', env:{PORT:'8765',BIND_HOST:'127.0.0.1',NODE_ENV:'test',DEV_OAUTH:'1'},
     url:'http://127.0.0.1:8765', reuseExistingServer:!process.env.CI, timeout:30000 },

@@ -6,3 +6,47 @@
 @media print{.site-header,.site-footer,.route-controls,.flow-top,.stop-tools,#rebuildDay,.more-menu,.toast,.sync-notice{display:none!important}.shell{width:100%;padding:0}.itinerary-grid{display:block}.stop-card{break-inside:avoid}.day-info{position:static}.view:not(#route){display:none!important}}
 
 .arrow-icon{width:18px;height:18px;flex:none;vertical-align:middle}.stop-tools .arrow-icon{width:11px;height:11px;margin-left:2px}
+
+/* Responsive web layout: phones, tablets, laptops and wide desktop displays. */
+:root{--gutter:32px;scroll-padding-block:28px 110px;-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{min-height:100vh;min-height:100svh;display:flex;flex-direction:column}
+main{flex:1;min-width:0}
+.shell{padding-left:max(var(--gutter),env(safe-area-inset-left));padding-right:max(var(--gutter),env(safe-area-inset-right))}
+.view,.fields,.profiles-grid,.itinerary-grid,.login-layout{min-width:0}
+.header-inner{height:auto;min-height:92px;padding-block:16px}
+.brand,.header-account{flex-shrink:0}
+h1,h2,h3,p,label,.button,.text-button,.taste,summary,.saved-plan{overflow-wrap:anywhere}
+input,select,textarea{scroll-margin-block:100px;max-width:100%}
+.button,.header-account,.text-button,.stop-tools button,.stop-tools a,.taste,.event-row button{min-height:44px}
+.stop-tools a,.stop-tools button{display:inline-flex;align-items:center}
+.taste .rating-mark{flex:none}
+.provider-vk{width:26px;height:26px;border-radius:7px;display:grid;place-items:center;background:#0077ff;color:white;font:bold 12px/1 Arial,sans-serif;flex:none;letter-spacing:-.04em}
+.login-card .oauth{white-space:normal;overflow-wrap:anywhere}
+.more-menu>div{max-height:min(430px,70svh);overflow-y:auto;overscroll-behavior:contain}
+:root.keyboard-open .flow-actions{position:static;backdrop-filter:none}
+:root.keyboard-open input:focus,:root.keyboard-open textarea:focus,:root.keyboard-open select:focus{scroll-margin-block:24px}
+@media(min-width:1600px){.shell{width:min(1320px,100%)}.flow-shell{width:min(980px,100%)}.hero{gap:72px;padding-block:66px}.hero-photo{height:590px}.hero h1{font-size:clamp(60px,4vw,76px)}.hero-lead{font-size:18px}.how{font-size:12px;gap:24px}.route-shell .itinerary-grid{grid-template-columns:minmax(0,1fr) 340px;gap:50px}}
+@media(min-width:651px) and (max-width:1024px){.shell{--gutter:28px}.hero{gap:28px;padding-block:36px;min-height:0}.hero h1{font-size:clamp(40px,5.7vw,55px)}.hero-photo{height:460px;border-radius:110px 110px 22px 22px}.how{flex-wrap:wrap;gap:10px 16px}.hero-lead{font-size:14px}.hero .large{font-size:13px;padding-inline:18px}.hero-photo figcaption{left:23px;bottom:26px}.hero-photo figcaption strong{font-size:20px}.login-layout{grid-template-columns:minmax(0,1fr) minmax(300px,.9fr);gap:28px}.itinerary-grid{grid-template-columns:minmax(0,1fr) 260px;gap:22px}.stop{padding-left:54px}.stop:before{left:38px}.stop-dot{left:34px}}
+@media(min-width:651px) and (max-width:800px){.login-layout{grid-template-columns:1fr;gap:12px}.login-card{width:100%;max-width:540px}.itinerary-grid{grid-template-columns:1fr}.day-info{position:static;max-width:none}.hero h1{font-size:40px}.hero-photo{height:420px}.desktop-only{display:none}.hero-note{font-size:11px}.how{font-size:10px}}
+@media(max-width:650px){.shell{--gutter:20px}.header-inner{min-height:76px;padding-block:14px}.flow-actions{margin-left:calc(-1 * max(var(--gutter),env(safe-area-inset-left)));margin-right:calc(-1 * max(var(--gutter),env(safe-area-inset-right)));padding-left:max(var(--gutter),env(safe-area-inset-left));padding-right:max(var(--gutter),env(safe-area-inset-right))}.brand small{white-space:normal}.hero .large{font-size:14px}.site-footer{padding-bottom:max(20px,env(safe-area-inset-bottom))}}
+@media(max-width:359px){.shell{--gutter:16px}.brand{font-size:19px;gap:6px}.brand svg{width:25px;height:25px}.header-account{padding:10px;font-size:10px;gap:5px}.hero h1{font-size:36px}.hero-photo{height:250px}.card{padding:20px 16px}.fields.two{grid-template-columns:1fr;gap:0}.stepper li{font-size:10px;gap:5px}.stepper li:not(:last-child):after{margin-right:6px}.route-controls{gap:14px}.route-controls .button{padding-inline:15px}.member-bar{flex-wrap:wrap}.taste-grid{gap:7px}.taste{font-size:11px;padding-inline:8px}}
+@media(orientation:landscape) and (max-height:540px) and (max-width:1100px){.header-inner{min-height:64px;padding-block:10px}.hero{padding-block:25px;min-height:0;gap:30px}.hero-photo{height:320px;border-radius:80px 80px 18px 18px}.hero h1{font-size:39px}.hero-lead{margin-top:17px;font-size:13px}.hero .large{margin-top:20px;min-height:48px;padding-block:13px}.how{margin-top:20px}.hero-note{font-size:10px}.hero .eyebrow{margin-bottom:15px}.flow-actions{padding-top:9px;padding-bottom:max(9px,env(safe-area-inset-bottom));margin-top:15px}.more-menu>div{max-height:58svh}.flow-top{margin-bottom:18px}}
+@media(pointer:coarse){.stop-tools button,.stop-tools a{min-height:46px}.stop-tools{gap:4px 17px}summary{min-height:48px}.more-menu button{min-height:48px}}
+@media(forced-colors:active){.button,.taste,.stop-card{border:1px solid ButtonText}.primary,.taste.liked{forced-color-adjust:auto}.stop-dot{background:CanvasText}}
+/* Reflow when accessibility text sizes grow: controls can move to a new row. */
+.header-inner{flex-wrap:wrap;row-gap:12px}
+.brand{max-width:100%;min-width:0;white-space:normal}
+.brand svg{flex:none}
+.brand>span,.header-account span{min-width:0;overflow-wrap:anywhere}
+.header-account{max-width:100%;min-width:0;white-space:normal}
+.how{flex-wrap:wrap}
+.section-heading{flex-wrap:wrap;align-items:flex-start}
+.section-heading>div{flex:1 1 180px;min-width:0}
+.section-heading>.button{flex:0 1 auto;max-width:100%}
+.stepper{flex-wrap:wrap;gap:10px}
+.stepper li{min-width:6.8em;flex:1 1 0}
+@media(max-width:650px){.login-card .text-button{overflow-wrap:anywhere}.member-bar>div{min-width:0}.route-controls{flex-wrap:wrap}.flow-actions .button{overflow-wrap:anywhere}}
+.site-header{padding-top:env(safe-area-inset-top)}
+.hero-photo{min-height:18em}
+.card>details:first-child>summary{min-height:48px}
+@media(max-width:650px){.route-controls>.more-menu[open]{flex:1 0 100%;width:100%}.more-menu>div{position:static;width:100%;min-width:0;max-width:none;max-height:60svh;margin-top:6px}}

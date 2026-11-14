@@ -7,7 +7,7 @@ const WORKSPACE_KEY='bezPlanovWorkspaceV1';
 const TOP_PREFS=['food','walk','art','history','nature','romance','activity','unusual','views','cinema'];
 let user=null,revision=0,workspace=loadGuest(),draft=normalDraft(workspace.draft),plan=null,dayIndex=0,step=1,swapIndex=null;
 let syncTimer=null,saving=false,dirty=false,editSerial=0,conflict=null,sessionReady=false,toastTimer=null;
-let authConfig={providers:{yandex:false,mailru:false}};
+let authConfig={providers:{yandex:false,mailru:false,vk:false}};
 let planBaseline=null,identityChanging=false;
 function fingerprint(p){return p?JSON.stringify({config:p.config,days:p.days}):null}
 function backupData(){return {workspace:clone(workspace),activePlan:plan?clone(plan):null}}
@@ -141,7 +141,7 @@ function renderReview(){
  el('review').innerHTML='<strong>Всё готово к вашему дню</strong><p>'+esc(draft.profiles.map((p,i)=>p.name||(i?'Партнёр':'Вы')).join(' и '))+' · '+esc(el('rangeInfo').textContent)+' · бюджет '+esc(formatMoney(draft.budgetAmount))+(draft.budgetScope==='daily'?' в день':' на период')+'</p>'+(positive.length?'<p>Распознали в пожеланиях: '+esc(positive.join(', '))+'.</p>':'')+(restrictions.length?'<p>Исключаем: '+esc(restrictions.join(', '))+'.</p>':'')+(draft.events.length?'<p>Закреплено событий: '+draft.events.length+'.</p>':'')+'<p>Сверьте ответы выше. Неизвестные пожелания останутся заметками — алгоритм пока понимает ограниченный словарь.</p>';
 }
 function generate(e){
- e.preventDefault();for(const n of [1,2]){const error=stepError(n);if(error){navigate('planner',n);setTimeout(()=>showError(error),0);return}}
+ e.preventDefault();if(step<3){const error=stepError(step);if(error){showError(error);return}navigate('planner',step+1);return}for(const n of [1,2]){const error=stepError(n);if(error){navigate('planner',n);setTimeout(()=>showError(error),0);return}}
  if(el('eventName').value.trim()){showError('Вы начали вводить событие. Нажмите «Добавить событие», чтобы сохранить его, или очистите название.');return}
  const error=validateConfig(draft);if(error){showError(error);return}
  try{plan=generateItinerary(clone(draft),{});planBaseline=null;plan.initialDays=clone(plan.days);plan.versions=[];dayIndex=0;swapIndex=null;persist();keepActive();navigate('route')}catch(error){showError(error.message)}
@@ -184,9 +184,9 @@ async function savePlan(asCopy=false){
 }
 function renderAccount(){
  el('accountGuest').hidden=!!user;el('accountMember').hidden=!user;el('accountTitle').innerHTML=user?'Ваш общий<br><em>кабинет.</em>':'Один вход.<br><em>Ваши общие планы.</em>';
- for(const [id,key]of [['loginYandex','yandex'],['loginMailru','mailru']]){const enabled=!!authConfig.providers?.[key];el(id).setAttribute('aria-disabled',String(!enabled));el(id).tabIndex=enabled?0:-1}
- el('authStatus').textContent=authConfig.providers?.yandex||authConfig.providers?.mailru?'Выберите один аккаунт, которым вы оба будете пользоваться.':'Вход пока готовится к запуску. Сейчас можно составить и сохранить маршрут на этом устройстве.';
- if(user){el('accountEmail').textContent=user.email||'Общий кабинет';el('pairNames').textContent=draft.profiles.map((p,i)=>p.name||(i?'Партнёр':'Вы')).join(' и ');el('guestImport').hidden=!loadGuest().plans.length}
+ for(const [id,key]of [['loginYandex','yandex'],['loginMailru','mailru'],['loginVk','vk']]){const enabled=!!authConfig.providers?.[key];el(id).setAttribute('aria-disabled',String(!enabled));el(id).tabIndex=enabled?0:-1}
+ el('authStatus').textContent=Object.values(authConfig.providers||{}).some(Boolean)?'Выберите один аккаунт, которым вы оба будете пользоваться.':'Вход пока готовится к запуску. Сейчас можно составить и сохранить маршрут на этом устройстве.';
+ if(user){el('accountEmail').textContent=user.email||user.name||(user.provider==='vk'?'Аккаунт ВКонтакте':'Общий кабинет');el('pairNames').textContent=draft.profiles.map((p,i)=>p.name||(i?'Партнёр':'Вы')).join(' и ');el('guestImport').hidden=!loadGuest().plans.length}
  el('savedNote').textContent=user?'Общие планы для вас обоих.':'Без входа маршруты доступны только в этом браузере.';
  el('savedPlans').innerHTML=workspace.plans.length?workspace.plans.map(p=>'<article class="saved-plan"><p class="eyebrow">'+p.days.length+' '+dayWord(p.days.length)+'</p><h3>'+esc(planName(p))+'</h3><p>'+esc(dateLabel(p.config.from))+(p.config.to!==p.config.from?' — '+esc(dateLabel(p.config.to)):'')+'</p><p>Ориентир: '+esc(formatMoney(totalSpend(p)))+' на двоих</p><div class="saved-actions"><button type="button" class="button secondary" data-act="open-plan" data-id="'+esc(p.id)+'">Открыть</button><button type="button" class="text-button" data-act="delete-plan" data-id="'+esc(p.id)+'">Удалить</button></div></article>').join(''):'<div class="empty-plans"><h3>Здесь будет ваш первый маршрут</h3><p>Выберите даты и интересы — и сохраните понравившийся день.</p></div>';
 }
@@ -235,14 +235,23 @@ function handleClick(e){
  if(a==='delete-plan'&&window.confirm('Удалить сохранённый маршрут?')){workspace.plans=workspace.plans.filter(p=>p.id!==button.dataset.id);persist();renderAccount()}
  if(a==='retry-sync')syncState();if(a==='merge-conflict')resolveConflict(true);if(a==='load-conflict')resolveConflict(false);if(a==='backup')downloadText('bez-planov-moi-pravki.json',JSON.stringify(backupData(),null,2),'application/json');if(a==='expired-logout')logout();
 }
+function updateViewport(){
+ const viewport=window.visualViewport;
+ const textInput=document.activeElement?.matches('input:not([type=checkbox]),textarea,select');
+ const reduced=viewport?window.innerHeight-viewport.height:0;
+ const zoomed=viewport&&viewport.scale>1.15;
+ document.documentElement.classList.toggle('keyboard-open',!!textInput&&!zoomed&&(reduced>120||window.innerHeight<360));
+}
 function bind(){
+ document.querySelector('.skip').addEventListener('click',e=>{e.preventDefault();const target=document.querySelector('main>.view:not([hidden]) h1')||el('main');target.tabIndex=-1;target.focus({preventScroll:true});target.scrollIntoView({block:'start',behavior:'auto'})});
+ document.addEventListener('keydown',e=>{if(e.key==='Escape'){const menu=document.querySelector('.more-menu[open]');if(menu){menu.open=false;menu.querySelector('summary').focus();e.preventDefault()}}});
  document.addEventListener('click',handleClick);document.querySelectorAll('.oauth').forEach(link=>link.addEventListener('click',e=>{if(link.getAttribute('aria-disabled')==='true'){e.preventDefault();return}if(!user&&plan&&!workspace.plans.some(p=>p.id===plan.id)){if(workspace.plans.length>=40){e.preventDefault();notify('Сохраните открытый маршрут или освободите место перед входом.');return}workspace.plans.unshift(clone(plan));if(!persist()){e.preventDefault();return}}}));el('planForm').addEventListener('input',fieldChanged);el('planForm').addEventListener('change',fieldChanged);el('planForm').addEventListener('submit',generate);
  el('startPlan').onclick=()=>startNew();el('newPlan').onclick=()=>startNew(true);el('continueGuest').onclick=()=>startNew();el('prevStep').onclick=()=>navigate('planner',Math.max(1,step-1));el('nextStep').onclick=()=>{const error=stepError(step);if(error){showError(error);return}navigate('planner',Math.min(3,step+1))};
  el('addEvent').onclick=addEvent;el('editPlan').onclick=()=>{draft=normalDraft(clone(plan.config));fillFields();persist();navigate('planner',1)};el('savePlan').onclick=()=>savePlan();el('saveCopy').onclick=()=>savePlan(true);el('routeDay').onchange=()=>{dayIndex=Number(el('routeDay').value);swapIndex=null;renderDay()};
  el('rebuildDay').onclick=()=>{try{changePlan(rebuildDay(plan,dayIndex,{}),'Другой вариант дня');notify('Предложили другой вариант. Закреплённые события сохранены.')}catch(e){notify(e.message)}};
  el('undoPlan').onclick=()=>{prepareHistory();const previous=plan.versions.pop();if(!previous)return;plan.days=clone(previous.days);keepActive();renderRoute();notify('Изменение отменено')};el('restoreOriginal').onclick=()=>{const next=clone(plan);next.days=clone(plan.initialDays);changePlan(next,'Возврат к исходному');notify('Исходный маршрут восстановлен')};
  el('exportCalendar').onclick=exportCalendar;el('sharePlan').onclick=share;el('logout').onclick=logout;el('editPreferences').onclick=()=>{fillFields();navigate('planner',2)};el('importGuest').onclick=importGuest;
- window.addEventListener('hashchange',renderLocation);window.addEventListener('focus',refreshSession);document.addEventListener('visibilitychange',()=>{if(!document.hidden)refreshSession()});setInterval(refreshSession,30000);
+ window.visualViewport?.addEventListener('resize',updateViewport);window.addEventListener('resize',updateViewport);document.addEventListener('focusin',updateViewport);document.addEventListener('focusout',()=>setTimeout(updateViewport,150));window.addEventListener('hashchange',renderLocation);window.addEventListener('focus',refreshSession);document.addEventListener('visibilitychange',()=>{if(!document.hidden)refreshSession()});setInterval(refreshSession,30000);
  window.addEventListener('beforeunload',e=>{if(user&&dirty){e.preventDefault();e.returnValue=''}});
 }
 busyIdentity(true);bind();fillFields();renderAccount();renderLocation();initAccount().catch(()=>{sessionReady=true;busyIdentity(false);notify('Вход временно недоступен. Можно продолжить без регистрации.')});

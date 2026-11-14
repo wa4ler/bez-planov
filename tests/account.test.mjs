@@ -1,35 +1,48 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
-import { LocalD1, createDevServer } from '../scripts/dev-server.mjs';
+import { LocalD1, createDevServer, applyLocalMigrations } from '../scripts/dev-server.mjs';
 import { handleAPI } from '../functions/api/[[path]].js';
 
 const origin = 'https://bez-planov.pages.dev';
-async function fixture() {
-  const DB = new LocalD1();
-  await DB.exec(await readFile(new URL('../migrations/0001_accounts.sql', import.meta.url), 'utf8'));
-  const env = { DB, APP_ORIGIN: origin, YANDEX_CLIENT_ID: 'test-client', YANDEX_CLIENT_SECRET: 'test-secret', MAILRU_CLIENT_ID: 'test-mail-client', MAILRU_CLIENT_SECRET: 'test-mail-secret' };
+async function fixture(existingDB) {
+  const DB = existingDB || new LocalD1();
+  if (!existingDB) await applyLocalMigrations(DB);
+  const env = { DB, APP_ORIGIN: origin, YANDEX_CLIENT_ID: 'test-client', YANDEX_CLIENT_SECRET: 'test-secret', MAILRU_CLIENT_ID: 'test-mail-client', MAILRU_CLIENT_SECRET: 'test-mail-secret', VK_CLIENT_ID: '1234567' };
   const req = (route, { method = 'GET', cookie = '', body, headers = {} } = {}) => new Request(origin + route, { method, headers: { ...(method !== 'GET' ? { Origin: origin } : {}), ...(body !== undefined ? { 'Content-Type': 'application/json' } : {}), ...(cookie ? { Cookie: cookie } : {}), ...headers }, ...(body !== undefined ? { body: JSON.stringify(body) } : {}) });
   const call = (route, opts) => handleAPI(req(route, opts), env);
-  async function login({ provider = 'yandex', subject = 'person-a', email = 'pair@yandex.ru', exchangeFailure = false, profile } = {}) {
+  async function login({ provider = 'yandex', subject = 'person-a', email = 'pair@yandex.ru', exchangeFailure = false, profile, deviceID = 'test-vk-device', tokenState, tokenUserID, callbackError } = {}) {
     const start = await call('/api/auth/' + provider);
     assert.equal(start.status, 303);
     const location = new URL(start.headers.get('Location')), state = location.searchParams.get('state');
     const flowCookie = start.headers.getSetCookie()[0].split(';')[0];
-    const callback = req(`/api/auth/callback/${provider}?code=valid-code&state=${state}`, { cookie: flowCookie });
+    const callbackURL = new URL(`/api/auth/callback/${provider}`, origin);
+    callbackURL.search = new URLSearchParams({ code: 'valid-code', state }).toString();
+    if (provider === 'vk' && deviceID != null) callbackURL.searchParams.set('device_id', deviceID);
+    if (callbackError) callbackURL.searchParams.set('error', callbackError);
+    const callback = req(callbackURL.pathname + callbackURL.search, { cookie: flowCookie });
     let calls = 0;
     const response = await handleAPI(callback, env, { fetcher: async (url, init) => {
       calls++;
-      if (url.endsWith('/token')) {
+      if (url.endsWith('/token') || url.endsWith('/oauth2/auth')) {
         const form = new URLSearchParams(init.body);
         assert.equal(form.get('grant_type'), 'authorization_code');
         assert.equal(form.get('redirect_uri'), origin + '/api/auth/callback/' + provider);
         if (provider === 'yandex') { assert.ok(form.get('code_verifier')); assert.equal(location.searchParams.get('code_challenge_method'), 'S256'); }
-        return exchangeFailure ? Response.json({ error: 'private-provider-details' }, { status: 500 }) : Response.json({ access_token: 'private-test-token', refresh_token: 'private-refresh-token' });
+        if (provider === 'vk') {
+          assert.equal(new URL(url).origin, 'https://id.vk.ru');
+          assert.equal(location.origin + location.pathname, 'https://id.vk.ru/authorize');
+          assert.equal(form.get('device_id'), deviceID); assert.equal(form.get('state'), state);
+          assert.equal(form.has('client_secret'), false); assert.equal(location.searchParams.get('code_challenge_method'), 's256');
+          const expected = Buffer.from(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(form.get('code_verifier')))).toString('base64url');
+          assert.equal(location.searchParams.get('code_challenge'), expected); assert.equal(location.searchParams.has('scope'), false);
+        }
+        return exchangeFailure ? Response.json({ error: 'private-provider-details' }, { status: 500 }) : Response.json({ access_token: 'private-test-token', refresh_token: 'private-refresh-token', ...(provider === 'vk' ? { state: tokenState ?? state, user_id: tokenUserID ?? subject } : {}) });
       }
       if (provider === 'yandex') assert.equal(init.headers.Authorization, 'OAuth private-test-token');
       else { assert.equal(init.method, 'POST'); assert.equal(new URLSearchParams(init.body).get('access_token'), 'private-test-token'); assert.ok(!url.includes('private-test-token')); }
-      return Response.json(profile ?? { id: subject, sub: subject, default_email: email, email });
+      if (provider === 'vk') { assert.equal(url, 'https://id.vk.ru/oauth2/user_info'); assert.equal(new URLSearchParams(init.body).get('client_id'), env.VK_CLIENT_ID); }
+      return Response.json(profile ?? (provider === 'vk' ? { user: { user_id: subject, first_name: 'Алекс', last_name: 'Саша', email } } : { id: subject, sub: subject, default_email: email, email }));
     } });
     const sessionCookie = response.headers.getSetCookie().find(x => x.startsWith('__Host-bp_session='))?.split(';')[0];
     return { response, cookie: sessionCookie, callback, calls, start, state, flowCookie };
@@ -41,7 +54,7 @@ const validState = (title = 'pair') => ({ draft: { profiles: [{ name: title }, {
 test('unconfigured deployment renders honest disabled providers and cannot start login', async () => {
   const request = new Request(origin + '/api/auth/config');
   const config = await (await handleAPI(request, {})).json();
-  assert.deepEqual(config, { configured: false, providers: { yandex: false, mailru: false } });
+  assert.deepEqual(config, { configured: false, providers: { yandex: false, mailru: false, vk: false } });
   const session = await (await handleAPI(new Request(origin + '/api/session'), {})).json();
   assert.equal(session.configured, false); assert.equal(session.user, null);
   assert.equal((await handleAPI(new Request(origin + '/api/auth/yandex'), {})).status, 503);
@@ -58,6 +71,88 @@ test('Yandex code flow uses PKCE, HttpOnly secure session and stores only hashed
   const stored = await f.DB.prepare('SELECT token_hash FROM sessions').first();
   assert.notEqual(stored.token_hash, login.cookie.split('=')[1]);
   assert.ok(!JSON.stringify(session).includes('private-test-token'));
+});
+
+test('VK public web client needs only its ID and stays disabled without it', async t => {
+  const f = await fixture(); t.after(() => f.DB.close());
+  const env = { DB: f.DB, APP_ORIGIN: origin, VK_CLIENT_ID: '1234567' };
+  const config = await (await handleAPI(f.req('/api/auth/config'), env)).json();
+  assert.deepEqual(config, { configured: true, providers: { yandex: false, mailru: false, vk: true } });
+  const missing = await handleAPI(f.req('/api/auth/vk'), { DB: f.DB, APP_ORIGIN: origin });
+  assert.equal(missing.status, 503);
+  assert.deepEqual(await missing.json(), { error: 'provider_not_configured' });
+});
+
+test('VK uses PKCE and callback device ID, verifies direct profile, and permits missing email', async t => {
+  const f = await fixture(); t.after(() => f.DB.close());
+  const login = await f.login({ provider: 'vk', email: '' });
+  assert.equal(login.calls, 2); assert.ok(login.cookie);
+  const session = await (await f.call('/api/session', { cookie: login.cookie })).json();
+  assert.equal(session.user.provider, 'vk'); assert.equal(session.user.email, ''); assert.equal(session.user.name, 'Алекс Саша');
+  assert.equal((await f.DB.prepare('SELECT subject FROM accounts').first()).subject, 'person-a');
+  for (const table of ['accounts', 'sessions', 'pair_state', 'oauth_flows']) {
+    const rows = await f.DB.prepare('SELECT * FROM ' + table).all();
+    assert.ok(!JSON.stringify(rows).includes('private-test-token'));
+    assert.ok(!JSON.stringify(rows).includes('private-refresh-token'));
+  }
+  const anotherDevice = await f.login({ provider: 'vk', email: '' });
+  const second = await (await f.call('/api/session', { cookie: anotherDevice.cookie })).json();
+  assert.equal(second.user.id, session.user.id);
+});
+
+test('VK missing or invalid device ID and denied authorization never exchange the code', async t => {
+  const f = await fixture(); t.after(() => f.DB.close());
+  for (const options of [{ deviceID: null }, { deviceID: '' }, { deviceID: 'bad device\n' }, { callbackError: 'access_denied' }]) {
+    const login = await f.login({ provider: 'vk', ...options });
+    assert.equal(login.calls, 0); assert.equal(login.cookie, undefined);
+    assert.equal(login.response.headers.get('Location'), origin + '/?auth=error#account');
+  }
+  assert.equal((await f.DB.prepare('SELECT COUNT(*) AS n FROM sessions').first()).n, 0);
+});
+
+test('VK rejects token state mismatch and missing, rounded or conflicting profile identity', async t => {
+  const f = await fixture(); t.after(() => f.DB.close());
+  const badState = await f.login({ provider: 'vk', tokenState: 'attacker-state' });
+  assert.equal(badState.calls, 1); assert.equal(badState.cookie, undefined);
+  for (const options of [{ profile: { user: { email: 'person@example.com' } } }, { tokenUserID: 'different-person' }, { profile: { user: { user_id: Number.MAX_SAFE_INTEGER + 1 } } }, { profile: { error: 'bad_token', user: { user_id: 'person-a' } } }]) {
+    const login = await f.login({ provider: 'vk', ...options });
+    assert.equal(login.cookie, undefined);
+    assert.equal(login.response.headers.get('Location'), origin + '/?auth=error#account');
+  }
+  assert.equal((await f.DB.prepare('SELECT COUNT(*) AS n FROM accounts').first()).n, 0);
+});
+
+test('VK keeps different subjects and matching emails from other providers isolated', async t => {
+  const f = await fixture(); t.after(() => f.DB.close());
+  const vk = await f.login({ provider: 'vk' }), otherVK = await f.login({ provider: 'vk', subject: 'other-vk-person' }), yandex = await f.login();
+  await f.call('/api/state', { method: 'PUT', cookie: vk.cookie, body: { state: validState('VK pair'), revision: 0 } });
+  for (const login of [otherVK, yandex]) {
+    const session = await (await f.call('/api/session', { cookie: login.cookie })).json();
+    assert.equal(session.state.draft, null);
+  }
+  assert.equal((await f.DB.prepare('SELECT COUNT(*) AS n FROM accounts').first()).n, 3);
+});
+
+test('VK migration preserves existing accounts, pair state and sessions with foreign keys enabled', async t => {
+  const DB = new LocalD1(); t.after(() => DB.close());
+  await DB.exec(await readFile(new URL('../migrations/0001_accounts.sql', import.meta.url), 'utf8'));
+  assert.equal((await DB.prepare('PRAGMA foreign_keys').first()).foreign_keys, 1);
+  for (const provider of ['yandex', 'mailru']) {
+    const id = 'existing-' + provider;
+    await DB.prepare('INSERT INTO accounts(id,provider,subject,email,created_at) VALUES(?,?,?,?,?)').bind(id, provider, 'stable-' + provider, provider + '@example.com', 123).run();
+    await DB.prepare('INSERT INTO pair_state(account_id,data_json,revision,updated_at) VALUES(?,?,?,?)').bind(id, JSON.stringify(validState(provider)), 17, 456).run();
+    await DB.prepare('INSERT INTO sessions(token_hash,account_id,expires_at) VALUES(?,?,?)').bind('original-hash-' + provider, id, 9999999999).run();
+  }
+  const before = {};
+  for (const [table, columns] of [['accounts', 'id,provider,subject,email,created_at'], ['pair_state', '*'], ['sessions', '*']]) before[table] = (await DB.prepare('SELECT ' + columns + ' FROM ' + table + ' ORDER BY 1').all()).results;
+  DB.sqlite.exec('BEGIN');
+  await DB.exec(await readFile(new URL('../migrations/0002_vk_accounts.sql', import.meta.url), 'utf8'));
+  DB.sqlite.exec('COMMIT');
+  for (const [table, columns] of [['accounts', 'id,provider,subject,email,created_at'], ['pair_state', '*'], ['sessions', '*']]) assert.deepEqual((await DB.prepare('SELECT ' + columns + ' FROM ' + table + ' ORDER BY 1').all()).results, before[table]);
+  assert.deepEqual((await DB.prepare('PRAGMA foreign_key_check').all()).results, []);
+  const f = await fixture(DB), vk = await f.login({ provider: 'vk', email: '' });
+  assert.ok(vk.cookie);
+  assert.equal((await (await f.call('/api/session', { cookie: vk.cookie })).json()).user.provider, 'vk');
 });
 
 test('OAuth state is browser-bound, consumed once and cannot be replayed', async t => {
@@ -185,4 +280,25 @@ test('local HTTP test server executes real state/session flow and disables fixtu
   assert.equal(session.user.email, 'pair@mail.ru'); assert.equal(session.user.provider, 'mailru');
   const normal = await createDevServer({ port: 0 }); t.after(() => normal.close());
   assert.equal((await fetch(normal.url + '/__test/login')).status, 404);
+});
+
+test('local VK fixture exercises the actual device/PKCE exchange and retains the same pair without email', async t => {
+  const app = await createDevServer({ port: 0, testMode: true }); t.after(() => app.close());
+  const sessions = [];
+  for (let device = 0; device < 2; device++) {
+    const jar = new Map();
+    let next = app.url + '/__test/login?provider=vk&subject=vk-shared-pair&email=&name=' + encodeURIComponent('Алекс Саша');
+    for (let i = 0; i < 5; i++) {
+      const response = await fetch(next, { redirect: 'manual', headers: { Cookie: [...jar].map(([k, v]) => k + '=' + v).join('; ') } });
+      for (const header of response.headers.getSetCookie()) { const [name, value] = header.split(';')[0].split('='); jar.set(name, value); }
+      if (response.status !== 303) break;
+      next = new URL(response.headers.get('Location'), app.url).href;
+    }
+    const session = await (await fetch(app.url + '/api/session', { headers: { Cookie: [...jar].map(([k, v]) => k + '=' + v).join('; ') } })).json();
+    assert.equal(session.user.provider, 'vk'); assert.equal(session.user.email, ''); assert.equal(session.user.name, 'Алекс Саша');
+    sessions.push(session);
+  }
+  assert.equal(sessions[0].user.id, sessions[1].user.id);
+  await applyLocalMigrations(app.DB);
+  assert.equal((await app.DB.prepare('SELECT name FROM accounts WHERE id=?').bind(sessions[0].user.id).first()).name, 'Алекс Саша');
 });

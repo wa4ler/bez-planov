@@ -18,7 +18,7 @@ jobs:
       - name: Install test runner
         run: npm ci --no-audit --no-fund
       - name: Install browsers
-        run: npx playwright install --with-deps chromium webkit
+        run: npx playwright install --with-deps chromium webkit firefox
       - name: Run mobile and desktop browser tests
         run: npm run test:ci
       - name: Upload browser report

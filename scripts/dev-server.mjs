@@ -1,6 +1,6 @@
 import { createServer } from 'node:http';
 import { DatabaseSync } from 'node:sqlite';
-import { readFile, stat, mkdir } from 'node:fs/promises';
+import { readFile, stat, mkdir, readdir } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import { randomBytes } from 'node:crypto';
@@ -11,7 +11,7 @@ const contentTypes = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascr
 
 // Small D1 compatibility adapter backed by actual SQLite, used only by local tests.
 export class LocalD1 {
-  constructor(filename = ':memory:') { this.sqlite = new DatabaseSync(filename); }
+  constructor(filename = ':memory:') { this.sqlite = new DatabaseSync(filename); this.sqlite.exec('PRAGMA foreign_keys = ON'); }
   exec(sql) { this.sqlite.exec(sql); return Promise.resolve({ count: 1 }); }
   prepare(sql) {
     const db = this.sqlite;
@@ -32,23 +32,41 @@ export class LocalD1 {
   close() { this.sqlite.close(); }
 }
 
+export async function applyLocalMigrations(DB) {
+  await DB.exec('CREATE TABLE IF NOT EXISTS local_migrations(name TEXT PRIMARY KEY)');
+  for (const name of (await readdir(path.join(projectRoot, 'migrations'))).filter(x => x.endsWith('.sql')).sort()) {
+    if (await DB.prepare('SELECT name FROM local_migrations WHERE name=?').bind(name).first()) continue;
+    const sql = await readFile(path.join(projectRoot, 'migrations', name), 'utf8');
+    DB.sqlite.exec('BEGIN');
+    try { await DB.exec(sql); await DB.prepare('INSERT INTO local_migrations(name) VALUES(?)').bind(name).run(); DB.sqlite.exec('COMMIT'); }
+    catch (error) { DB.sqlite.exec('ROLLBACK'); throw error; }
+  }
+}
+
 export async function createDevServer({ port = 8765, host = '127.0.0.1', testMode = false, database = ':memory:' } = {}) {
   if (!['127.0.0.1', 'localhost', '::1'].includes(host)) throw new Error('The local development server must bind to loopback.');
   const DB = new LocalD1(database);
-  await DB.exec(await readFile(path.join(projectRoot, 'migrations/0001_accounts.sql'), 'utf8'));
-  const env = { DB, APP_ORIGIN: '', ...(testMode ? { YANDEX_CLIENT_ID: 'local-fixture', YANDEX_CLIENT_SECRET: 'local-fixture', MAILRU_CLIENT_ID: 'local-fixture', MAILRU_CLIENT_SECRET: 'local-fixture' } : {}) };
+  await applyLocalMigrations(DB);
+  const env = { DB, APP_ORIGIN: '', ...(testMode ? { YANDEX_CLIENT_ID: 'local-fixture', YANDEX_CLIENT_SECRET: 'local-fixture', MAILRU_CLIENT_ID: 'local-fixture', MAILRU_CLIENT_SECRET: 'local-fixture', VK_CLIENT_ID: '1234567' } : {}) };
   const codes = new Map(), tokens = new Map();
   const fakeFetch = async (url, init = {}) => {
     const target = new URL(url), params = new URLSearchParams(init.body || '');
-    if (['oauth.yandex.ru', 'oauth.mail.ru'].includes(target.hostname) && target.pathname === '/token') {
-      const code = params.get('code'), identity = codes.get(code); codes.delete(code);
-      if (!identity) return Response.json({ error: 'invalid_grant' }, { status: 400 });
-      const token = randomBytes(32).toString('base64url'); tokens.set(token, identity);
-      return Response.json({ access_token: token });
+    if ((['oauth.yandex.ru', 'oauth.mail.ru'].includes(target.hostname) && target.pathname === '/token') || (target.hostname === 'id.vk.ru' && target.pathname === '/oauth2/auth')) {
+      const code = params.get('code'), flow = codes.get(code); codes.delete(code);
+      if (!flow) return Response.json({ error: 'invalid_grant' }, { status: 400 });
+      if (flow.provider === 'vk' || flow.provider === 'yandex') {
+        const challenge = Buffer.from(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(params.get('code_verifier') || ''))).toString('base64url');
+        if (challenge !== flow.challenge) return Response.json({ error: 'invalid_grant' }, { status: 400 });
+      }
+      if (flow.provider === 'vk' && (params.get('device_id') !== flow.deviceID || params.get('state') !== flow.state)) return Response.json({ error: 'invalid_grant' }, { status: 400 });
+      const token = randomBytes(32).toString('base64url'); tokens.set(token, flow);
+      return Response.json({ access_token: token, ...(flow.provider === 'vk' ? { user_id: flow.identity.subject, state: flow.state } : {}) });
     }
     const token = init.headers?.Authorization?.replace(/^OAuth /, '') || params.get('access_token');
-    const identity = tokens.get(token); tokens.delete(token);
-    if (!identity) return Response.json({ error: 'invalid_token' }, { status: 401 });
+    const flow = tokens.get(token); tokens.delete(token);
+    if (!flow) return Response.json({ error: 'invalid_token' }, { status: 401 });
+    const identity = flow.identity;
+    if (flow.provider === 'vk') return Response.json({ user: { user_id: identity.subject, email: identity.email, first_name: identity.name, last_name: '' } });
     return Response.json({ id: identity.subject, sub: identity.subject, default_email: identity.email, email: identity.email });
   };
   const server = createServer(async (incoming, outgoing) => {
@@ -59,24 +77,26 @@ export async function createDevServer({ port = 8765, host = '127.0.0.1', testMod
       const request = new Request(url, { method: incoming.method, headers: requestHeaders, ...(incoming.method !== 'GET' && incoming.method !== 'HEAD' ? { body: incoming, duplex: 'half' } : {}) });
       let response;
       if (testMode && url.pathname === '/__test/login') {
-        const provider = url.searchParams.get('provider') === 'mailru' ? 'mailru' : 'yandex';
-        const identity = { subject: url.searchParams.get('subject') || 'shared-pair', email: url.searchParams.get('email') || 'pair@yandex.ru' };
+        const provider = ['mailru', 'vk'].includes(url.searchParams.get('provider')) ? url.searchParams.get('provider') : 'yandex';
+        const identity = { subject: url.searchParams.get('subject') || 'shared-pair', email: url.searchParams.has('email') ? url.searchParams.get('email') : provider === 'vk' ? '' : 'pair@yandex.ru', name: url.searchParams.get('name') || 'Алекс Саша' };
         const fixture = Buffer.from(JSON.stringify(identity)).toString('base64url');
         response = new Response(null, { status: 303, headers: { Location: '/api/auth/' + provider, 'Set-Cookie': `bp_test_identity=${fixture}; Path=/; HttpOnly; SameSite=Lax`, 'Cache-Control': 'no-store' } });
       } else if (testMode && url.pathname.startsWith('/__test/provider/')) {
         const provider = url.pathname.split('/').pop();
         const raw = (request.headers.get('Cookie') || '').match(/(?:^|;\s*)bp_test_identity=([^;]+)/)?.[1];
         const identity = raw ? JSON.parse(Buffer.from(raw, 'base64url').toString()) : { subject: 'shared-pair', email: 'pair@yandex.ru' };
-        const code = randomBytes(24).toString('base64url'); codes.set(code, identity);
+        const code = randomBytes(24).toString('base64url'), deviceID = 'fixture-device-' + randomBytes(16).toString('hex');
+        codes.set(code, { identity, provider, challenge: url.searchParams.get('code_challenge'), state: url.searchParams.get('state'), deviceID });
         const callback = new URL('/api/auth/callback/' + provider, env.APP_ORIGIN);
         callback.search = new URLSearchParams({ state: url.searchParams.get('state') || '', code }).toString();
+        if (provider === 'vk') callback.searchParams.set('device_id', deviceID);
         response = Response.redirect(callback, 303);
       } else if (url.pathname.startsWith('/api/')) {
         response = await handleAPI(request, env, testMode ? { fetcher: fakeFetch } : {});
         if (testMode && response.status === 303) {
           const target = new URL(response.headers.get('Location'), env.APP_ORIGIN);
-          if (['oauth.yandex.ru', 'oauth.mail.ru'].includes(target.hostname)) {
-            const provider = target.hostname.includes('yandex') ? 'yandex' : 'mailru';
+          if (['oauth.yandex.ru', 'oauth.mail.ru', 'id.vk.ru'].includes(target.hostname)) {
+            const provider = target.hostname.includes('yandex') ? 'yandex' : target.hostname === 'id.vk.ru' ? 'vk' : 'mailru';
             response.headers.set('Location', '/__test/provider/' + provider + target.search);
           }
         }

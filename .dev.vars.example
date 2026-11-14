@@ -5,4 +5,6 @@ YANDEX_CLIENT_ID=
 YANDEX_CLIENT_SECRET=
 MAILRU_CLIENT_ID=
 MAILRU_CLIENT_SECRET=
+VK_CLIENT_ID=
+# VK ID web authorization uses PKCE; no VK client secret is required.
 # D1 database binding name: DB (configure in Pages settings).

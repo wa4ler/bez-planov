@@ -6,7 +6,8 @@ const MAX_BYTES = 1024 * 1024;
 const encoder = new TextEncoder();
 const PROVIDERS = {
   yandex: { authorize: 'https://oauth.yandex.ru/authorize', token: 'https://oauth.yandex.ru/token', info: 'https://login.yandex.ru/info?format=json', prefix: 'YANDEX', scope: 'login:info login:email', pkce: true },
-  mailru: { authorize: 'https://oauth.mail.ru/login', token: 'https://oauth.mail.ru/token', info: 'https://oauth.mail.ru/userinfo', prefix: 'MAILRU', scope: 'userinfo', pkce: false }
+  mailru: { authorize: 'https://oauth.mail.ru/login', token: 'https://oauth.mail.ru/token', info: 'https://oauth.mail.ru/userinfo', prefix: 'MAILRU', scope: 'userinfo', pkce: false },
+  vk: { authorize: 'https://id.vk.ru/authorize', token: 'https://id.vk.ru/oauth2/auth', info: 'https://id.vk.ru/oauth2/user_info', prefix: 'VK', scope: '', pkce: true, publicClient: true }
 };
 
 class APIError extends Error {
@@ -41,7 +42,7 @@ function appOrigin(env, request) {
 function configuredProviders(env, request) {
   let baseReady = false;
   try { baseReady = !!env.DB && !!appOrigin(env, request); } catch { /* Render disabled login without exposing deployment details. */ }
-  return Object.fromEntries(Object.entries(PROVIDERS).map(([name, p]) => [name, baseReady && !!env[p.prefix + '_CLIENT_ID'] && !!env[p.prefix + '_CLIENT_SECRET']]));
+  return Object.fromEntries(Object.entries(PROVIDERS).map(([name, p]) => [name, baseReady && !!env[p.prefix + '_CLIENT_ID'] && (p.publicClient || !!env[p.prefix + '_CLIENT_SECRET'])]));
 }
 function cookiesFrom(request) {
   return Object.fromEntries((request.headers.get('Cookie') || '').split(';').map(s => { const i = s.indexOf('='); return i < 0 ? [] : [s.slice(0, i).trim(), s.slice(i + 1)]; }).filter(x => x.length === 2));
@@ -65,7 +66,7 @@ async function rateLimit(env, name, maximum, seconds) {
 async function currentSession(request, env) {
   const token = cookiesFrom(request)[sessionName(request)];
   if (!token || !/^[A-Za-z0-9_-]{43}$/.test(token)) return null;
-  return env.DB.prepare('SELECT accounts.id,accounts.email,accounts.provider FROM sessions JOIN accounts ON accounts.id=sessions.account_id WHERE sessions.token_hash=? AND sessions.expires_at>?').bind(await hash(token), Math.floor(Date.now() / 1000)).first();
+  return env.DB.prepare('SELECT accounts.id,accounts.email,accounts.provider,accounts.name FROM sessions JOIN accounts ON accounts.id=sessions.account_id WHERE sessions.token_hash=? AND sessions.expires_at>?').bind(await hash(token), Math.floor(Date.now() / 1000)).first();
 }
 async function stateFor(env, accountID) {
   const row = await env.DB.prepare('SELECT data_json,revision FROM pair_state WHERE account_id=?').bind(accountID).first();
@@ -104,29 +105,41 @@ function validState(state) {
   }
   return true;
 }
-async function providerIdentity(providerName, code, verifier, redirectURI, env, fetcher) {
+function subjectString(value) { return typeof value === 'string' ? value : Number.isSafeInteger(value) && value >= 0 ? String(value) : ''; }
+function profileName(value) { return typeof value === 'string' ? value.replace(/[\u0000-\u001f\u007f<>]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 100) : ''; }
+async function providerIdentity(providerName, code, verifier, redirectURI, env, fetcher, callback = {}) {
   const p = PROVIDERS[providerName];
-  const form = new URLSearchParams({ grant_type: 'authorization_code', code, client_id: env[p.prefix + '_CLIENT_ID'], client_secret: env[p.prefix + '_CLIENT_SECRET'], redirect_uri: redirectURI });
+  const form = new URLSearchParams({ grant_type: 'authorization_code', code, client_id: env[p.prefix + '_CLIENT_ID'], redirect_uri: redirectURI });
+  if (!p.publicClient) form.set('client_secret', env[p.prefix + '_CLIENT_SECRET']);
   if (p.pkce) form.set('code_verifier', verifier);
+  if (providerName === 'vk') { form.set('device_id', callback.deviceID); form.set('state', callback.state); }
   const response = await fetcher(p.token, { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded', Accept: 'application/json' }, body: form.toString(), signal: AbortSignal.timeout(12000), redirect: 'error' });
   if (!response.ok) throw new APIError(502, 'provider_unavailable');
   const result = await response.json();
-  if (typeof result.access_token !== 'string' || !result.access_token || result.access_token.length > 8192) throw new APIError(502, 'provider_unavailable');
+  if (result.error || typeof result.access_token !== 'string' || !result.access_token || result.access_token.length > 8192) throw new APIError(502, 'provider_unavailable');
+  if (providerName === 'vk' && !safeEqual(result.state, callback.state)) throw new APIError(502, 'provider_unavailable');
   // Mail documents the token as a userinfo request parameter; use POST body to keep it out of URLs/logs.
-  const infoRequest = providerName === 'mailru'
-    ? { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded', Accept: 'application/json' }, body: new URLSearchParams({ access_token: result.access_token }).toString() }
+  const infoRequest = providerName === 'mailru' || providerName === 'vk'
+    ? { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded', Accept: 'application/json' }, body: new URLSearchParams({ access_token: result.access_token, ...(providerName === 'vk' ? { client_id: env.VK_CLIENT_ID } : {}) }).toString() }
     : { headers: { Authorization: 'OAuth ' + result.access_token, Accept: 'application/json' } };
   const userResponse = await fetcher(p.info, { ...infoRequest, signal: AbortSignal.timeout(12000), redirect: 'error' });
   if (!userResponse.ok) throw new APIError(502, 'provider_unavailable');
-  const info = await userResponse.json();
+  const envelope = await userResponse.json();
+  if (envelope.error) throw new APIError(502, 'provider_profile_unavailable');
+  const info = providerName === 'vk' ? envelope.user : envelope;
+  if (!info || typeof info !== 'object' || Array.isArray(info)) throw new APIError(502, 'provider_profile_unavailable');
   const email = String(providerName === 'yandex' ? info.default_email || '' : info.email || '').trim().toLowerCase();
-  const suppliedSubject = providerName === 'yandex' ? info.id : info.sub ?? info.id;
+  const suppliedSubject = providerName === 'vk' ? info.user_id ?? info.id : providerName === 'yandex' ? info.id : info.sub ?? info.id;
   // Do not round long provider IDs through JavaScript numbers: that could join two people.
-  const subject = typeof suppliedSubject === 'string' ? suppliedSubject
-    : Number.isSafeInteger(suppliedSubject) && suppliedSubject >= 0 ? String(suppliedSubject)
-    : suppliedSubject == null && providerName === 'mailru' ? email : '';
-  if (!subject || subject.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || email.length > 254 || info.error) throw new APIError(502, 'provider_profile_unavailable');
-  return { subject, email };
+  const subject = subjectString(suppliedSubject) || (suppliedSubject == null && providerName === 'mailru' ? email : '');
+  const validEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) && email.length <= 254;
+  if (!subject || subject.length > 254 || (providerName === 'vk' ? email && !validEmail : !validEmail) || info.error) throw new APIError(502, 'provider_profile_unavailable');
+  if (providerName === 'vk') {
+    const tokenSubject = result.user_id == null ? '' : subjectString(result.user_id);
+    if (result.user_id != null && (!tokenSubject || !safeEqual(tokenSubject, subject))) throw new APIError(502, 'provider_profile_unavailable');
+  }
+  const name = profileName(providerName === 'vk' ? [info.first_name, info.last_name].filter(v => typeof v === 'string').join(' ') : info.display_name || info.real_name || info.name || '');
+  return { subject, email, name };
 }
 async function startOAuth(request, env, name, origin) {
   if (!configuredProviders(env, request)[name]) throw new APIError(503, 'provider_not_configured');
@@ -141,7 +154,8 @@ async function startOAuth(request, env, name, origin) {
   ]);
   const p = PROVIDERS[name], target = new URL(p.authorize);
   target.search = new URLSearchParams({ client_id: env[p.prefix + '_CLIENT_ID'], response_type: 'code', redirect_uri: origin + '/api/auth/callback/' + name, scope: p.scope, state }).toString();
-  if (p.pkce) { target.searchParams.set('code_challenge', await hash(verifier)); target.searchParams.set('code_challenge_method', 'S256'); }
+  if (!p.scope) target.searchParams.delete('scope');
+  if (p.pkce) { target.searchParams.set('code_challenge', await hash(verifier)); target.searchParams.set('code_challenge_method', name === 'vk' ? 's256' : 'S256'); }
   return redirect(target.href, [cookie(request, flowName(request), state, FLOW_SECONDS)]);
 }
 async function callbackOAuth(request, env, name, origin, fetcher) {
@@ -154,9 +168,11 @@ async function callbackOAuth(request, env, name, origin, fetcher) {
     // DELETE RETURNING makes state one-use even if two callbacks race.
     const flow = await env.DB.prepare('DELETE FROM oauth_flows WHERE state_hash=? AND provider=? AND expires_at>? RETURNING verifier').bind(await hash(state), name, Math.floor(Date.now() / 1000)).first();
     if (!flow || url.searchParams.has('error') || !code || code.length > 4096) return failure();
-    const identity = await providerIdentity(name, code, flow.verifier, origin + '/api/auth/callback/' + name, env, fetcher);
+    const deviceID = url.searchParams.get('device_id');
+    if (name === 'vk' && (!deviceID || deviceID.length > 1024 || /[\u0000-\u0020\u007f]/.test(deviceID))) return failure();
+    const identity = await providerIdentity(name, code, flow.verifier, origin + '/api/auth/callback/' + name, env, fetcher, { deviceID, state });
     const now = Math.floor(Date.now() / 1000), freshID = crypto.randomUUID();
-    await env.DB.prepare('INSERT INTO accounts(id,provider,subject,email,created_at) VALUES(?,?,?,?,?) ON CONFLICT(provider,subject) DO UPDATE SET email=excluded.email').bind(freshID, name, identity.subject, identity.email, now).run();
+    await env.DB.prepare('INSERT INTO accounts(id,provider,subject,email,name,created_at) VALUES(?,?,?,?,?,?) ON CONFLICT(provider,subject) DO UPDATE SET email=excluded.email,name=excluded.name').bind(freshID, name, identity.subject, identity.email, identity.name, now).run();
     const user = await env.DB.prepare('SELECT id FROM accounts WHERE provider=? AND subject=?').bind(name, identity.subject).first();
     const session = randomToken();
     await env.DB.batch([
@@ -180,9 +196,9 @@ export async function handleAPI(request, env, options = {}) {
     if (!env.DB) throw new APIError(503, 'account_not_configured');
     const origin = appOrigin(env, request);
     if (['POST', 'PUT', 'PATCH', 'DELETE'].includes(request.method)) csrf(request, origin);
-    const start = path.match(/^\/api\/auth\/(yandex|mailru)$/);
+    const start = path.match(/^\/api\/auth\/(yandex|mailru|vk)$/);
     if (start && request.method === 'GET') return await startOAuth(request, env, start[1], origin);
-    const callback = path.match(/^\/api\/auth\/callback\/(yandex|mailru)$/);
+    const callback = path.match(/^\/api\/auth\/callback\/(yandex|mailru|vk)$/);
     if (callback && request.method === 'GET') return await callbackOAuth(request, env, callback[1], origin, options.fetcher || fetch);
     const user = await currentSession(request, env);
     if (path === '/api/session' && request.method === 'GET') return json({ configured, user, ...(user ? await stateFor(env, user.id) : { state: EMPTY_STATE(), revision: 0 }) });
