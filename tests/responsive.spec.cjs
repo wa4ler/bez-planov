@@ -24,6 +24,12 @@ async function inspect(page, name, records, touch) {
   await expectNoOverflow(page);
   const state = await page.evaluate(() => ({
     width: innerWidth, height: innerHeight, scrollWidth: document.documentElement.scrollWidth,
+    clippedCardText: [...document.querySelectorAll('.idea-button')].filter(element => element.getClientRects().length).flatMap(element => {
+      const text = element.querySelector('.idea-info');
+      if (!text) return [];
+      const outer = element.getBoundingClientRect(), inner = text.getBoundingClientRect();
+      return inner.top < outer.top - 1 || inner.bottom > outer.bottom + 1 ? [{ name: text.textContent.trim().slice(0, 60), top: inner.top, bottom: inner.bottom, cardTop: outer.top, cardBottom: outer.bottom }] : [];
+    }),
     clippedActions: [...document.querySelectorAll('button,summary')].filter(element => {
       if (!element.getClientRects().length || !element.clientWidth) return false;
       for (let parent = element.parentElement; parent; parent = parent.parentElement) {
@@ -33,6 +39,7 @@ async function inspect(page, name, records, touch) {
     }).map(element => ({ name: element.id || element.textContent.trim().slice(0, 60), width: element.clientWidth, scrollWidth: element.scrollWidth }))
   }));
   records.push({ name, ...state });
+  expect(state.clippedCardText, 'Mood card titles and descriptions must remain inside the visible card').toEqual([]);
   expect(state.clippedActions, 'Action labels must wrap instead of being clipped').toEqual([]);
   if (touch) {
     const small = await page.locator('main button:visible,main summary:visible,#accountOpen').evaluateAll(elements => elements.filter(element => !element.disabled && element.getAttribute('aria-disabled') !== 'true' && element.getBoundingClientRect().height < 43.5).map(element => ({ name: element.id || element.textContent.trim().slice(0, 50), height: element.getBoundingClientRect().height, minHeight: getComputedStyle(element).minHeight, coarse: matchMedia('(pointer:coarse)').matches })));
