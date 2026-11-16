@@ -40,9 +40,9 @@ async function inspect(page, name, records, touch) {
   }
 }
 
-async function fillPeople(page) {
-  await page.locator('#nameOne').fill('Александра'); await page.locator('#nameTwo').fill('Константин');
-  for (const person of [0, 1]) for (const pref of ['food', 'walk']) await page.locator(`[data-act="rating"][data-person="${person}"][data-pref="${pref}"]`).click();
+async function fillProfile(page, person) {
+  await page.locator(person ? '#nameTwo' : '#nameOne').fill(person ? 'Константин' : 'Александра');
+  for (const pref of ['food', 'walk']) await page.locator(`[data-act="rating"][data-person="${person}"][data-pref="${pref}"][data-rating="2"]`).click();
 }
 
 async function exerciseScreens(page, info, viewport, records, screenshot = false, resizeText = false) {
@@ -54,6 +54,9 @@ async function exerciseScreens(page, info, viewport, records, screenshot = false
   };
   await page.goto('/'); await page.waitForFunction(() => sessionReady);
   await check('home'); await expectClickableCenter(page.locator('#startPlan')); await expectClickableCenter(page.locator('#accountOpen'));
+  await page.locator('[data-nav="ideas"]:visible').first().click();
+  await expect(page.locator('#ideas')).toBeVisible(); await check('ideas');
+  await page.locator('[data-nav="home"]:visible').first().click();
   await page.locator('#startPlan').click();
   await page.locator('#dateStart').fill(future(5)); await page.locator('#dateEnd').fill(future(6));
   await page.locator('#budgetAmount').fill('20000');
@@ -61,9 +64,10 @@ async function exerciseScreens(page, info, viewport, records, screenshot = false
   await page.locator('#transportReserve').fill('500'); await page.locator('#overnightStay').check();
   await page.locator('#hotelAddress').fill('Гостиница в Москве, общий адрес пары'); await page.locator('#hotelReserve').fill('5000');
   await check('step1'); await expectClickableCenter(page.locator('#nextStep')); await page.locator('#nextStep').click();
-  await fillPeople(page); await check('step2'); await expectClickableCenter(page.locator('#nextStep')); await page.locator('#nextStep').click();
+  await fillProfile(page, 0); await check('step2'); await expectClickableCenter(page.locator('#nextStep')); await page.locator('#nextStep').click();
+  await fillProfile(page, 1); await check('step3'); await expectClickableCenter(page.locator('#nextStep')); await page.locator('#nextStep').click();
   await page.locator('#dayStart').fill('10:00'); await page.locator('#dayEnd').fill('19:00');
-  await check('step3'); await expectClickableCenter(page.locator('#generatePlan')); await page.locator('#generatePlan').click();
+  await check('step4'); await expectClickableCenter(page.locator('#generatePlan')); await page.locator('#generatePlan').click();
   await expect(page.locator('#route')).toBeVisible(); await check('route');
   if (viewport.width === 320) {
     await page.locator('.more-menu > summary').click();
@@ -132,7 +136,7 @@ test('Two hundred percent text keeps all screens and essential actions usable', 
 test('Focused inputs and actions remain reachable in a reduced-height phone viewport', async ({ page }, info) => {
   test.skip(info.project.name !== 'Mobile Chrome 390' && info.project.name !== 'iPhone WebKit', 'Check one touch Chromium and one WebKit context');
   await page.goto('/'); await page.locator('#startPlan').click(); await page.locator('#nextStep').click();
-  await fillPeople(page); await page.locator('#nameOne').focus();
+  await fillProfile(page, 0); await page.locator('#nameOne').focus();
   await page.setViewportSize({ width: 390, height: 300 });
   await expect(page.locator('#nameOne')).toBeFocused();
   await expect.poll(() => page.evaluate(() => document.documentElement.classList.contains('keyboard-open'))).toBe(true);
@@ -140,6 +144,7 @@ test('Focused inputs and actions remain reachable in a reduced-height phone view
   await page.locator('#nextStep').click(); await expect(page.locator('.flow-step[data-step="3"]')).toBeVisible();
   await page.setViewportSize({ width: 390, height: 844 });
   await expect.poll(() => page.evaluate(() => document.documentElement.classList.contains('keyboard-open'))).toBe(false);
+  await fillProfile(page, 1); await page.locator('#nextStep').click();
   await expectClickableCenter(page.locator('#generatePlan'));
 });
 
@@ -162,8 +167,10 @@ test('Keyboard skip link keeps the current step, and reduced motion removes view
     focused.push(id); if (id === 'nameOne') break;
   }
   expect(focused).toContain('nameOne');
-  await fillPeople(page); await page.locator('#nameTwo').focus(); await page.keyboard.press('Enter');
-  await expect(page.locator('.flow-step[data-step="3"]')).toBeVisible(); await expect(page.locator('#route')).toBeHidden();
+  await fillProfile(page, 0); await page.locator('#nameOne').focus(); await page.keyboard.press('Enter');
+  await expect(page.locator('.flow-step[data-step="3"]')).toBeVisible();
+  await fillProfile(page, 1); await page.locator('#nameTwo').focus(); await page.keyboard.press('Enter');
+  await expect(page.locator('.flow-step[data-step="4"]')).toBeVisible(); await expect(page.locator('#route')).toBeHidden();
   const styles = await page.locator('#planner').evaluate(element => ({ duration: getComputedStyle(element).animationDuration, name: getComputedStyle(element).animationName }));
   expect(styles.name === 'none' || styles.duration === '0s').toBe(true);
 });

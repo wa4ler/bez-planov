@@ -40,7 +40,11 @@ test('VK ID without email opens one shared pair account, synchronizes preference
     const second = await (await otherDevice.request.get('/api/session')).json();
     expect(second.user.id).toBe(first.user.id);
     await page.locator('#editPreferences').click();
-    await page.locator('#nameOne').fill('Первый в паре'); await page.locator('#nameTwo').fill('Второй в паре');
+    await page.locator('#nameOne').fill('Первый в паре');
+    await page.locator('[data-act="rating"][data-person="0"][data-pref="food"][data-rating="2"]').click();
+    await page.locator('#nextStep').click();
+    await page.locator('#nameTwo').fill('Второй в паре');
+    await page.locator('[data-act="rating"][data-person="1"][data-pref="food"][data-rating="2"]').click();
     await expect.poll(async () => (await (await otherDevice.request.get('/api/session')).json()).state.draft?.profiles?.map(person => person.name)).toEqual(['Первый в паре', 'Второй в паре']);
     await page.locator('#accountOpen').click(); await page.locator('#logout').click();
     await expect(page.locator('#accountGuest')).toBeVisible();

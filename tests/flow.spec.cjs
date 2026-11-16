@@ -16,17 +16,18 @@ async function begin(page, { from = future(10), to = from, budget = '16000', sco
   await expect(page.locator('.flow-step[data-step="2"]')).toBeVisible();
 }
 
+async function answerPerson(page, person, name) {
+  await page.locator(person === 0 ? '#nameOne' : '#nameTwo').fill(name);
+  for (const pref of ['food', 'walk']) await page.locator(`[data-act="rating"][data-person="${person}"][data-pref="${pref}"][data-rating="2"]`).click();
+}
+
 async function people(page) {
-  await page.locator('#nameOne').fill('Алекс');
-  await page.locator('#nameTwo').fill('Саша');
-  for (const id of ['tasteOne', 'tasteTwo']) {
-    await page.locator('#' + id + ' button').nth(0).click();
-    await page.locator('#' + id + ' button').nth(1).click();
-  }
-  await expectNoOverflow(page);
-  await expectClickableCenter(page.locator('#nextStep'));
-  await page.locator('#nextStep').click();
+  await answerPerson(page, 0, 'Алекс');
+  await expectNoOverflow(page); await expectClickableCenter(page.locator('#nextStep')); await page.locator('#nextStep').click();
   await expect(page.locator('.flow-step[data-step="3"]')).toBeVisible();
+  await answerPerson(page, 1, 'Саша');
+  await expectNoOverflow(page); await expectClickableCenter(page.locator('#nextStep')); await page.locator('#nextStep').click();
+  await expect(page.locator('.flow-step[data-step="4"]')).toBeVisible();
 }
 
 async function event(page, { date = future(10), cost = '3000', paid = true } = {}) {
@@ -58,7 +59,7 @@ test.afterEach(async ({ page }) => {
   expect(page.clientErrors, 'No browser JavaScript exceptions').toEqual([]);
 });
 
-test('Three clear steps create a multi-day plan, preserve a paid event and export a Moscow calendar', async ({ page }, info) => {
+test('Four clear steps create a multi-day plan, preserve a paid event and export a Moscow calendar', async ({ page }, info) => {
   const from = future(10), middle = future(11), to = future(12);
   await begin(page, { from, to, budget: '30000', scope: 'total' });
   await people(page);
@@ -105,39 +106,32 @@ test('Changing dates retains paid events and explains the conflict instead of si
   await begin(page, { from: future(10), to: future(12) });
   await people(page);
   await event(page);
-  await page.locator('#prevStep').click();
-  await page.locator('#prevStep').click();
+  for (let i = 0; i < 3; i++) await page.locator('#prevStep').click();
   await page.locator('#dateStart').fill(future(11));
   await expect(page.locator('#dateConflict')).toBeVisible();
   await expect(page.locator('#dateConflict')).toContainText(/событ|закреп|билет/i);
   await page.locator('#nextStep').click();
   await expect(page.locator('.flow-step[data-step="1"]')).toBeVisible();
   await page.locator('#dateStart').fill(future(10));
-  await page.locator('#nextStep').click();
-  await page.locator('#nextStep').click();
+  for (let i = 0; i < 3; i++) await page.locator('#nextStep').click();
   if (!(await page.locator('#bookingsDetails').evaluate(element => element.open))) await page.locator('#bookingsDetails > summary').click();
   await expect(page.locator('#eventList')).toContainText('Наш оплаченный театр');
 });
 
 test('The two partners answer independently and invalid dates cannot skip the first step', async ({ page }) => {
-  await page.goto('/');
-  await page.locator('#startPlan').click();
-  await page.locator('#dateStart').fill(future(10));
-  await page.locator('#dateEnd').fill(future(41));
-  await page.locator('#nextStep').click();
-  await expect(page.locator('.flow-step[data-step="1"]')).toBeVisible();
+  await page.goto('/'); await page.locator('#startPlan').click();
+  await page.locator('#dateStart').fill(future(10)); await page.locator('#dateEnd').fill(future(41));
+  await page.locator('#nextStep').click(); await expect(page.locator('.flow-step[data-step="1"]')).toBeVisible();
   await expect(page.locator('#wizardError')).not.toBeEmpty();
-  await page.locator('#dateEnd').fill(future(10));
-  await page.locator('#nextStep').click();
-  await page.locator('#tasteOne button').nth(0).click();
-  await page.locator('#tasteOne button').nth(1).click();
-  await page.locator('#nextStep').click();
-  await expect(page.locator('.flow-step[data-step="2"]')).toBeVisible();
+  await page.locator('#dateEnd').fill(future(10)); await page.locator('#nextStep').click();
+  await page.locator('#nextStep').click(); await expect(page.locator('.flow-step[data-step="2"]')).toBeVisible();
   await expect(page.locator('#wizardError')).not.toBeEmpty();
-  await page.locator('#tasteTwo button').nth(0).click();
-  await page.locator('#tasteTwo button').nth(1).click();
-  await page.locator('#nextStep').click();
+  await answerPerson(page, 0, 'Алекс'); await page.locator('#nextStep').click();
   await expect(page.locator('.flow-step[data-step="3"]')).toBeVisible();
+  await page.locator('#nextStep').click(); await expect(page.locator('.flow-step[data-step="3"]')).toBeVisible();
+  await expect(page.locator('#wizardError')).not.toBeEmpty();
+  await answerPerson(page, 1, 'Саша'); await page.locator('#nextStep').click();
+  await expect(page.locator('.flow-step[data-step="4"]')).toBeVisible();
 });
 
 test('Unavailable OAuth is explained honestly and the guest route remains usable', async ({ page }) => {
@@ -248,8 +242,9 @@ test('Provider buttons complete a local OAuth fixture, and guest plans move only
   await expect.poll(async () => (await (await context.request.get('/api/session')).json()).state.plans.length).toBe(1);
   await page.locator('#editPreferences').click();
   await expect(page.locator('.flow-step[data-step="2"]')).toBeVisible();
-  await page.locator('#nameOne').fill('Имя первого');
-  await page.locator('#nameTwo').fill('Имя второго');
+  await answerPerson(page, 0, 'Имя первого');
+  await page.locator('#nextStep').click();
+  await answerPerson(page, 1, 'Имя второго');
   await expect.poll(async () => (await (await context.request.get('/api/session')).json()).state.draft?.profiles?.map(person => person.name)).toEqual(['Имя первого', 'Имя второго']);
   await page.locator('#accountOpen').click();
   await page.locator('#logout').click();

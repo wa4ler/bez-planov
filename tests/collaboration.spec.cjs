@@ -104,3 +104,30 @@ test('Refreshing a partner change preserves local route edits as a separate copy
   const localVersion = state.plans.find(plan => plan.id === localID);
   expect(localVersion.days[0].stops.find(stop => stop.id === lockedID).locked).toBe(true);
 });
+
+for (const delayedStatus of [200, 401]) test(`A delayed save (${delayedStatus}) cannot change the guest workspace after re-login starts`, async ({ page }, info) => {
+  await login(page, info);
+  const accountID = await page.evaluate(() => user.id);
+  let requests = 0, held = false, fulfilled = false, release;
+  const gate = new Promise(resolve => { release = resolve; });
+  await page.route('**/api/state', async route => {
+    requests++;
+    if (requests === 1) return route.fulfill({ status: 401, json: { message: 'Session expired' } });
+    held = true; await gate;
+    await route.fulfill({ status: delayedStatus, json: delayedStatus === 200 ? { revision: 999 } : { message: 'Session expired' } });
+    fulfilled = true;
+  });
+  await page.locator('#editPreferences').click();
+  await page.locator('#nameOne').fill('Первая несохранённая правка');
+  await expect(page.locator('#syncNotice [data-act="relogin"]')).toBeVisible();
+  await page.locator('#nameOne').fill('Вторая личная правка');
+  await expect.poll(() => held).toBe(true);
+  await page.locator('#syncNotice [data-act="relogin"]').click();
+  await expect(page.locator('#accountGuest')).toBeVisible();
+  release(); await expect.poll(() => fulfilled).toBe(true);
+  await expect.poll(() => page.evaluate(() => !saving)).toBe(true);
+  await expect(page.locator('#syncNotice')).toBeHidden();
+  expect(await page.evaluate(() => ({ user, revision, dirty, sessionExpired }))).toEqual({ user: null, revision: 0, dirty: false, sessionExpired: false });
+  expect(await page.evaluate(() => JSON.stringify(workspace))).not.toContain('Вторая личная правка');
+  expect(await page.evaluate(id => sessionStorage.getItem('bezPlanovPendingV1:' + id), accountID)).toContain('Вторая личная правка');
+});
