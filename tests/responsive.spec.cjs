@@ -16,6 +16,13 @@ const SHOT_SIZES = new Set(['320x568', '390x844', '667x375', '1024x768', '1366x7
 async function capture(page, info, label) {
   if (!process.env.QA_SCREENSHOT_DIR) return;
   await fs.mkdir(process.env.QA_SCREENSHOT_DIR, { recursive: true });
+  // Load the actual visible view's lazy images before judging a full-page capture.
+  for (const image of await page.locator('main > .view:not([hidden]) img:visible').all()) {
+    if (!await image.evaluate(element => element.complete && element.naturalWidth > 0)) {
+      await image.scrollIntoViewIfNeeded();
+      await expect.poll(() => image.evaluate(element => element.complete && element.naturalWidth > 0), { message: 'A visible photo must load before its visual review' }).toBe(true);
+    }
+  }
   await page.evaluate(() => { document.activeElement?.blur(); scrollTo(0, 0); });
   await page.screenshot({ path: path.join(process.env.QA_SCREENSHOT_DIR, info.project.name.replace(/\W/g, '-') + '-' + label + '.png'), fullPage: true, animations: 'disabled' });
 }
@@ -24,6 +31,19 @@ async function inspect(page, name, records, touch) {
   await expectNoOverflow(page);
   const state = await page.evaluate(() => ({
     width: innerWidth, height: innerHeight, scrollWidth: document.documentElement.scrollWidth,
+    obscuredHeroText: (() => {
+      const host = document.querySelector('.hero-collage'), image = host?.querySelector('.hero-photo-main');
+      if (!image || !host.getClientRects().length) return [];
+      const photo = image.getBoundingClientRect(), walker = document.createTreeWalker(host, NodeFilter.SHOW_TEXT), overlaps = [];
+      for (let node; (node = walker.nextNode());) {
+        if (!node.textContent.trim() || getComputedStyle(node.parentElement).visibility === 'hidden') continue;
+        const range = document.createRange(); range.selectNodeContents(node);
+        for (const bounds of range.getClientRects()) if (bounds.width && bounds.height && bounds.left < photo.right - 1 && bounds.right > photo.left + 1 && bounds.top < photo.bottom - 1 && bounds.bottom > photo.top + 1) {
+          overlaps.push(node.textContent.trim().slice(0, 70)); break;
+        }
+      }
+      return overlaps;
+    })(),
     clippedCardText: [...document.querySelectorAll('.idea-button')].filter(element => element.getClientRects().length).flatMap(element => {
       const text = element.querySelector('.idea-info');
       if (!text) return [];
@@ -39,6 +59,7 @@ async function inspect(page, name, records, touch) {
     }).map(element => ({ name: element.id || element.textContent.trim().slice(0, 60), width: element.clientWidth, scrollWidth: element.scrollWidth }))
   }));
   records.push({ name, ...state });
+  expect(state.obscuredHeroText, 'The main photo must not be covered by promotional text or cards').toEqual([]);
   expect(state.clippedCardText, 'Mood card titles and descriptions must remain inside the visible card').toEqual([]);
   expect(state.clippedActions, 'Action labels must wrap instead of being clipped').toEqual([]);
   if (touch) {

@@ -128,7 +128,7 @@ function goToStep(target){
 }
 function renderResume(){const x=el('resumePlanBanner');x.hidden=!plan;if(plan)x.innerHTML='<p>Ваш '+(plan.days.length===1?'день':'маршрут')+' на '+esc(dateLabel(plan.config.from))+' уже собран.</p><button type="button" class="text-button" data-go="route">Вернуться к маршруту →</button>'}
 function renderTheme(){const theme=IDEAS.find(x=>x.id===draft.themeId);el('themeBadge').hidden=!theme;if(theme)el('themeBadge').innerHTML=uiIcon('spark')+'<span>Начали с настроения «'+esc(theme.title)+'». Дальше важны ответы каждого.</span><button type="button" class="text-button" data-act="clear-theme">Убрать</button>'}
-function ideaCards(list){return list.map(x=>'<article class="idea-card" data-tags="'+x.tags.join(' ')+'" data-search="'+esc((x.title+' '+x.text+' '+x.prompt).toLowerCase())+'"><button type="button" class="idea-button" data-act="choose-idea" data-idea="'+x.id+'" aria-label="Выбрать настроение: '+esc(x.title)+'"><img class="idea-photo" src="/assets/dates/'+x.image+'.webp" width="1672" height="941" loading="lazy" alt="Иллюстрация настроения: '+esc(x.title)+'"><span class="idea-corner">'+uiIcon('arrow')+'</span><span class="idea-info"><span class="idea-tag">'+esc(x.tag)+'</span><strong>'+esc(x.title)+'</strong><small>'+esc(x.text)+'</small></span></button></article>').join('')}
+function ideaCards(list){return list.map(x=>'<article class="idea-card" data-tags="'+x.tags.join(' ')+'" data-search="'+esc((x.title+' '+x.text+' '+x.prompt).toLowerCase())+'"><button type="button" class="idea-button" data-act="choose-idea" data-idea="'+x.id+'" aria-label="Выбрать настроение: '+esc(x.title)+'"><img class="idea-photo" src="/assets/dates/'+x.image+'.webp" width="1672" height="941" loading="lazy" alt="Иллюстрация настроения: '+esc(x.title)+'"><span class="idea-info"><span class="idea-tag">'+esc(x.tag)+'</span><strong>'+esc(x.title)+'</strong><small>'+esc(x.text)+'</small></span></button></article>').join('')}
 function initDesign(){
  el('homeIdeas').innerHTML=ideaCards(IDEAS.slice(0,4));el('ideasGrid').innerHTML=ideaCards(IDEAS);
  window.BPExperience?.mountPreviewMap(el('exampleMap'));
@@ -247,8 +247,8 @@ async function savePlan(asCopy=false){
 }
 function renderAccount(){
  el('accountGuest').hidden=!!user;el('accountMember').hidden=!user;
- el('accountTitle').innerHTML=user?'Ваши дни.<br><em>Ваша общая история.</em>':'Всё, что хочется<br><em>прожить вдвоём.</em>';
- el('accountLead').textContent=user?'Ваши маршруты, любимые места и два разных набора желаний — в одном кабинете.':'Сначала можно без входа: ваши сохранённые дни останутся на этом устройстве.';
+ el('accountTitle').textContent='Кабинет пары';
+ el('accountLead').textContent=user?'Маршруты, любимые места и предпочтения — всё в одном кабинете.':'Сначала можно без входа: ваши сохранённые дни останутся на этом устройстве.';
  for(const [id,key]of [['loginYandex','yandex'],['loginMailru','mailru'],['loginVk','vk']]){const enabled=authConfigState==='ready'&&!!authConfig.providers?.[key];el(id).setAttribute('aria-disabled',String(!enabled));el(id).tabIndex=enabled?0:-1}
  el('authStatus').textContent=authConfigState==='unavailable'?'Не удалось проверить доступность входа. Повторите проверку или пока продолжите без регистрации.':authConfigState==='loading'?'Проверяем доступность входа…':Object.values(authConfig.providers||{}).some(Boolean)?'Для общего кабинета на двух устройствах выбирайте один и тот же аккаунт одного сервиса.':'Общий вход пока готовится к запуску. Уже можно попробовать маршрут и сохранить его на этом устройстве.';
  el('retryAuth').hidden=authConfigState!=='unavailable';

@@ -59,7 +59,7 @@
   const polyline = (points, project) => points.map(point => { const position = project(point); return numeral(position.x) + ',' + numeral(position.y); }).join(' ');
   function underlay(project, uniqueID) {
     const centre = project([55.755,37.617]), ringEast = project([55.755,37.651]), ringNorth = project([55.774,37.617]);
-    return '<defs><pattern id="' + uniqueID + '-blocks" width="46" height="46" patternUnits="userSpaceOnUse" patternTransform="rotate(-16)"><rect x="5" y="5" width="32" height="32" rx="7" fill="none" stroke="currentColor" stroke-width=".65"/></pattern><radialGradient id="' + uniqueID + '-light"><stop offset="0" stop-color="#fffaf2" stop-opacity=".45"/><stop offset="1" stop-color="#d9c6d1" stop-opacity=".16"/></radialGradient></defs>' +
+    return '<defs><pattern id="' + uniqueID + '-blocks" width="46" height="46" patternUnits="userSpaceOnUse" patternTransform="rotate(-16)"><rect x="5" y="5" width="32" height="32" rx="7" fill="none" stroke="currentColor" stroke-width=".65"/></pattern><radialGradient id="' + uniqueID + '-light"><stop offset="0" stop-color="#9cae82" stop-opacity=".1"/><stop offset="1" stop-color="#0f1a15" stop-opacity=".2"/></radialGradient></defs>' +
       '<rect width="800" height="430" class="bp-map-ground"/><rect width="800" height="430" fill="url(#' + uniqueID + '-light)"/><rect width="800" height="430" fill="url(#' + uniqueID + '-blocks)" class="bp-map-blocks"/>' +
       parks.map(points => '<polygon points="' + polyline(points, project) + '" class="bp-map-park"/>').join('') +
       '<g class="bp-map-roads">' + roads.map(points => '<polyline points="' + polyline(points, project) + '"/>').join('') + '<ellipse cx="' + numeral(centre.x) + '" cy="' + numeral(centre.y) + '" rx="' + numeral(Math.abs(ringEast.x - centre.x)) + '" ry="' + numeral(Math.abs(ringNorth.y - centre.y)) + '"/></g>' +
@@ -168,13 +168,25 @@
     function destroy() { root.removeEventListener('click', click); root.removeEventListener('keydown', keydown); cardsRoot?.removeEventListener('click', cardClick); insertedButtons.forEach(button => button.remove()); cardElements.forEach(card => card?.classList.remove('bp-map-card-selected')); controllers.delete(root); }
     controllers.set(root, { destroy, select }); return destroy;
   }
-  function previewDay() {
-    return { areaId: 'zamos', stops: ['tretyakov', 'bjorn', 'ges2', 'patriarshy-bridge'].filter(id => catalog()[id]).map((id, index) => ({ kind: 'place', id, time: ['11:00', '13:00', '15:00', '17:00'][index] })) };
+  function renderCinematicPreview() {
+    return '<figure class="bp-cinematic-map" data-bp-cinematic-preview>' +
+      '<a class="bp-cinematic-image" href="/assets/moscow-map-cinematic.webp" target="_blank" rel="noopener noreferrer" aria-label="Рассмотреть иллюстрацию Москвы в полном размере — откроется изображение">' +
+      '<img src="/assets/moscow-map-cinematic.webp" width="1280" height="720" loading="lazy" alt="Художественная иллюстрация вечерней Москвы с условными остановками: ресторан, парк, кино и спа"></a>' +
+      '<figcaption class="bp-cinematic-caption"><div><p>Москва. Одна история на двоих.</p><span>Иллюстрация настроения: места и линии условные. Это не навигационная карта.</span></div>' +
+      '<a href="/assets/moscow-map-cinematic.webp" target="_blank" rel="noopener noreferrer">Рассмотреть изображение <svg viewBox="0 0 20 20" aria-hidden="true"><path d="m5 15 10-10M5 5h10v10" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></a></figcaption></figure>';
+  }
+  function mountCinematicPreview(root) {
+    if (!root) return () => {};
+    controllers.get(root)?.destroy();
+    root.innerHTML = renderCinematicPreview();
+    function destroy() { controllers.delete(root); }
+    controllers.set(root, { destroy, select: () => false });
+    return destroy;
   }
   global.BPExperience = Object.freeze({
     renderMap, mountMap, cardId,
     selectStop(root, index, options) { return controllers.get(root)?.select(index, options) || false; },
-    renderPreviewMap() { return renderMap(previewDay(), {}, { preview: true }); },
-    mountPreviewMap(root, options = {}) { return mountMap(root, previewDay(), {}, { ...options, preview: true }); }
+    renderPreviewMap: renderCinematicPreview,
+    mountPreviewMap: mountCinematicPreview
   });
 })(window);

@@ -26,6 +26,66 @@ test.beforeEach(async ({ page, context, baseURL }) => {
 });
 test.afterEach(async ({ page }) => expect(page.clientErrors, 'No uncaught browser errors').toEqual([]));
 
+test('The original cinematic image remains complete, clearly illustrated and available in full size', async ({ page }) => {
+  await page.goto('/'); await page.waitForFunction(() => sessionReady);
+  const heroImage = page.locator('.hero-photo-main');
+  await expect(heroImage).toBeVisible();
+  await expect.poll(() => heroImage.evaluate(element => element.complete && element.naturalWidth > 0)).toBe(true);
+  const figure = page.locator('#exampleMap .bp-cinematic-map');
+  const image = figure.locator('img');
+  await image.scrollIntoViewIfNeeded();
+  await expect.poll(() => image.evaluate(element => element.complete && element.naturalWidth > 0)).toBe(true);
+  await expect(image).toHaveAttribute('src', '/assets/moscow-map-cinematic.webp');
+  const dimensions = await image.evaluate(element => {
+    const bounds = element.getBoundingClientRect();
+    return { renderedRatio: bounds.width / bounds.height, originalRatio: element.naturalWidth / element.naturalHeight, width: bounds.width };
+  });
+  expect(dimensions.width).toBeGreaterThan(200);
+  expect(Math.abs(dimensions.renderedRatio - dimensions.originalRatio), 'The full original illustration must keep its aspect ratio').toBeLessThan(.02);
+  await expect(figure).toContainText(/иллюстрац/i);
+  await expect(figure).toContainText(/не навигационная карта/i);
+  await expect(figure.locator('.bp-map-pin,[data-bp-map-stop],.route-map')).toHaveCount(0);
+  const openImage = figure.locator('.bp-cinematic-caption > a');
+  await expectClickableCenter(openImage);
+  const opened = page.waitForEvent('popup'); await openImage.click();
+  const original = await opened;
+  await expect(original).toHaveURL(/\/assets\/moscow-map-cinematic\.webp$/);
+  await original.close();
+  await expectNoOverflow(page);
+});
+
+test('The intentional dark palette keeps plain text and fields readable in both OS color preferences', async ({ page }) => {
+  const palettes = [];
+  for (const colorScheme of ['light', 'dark']) {
+    await page.emulateMedia({ colorScheme }); await page.goto('/'); await page.waitForFunction(() => sessionReady);
+    const home = await page.evaluate(() => {
+      const root = getComputedStyle(document.documentElement), lead = getComputedStyle(document.querySelector('.hero-lead'));
+      return { scheme: root.colorScheme, background: root.backgroundColor, text: root.color, lead: lead.color };
+    });
+    expect(home.scheme).toContain('dark');
+    palettes.push(home);
+    await page.locator('#startPlan').click();
+    const readability = await page.evaluate(() => {
+      const parse = value => {
+        const channels = value.match(/[\d.]+/g)?.map(Number);
+        return channels?.length >= 3 ? [channels[0], channels[1], channels[2], channels[3] ?? 1] : [0, 0, 0, 0];
+      };
+      const background = element => {
+        const layers = []; for (let current = element; current; current = current.parentElement) layers.unshift(parse(getComputedStyle(current).backgroundColor));
+        return layers.reduce((color, layer) => layer.slice(0, 3).map((channel, index) => channel * layer[3] + color[index] * (1 - layer[3])), [0, 0, 0]);
+      };
+      const luminance = color => color.slice(0, 3).map(channel => { const value = channel / 255; return value <= .04045 ? value / 12.92 : ((value + .055) / 1.055) ** 2.4; }).reduce((sum, value, index) => sum + value * [.2126, .7152, .0722][index], 0);
+      return ['#budgetAmount', '.flow-step[data-step="1"] .field-hint', '.flow-heading h1'].map(selector => {
+        const element = document.querySelector(selector), ink = luminance(parse(getComputedStyle(element).color)), paper = luminance(background(element));
+        return { selector, contrast: (Math.max(ink, paper) + .05) / (Math.min(ink, paper) + .05) };
+      });
+    });
+    for (const sample of readability) expect(sample.contrast, sample.selector + ' should have readable plain-text contrast').toBeGreaterThanOrEqual(4.5);
+    await expectNoOverflow(page);
+  }
+  expect(palettes[1]).toEqual(palettes[0]);
+});
+
 test('Navigation, searchable moods and independent taste choices lead into a clear four-step questionnaire', async ({ page }) => {
   await page.goto('/'); await page.waitForFunction(() => sessionReady);
   await expect(page.locator('#homeIdeas .idea-card')).toHaveCount(4);
