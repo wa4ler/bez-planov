@@ -102,3 +102,30 @@ const PLACE_LINKS={
   'bjorn':{website:'https://bjorn.rest/'},
   'vokrug-sveta':{website:'https://vokrugsvetamarket.ru/'}
 };
+
+/* Editorial approximate points, hand-entered for ordering and rough distance
+   estimates only. These are NOT geocoded entrances or accessible routes. */
+const PLACE_COORDS={
+ 'red-square':[55.754,37.621],'gum':[55.754,37.622],'nikolskaya':[55.757,37.622],
+ 'vokrug-sveta':[55.758,37.624],'history-museum':[55.755,37.618],'zaryadye':[55.751,37.628],
+ 'floating-bridge':[55.750,37.629],'st-basil':[55.752,37.624],
+ 'tretyakov':[55.741,37.620],'ordynka':[55.733,37.623],'pyatnitskaya':[55.738,37.628],
+ 'bjorn':[55.745,37.625],'bolotnaya':[55.746,37.617],'ges2':[55.744,37.613],'patriarshy-bridge':[55.743,37.607],
+ 'muzeon':[55.735,37.610],'krymskaya':[55.734,37.607],'gorky-park':[55.730,37.600],
+ 'neskuchny':[55.718,37.586],'museum-moscow':[55.736,37.593],'usachevsky':[55.727,37.570],'frunzenskaya':[55.723,37.589],
+ 'arbat-old':[55.750,37.591],'pushkin-house':[55.748,37.584],'varenichnaya':[55.750,37.591],
+ 'gogol-blvd':[55.746,37.600],'pushkin-art':[55.747,37.605],'christ-savior':[55.744,37.605],'khudozhestvenny':[55.752,37.601],
+ 'patriarch-ponds':[55.763,37.593],'bulgakov':[55.767,37.593],'planetarium':[55.762,37.583],
+ 'tverskoy-blvd':[55.762,37.601],'pushkin-cafe':[55.765,37.604],'hermitage-garden':[55.771,37.609],
+ 'depo-lesnaya':[55.779,37.588],'moscow-zoo':[55.762,37.577],
+ 'moscow-city':[55.750,37.539],'afimall':[55.749,37.540],'afimall-food':[55.749,37.540],
+ 'panorama360':[55.750,37.537],'bagration':[55.748,37.545],'shevchenko':[55.746,37.547],'krasnaya-presnya':[55.754,37.554],
+ 'vdnh-arch':[55.825,37.637],'vdnh-park':[55.831,37.629],'cosmos':[55.835,37.623],
+ 'moskvarium':[55.833,37.618],'sun-moscow':[55.824,37.629],'botanical':[55.844,37.604],'moscow-sky':[55.832,37.631],
+ 'kolom-park':[55.668,37.670],'ascension':[55.667,37.672],'palace-alexei':[55.653,37.665],
+ 'gol-os':[55.660,37.674],'kolom-river':[55.664,37.677],'kazan-church':[55.670,37.668]
+};
+const AREA_COORDS={center:[55.754,37.622],zamos:[55.740,37.621],gorky:[55.730,37.600],arbat:[55.749,37.596],patriki:[55.765,37.595],city:[55.750,37.541],vdnh:[55.831,37.629],kolomenskoye:[55.664,37.670]};
+for(const [id,coordinates] of Object.entries(PLACE_COORDS))if(PLACES[id]){
+ PLACES[id].coordinates=coordinates;PLACES[id].coordinateType='editorial-approximate';
+}
